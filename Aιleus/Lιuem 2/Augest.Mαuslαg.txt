@@ -1,0 +1,74 @@
+____________________________________________________________________________________________________________________________________________________________
+
+Conversión nominal
+
+Soleu		 4 Au |   8 Lt |  100 D |   90 € |
+		75 Au | 150 Lt | 1875 D | 1800 € |
+Neqeu		 1 Au |	  2 Lt |   25 D |   20 € | *Soleu
+Vαu Kopteu	75 Au | 150 Lt | 1875 D | 1800 € |
+
+Pαμuαl		1 pμ: 5 ge	| 2 pμ: 1 pα
+
+
+
+ANGESTAQ
+
+
+CUENTAS
+	Mayeq
+	Neqeu
+	Van Kopteu
+	EuroI
+
+CANALES
+	Delαus
+	Proxeu
+	Soleu
+
+MÉTRICA
+	Divisas
+FLUJO
+	Inyección
+	Drenaje
+
+
+
+Fuerza mínima de trabajo
+Impuesto al gasto
+
+
+Inyección paralela
+
+Inyección que se divide entre dos o más canales para generar un crecimiento paralelo de dichos canales
+- Permite adelantar avances, especialmente cuando los objetivos son muy altos
+
+
+ANGEST
+	Mαyeq
+	Soleu
+	Neqeu
+	Vαu Kopteu
+	
+Mαyeq		Lιqeu 	[Lq]
+Loyeμ		Lυteu	[Lu]	= 50 Lq	> 10€
+		Loyeμt	[Lt]	= 2 Lu	> 20€
+Pιlμα		
+		Aqpm min = 1Lt.10Lq
+
+
+Augestα	[Au]	= (Augerαq)
+
+1 Lt = 100 Lq
+1 Au = 1 Lt
+1 Lt = 2 Lu
+1 Lu = 50 Lq
+
+
+
+Parámetro de Medición
+
+1. Autonomía
+	Cuántas Au/mes necesito para vivir = 1 messeuα
+	Cuántas Au/mes tengo para vivir	   = ? messeuα
+
+SMMLV: 12 Lt | 1200 Lq | 24 Lt |

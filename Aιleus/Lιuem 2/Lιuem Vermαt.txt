@@ -1,0 +1,44 @@
+
+Crear Toreg Loyeμ Amυseuα
+Crear pantalla Tevuα restantes
+Que los menú funcionen también con números
+
+
+Vermαt |
+
+Vermαt.dyαteν
+ · Debe permitir ordenar por orden temporal, como un calendario
+ · No guardar datos errados: Confirmar si guardar los datos al final
+ · Revisar input() al final de Intrêv
+
+Poder utilizar la información por separado:
+- Poder ingresar info a un Vermαt Música, Vermαt personal, etc
+
+
+Augestαq |
+
+Poder usar las variables de Augestαq y editarlos de manera independiente
+En Augestαq.csv : Si el número es menor que 10, agregar un espacio al inicio para alinear la divisa en la columna
+Augestαq.editar  No existe
+ Editar cada atributo por separado
+Augestαq.aqehr: command lαιu ιuverqom
+Augest.Sιgμe: Agregar Sιgμe al .csv
+
+CRASH
+Augestαq.sιguα
+ · Retornar error cuando se inserta una letra o un caracter inválido
+ · No registrarlo en Augestαq.csv
+ · No crashear
+AuSιg_Imαν = 'Sighe'
+
+
+Mυuιtsyα |
+
+Crear bucle αuemαt, sιeνιt y vresuα cuando se ingresan datos errados
+Crear área de géneros, cuando se define sιeνιt en Mυuιt.Sιguα
+
+Mυuιtsyα
+· Mυuιm terιgμe
+· Mυuιm lαgreuα
+· Mυuιm lαmeδuα
+· Youtube

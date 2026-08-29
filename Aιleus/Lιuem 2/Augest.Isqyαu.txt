@@ -1,0 +1,587 @@
+| 2024-05-02
+
+
+Mαyeq
+──────────────
+Delαus │ 1 ge
+Proxeu │ 5 ge
+Soleu  │ 26 ge
+Sιguα  │ 32 ge
+
+
+Neqeu
+─────────────
+Delαus │ 1 ge
+Dαuqαδ │ 0 ge
+Soleu  │ 9 ge
+Sιguα  │ 1 pα
+
+
+
+| 2024-04-22
+
+
+Mαyeq
+──────────────
+Delαus | 1 ge
+Proxeu | 5 ge
+Soleu  | 25 ge
+Sιguα  | 31 ge
+
+
+Neqeu
+──────────────
+Delαus | 1 ge
+Dαuqαδ | 0 ge
+Soleu  | 8 ge
+Sιguα  | 9 ge
+
+
+Sιgμe  | 4 pα
+
+
+
+| 2024-04-16
+
+
+Mαyeq
+──────────────
+Delαus |   1 ge
+Proxeu |   5 ge
+Soleu  |  24 ge
+Sιguα  |   3 pα
+
+
+Neqeu
+──────────────
+Delαus |   1 ge
+Dαuqαδ |   1 ge
+Soleu  |   8 ge
+Sιguα  |   1 pα
+
+Auqopt |  80 ge
+
+Notμ   | 120 ge
+
+
+
+| 2024-03-25
+
+
+Mαyeq
+──────────────
+Delαus | 1 ge
+Proxeu | 5 ge
+Soleu  | 24 ge
+Sιguα  | 3 pα
+
+
+
+Neqeu
+──────────────
+Delαus | 1 ge
+Dαuqαδ | 1 ge
+Soleu  | 9 ge
+Sιguα  | 11 ge
+
+Auqopt | 81 ge
+
+Notμ   | 122 ge
+
+
+
+
+| 2024-03-10
+
+
+Mαyeq
+──────────────
+Delαus | 1 ge
+Proxeu | 5 ge
+Soleu  | 24 ge
+Sιguα  | 3 pα
+
+
+
+Neqeu
+──────────────
+Delαus | 0 ge
+Dαuqαδ | 0 ge
+Soleu  | 6 ge
+Sιguα  | 6 ge
+
+Auqopt | 82 ge
+
+Notμest| 118 ge
+
+
+
+
+| 2024-03-07
+
+
+Mαyeq
+──────────────
+Delαus | 1 ge
+Proxeu | 5 ge
+Soleu  | 22 ge
+Sιguα  | 28 ge
+
+
+Neqeu
+──────────────
+Delαus | 1 ge
+Dαuqαδ | 0 ge
+Soleu  | 8 ge
+Sιguα  | 9 ge
+
+Auqopt | 82 ge
+
+
+
+
+| 2024-02-16
+
+
+Mαyeq
+──────────────
+Delαus | 2 ge
+Proxeu | 5 ge
+Soleu  | 22 ge
+Sιguα  | 29 ge
+
+Neqeu
+──────────────
+Delαus | 0 ge
+Dαuqαδ | 0 ge
+Soleu  | 9 ge
+Sιguα  | 9 ge
+
+Auqopt | 82 ge
+
+
+
+
+| 2024-01-27
+
+
+Mαyeq
+──────────────
+Delαus | 2 ge
+Proxeu | 5 ge
+Soleu  | 20 ge
+Sιguα  | 27 ge
+
+
+
+| 2024-01-27
+
+
+Mαyeq
+──────────────
+Delαus | 2 ge
+Proxeu | 5 ge
+Soleu  | 22 ge
+Sιguα  | 29 ge
+
+
+Neqeu
+──────────────
+Delαus | 1 ge
+Dαuqαδ | 1 ge
+Soleu  | 10 ge
+Sιguα  | 12 ge
+
+Auqopt | 85 ge
+
+Notμest| 126 ge
+
+
+
+
+| 2024-01-24
+
+
+Mαyeq
+──────────────
+Delαus | 0 ge
+Proxeu | 5 ge
+Soleu  | 15 ge
+Sιguα  | 2 pα
+
+
+
+Neqeu
+──────────────
+Delαus | 1 ge
+Dαuqαδ | 1 ge
+Soleu  | 10 ge
+Sιguα  | 12 ge
+
+Auqopt | 85 ge
+
+Notμest| 117 ge
+
+
+
+______________________________________________________
+
+Metas a lo mínimo
+
+
+		251124		12024		2024+
+Mαyeq
+	Delαus	1 αu	-->	2 αu	-->	5 αu
+	Soleu	4 αu	-->	5 αu	-->	10 αu
+
+Neqeu
+	Delαus	1 Lu	-->	2 αu	-->	5 αu
+	Soleu	1 αu	-->	2 αu	-->	5 αu
+
+Vαu Qopteu
+		75 αu	-->	75 αu	-->	80 αu
+
+______________________________________________________
+
+		 25124	 	12024 		2024+
+Mαyeq			 [7g]>
+	Delαus	   -	  -->	 2 ge	-->	5 ge
+	Proxeu	  5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 15 ge	  -->	 2 pα	-->	3 pα
+
+Sιguα 		  2 pα	  -->	+2 pα	-->	3 pα
+
+Neqeu			 	       [1pα]>
+	Delαus	  2 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  1 pα	  -->	 1 pα	-->	2 pα
+Sιguα		 11 ge
+
+Sιguα		 31 ge	  -->    4 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ges
+
+Notμevα		114 ge	-->	14 pα	-->	20 pα
+
+______________________________________________________
+
+		 20124	 	12024 		2024+
+Mαyeq			 [7g]>
+	Delαus	   -	  -->	 2 ge	-->	5 ge
+	Proxeu	  5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 15 ge	  -->	 2 pα	-->	2 pα
+
+Sιguα 		  2 pα	  -->	+2 pα	-->	3 pα
+
+Neqeu			 [2g]>
+	Delαus	  2 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  9 ge	  -->	 1 pα	-->	2 pα
+Sιguα		 11 ge
+
+Sιguα		 31 ge	  -->    4 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ges
+
+Notμevα		114 ge	-->	14 pα	-->	20 pα
+
+______________________________________________________
+
+		 16124	 	12024 		2024+
+Mαyeq			 [8g]>
+	Delαus	   -	  -->	 2 ge	-->	5 ge
+	Proxeu	  4 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 15 ge	  -->	 2 pα	-->	2 pα
+
+Sιguα 		+19 ge	  -->	+2 pα	-->	3 pα
+
+Neqeu			 [2g]>
+	Delαus	  2 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  9 ge	  -->	 1 pα	-->	2 pα
+Sιguα		 11 ge
+
+Sιguα		  3 pα	  -->    4 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ges
+
+Notμevα		114 ge	-->	14 pα	-->	20 pα
+_____________________________________________________
+
+		 5124	 	12024 		2024+
+Mαyeq			 [8g]>
+	Delαus	   -	  -->	 2 ge	-->	5 ge
+	Proxeu	  5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 14 ge	  -->	 2 pα	-->	2 pα
+
+Sιguα 		 19 ge	  -->	+2 pα	-->	3 pα
+
+Neqeu			 [2g]>
+	Delαus	 <2 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  8 ge	  -->	 1 pα	-->	2 pα
+
+Sιguα		 29 ge	  -->    4 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ge
+
+Notμevα		114 ge	-->	14 pα	-->	20 pα
+_____________________________________________________
+
+301123
+
+Mαyeq		
+	Delαus	 1 Lu
+	Soleu	 5 αu
+
+Neqeu
+	Delαus	 1 αu
+	Soleu	 2 αu
+
+Sιguα		 8 αu
+
+
+Vαu Qopteu		
+		75 αu
+
+Notμevα		83 αu
+_________________________________________________________
+
+		 31223		12024		2024+
+Mαyeq
+	Delαus	 1 αu	-->	 2 αu	-->	 5 αu
+	Proxeu	 1 αu	-->	 2 αu	-->	 5 αu
+	Soleu	 8 αu	-->	10 αu	-->	20 αu
+
+Neqeu
+	Delαus	 - αu	-->	 2 αu	-->	 5 αu
+	Soleu	 4 αu	-->	 5 αu	-->	10 αu
+
+Sιguα		14 αu
+
+___________
+Vαu Qopteu
+		75 αu	-->	75 αu	-->	80 αu
+
+Notμevα		89 αu
+________________________________________________________
+
+		71223		12024		2024+
+Mαyeq
+	Delαus	 1 αu	-->	 2 αu	-->	 5 αu
+	Proxeu	 1 αu	-->	 2 αu	-->	 5 αu
+	Soleu	 8 αu	-->	10 αu	-->	20 αu
+
+Neqeu
+	Delαus	 - αu	-->	 2 αu	-->	 5 αu
+	Soleu	 5 αu	-->	 5 αu	-->	10 αu
+
+Sιguα		15 αu
+
+___________
+Vαu Qopteu
+		75 αu	-->	75 αu	-->	80 αu
+
+Notμevα		90 αu
+_______________________________________________________
+
+		81223		12024		2024+
+Mαyeq
+	Delαus	 1 αu	-->	 2 αu	-->	 4 αu
+	Proxeu	 1 αu	-->	 2 αu	-->	 5 αu
+	Soleu	 8 αu	-->	10 αu	-->	20 αu
+
+Neqeu
+	Delαus	 - αu	-->	 2 αu	-->	 5 αu
+	Soleu	 6 αu	-->	10 αu	-->	20 αu
+
+Sιguα		16 αu
+
+___________
+Vαu Qopteu
+		75 αu	-->	75 αu	-->	80 αu
+
+Notμevα		91 αu
+______________________________________________________
+
+		101223		12024		2024+
+Mαyeq
+	Delαus	80 lq	-->	 2 αu	-->	 4 αu [Debe 20 lq]
+	Proxeu	 2 αu	-->	 2 αu	-->	 5 αu
+	Soleu	 9 αu	-->	10 αu	-->	20 αu
+
+Neqeu
+	Delαus	60 lq	-->	 2 αu	-->	 5 αu [Debe 40 lq]
+	Soleu	 5 αu	-->	10 αu	-->	20 αu
+
+Sιguα		18 αu
+______________
+
+Vαu Qopteu
+		75 αu	-->	75 αu	-->	80 αu
+
+Notμevα		93 αu
+
+______________________________________________________
+
+		171223		12024		2024+
+Mαyeq
+	Delαus	 3 lt	-->	2 ge	-->	4 ge
+	Proxeu	 2 ge	-->	2 ge	-->	5 ge
+	Soleu	 1 pα	-->	1 pα	-->	2 pα
+
+Neqeu
+	Delαus	 1 ge	-->	2 ge	-->	5 ge
+	Soleu	 6 ge	-->	1 pα	-->	2 pα
+
+Sιguα		 2 pα	-->     3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		75 ge	-->	75 ge	-->	80 ge
+
+Notμevα		95 ge
+______________________________________________________
+
+		191223		12024		2024+
+Mαyeq
+	Delαus	 2 ge	-->	2 ge	-->	4 ge
+	Proxeu	 2 ge	-->	5 ge	-->	5 ge
+	Soleu	 1 pα	-->	1 pα	-->	2 pα
+
+Neqeu
+	Delαus	 1 ge	-->	2 ge	-->	5 ge
+	Soleu	 6 ge	-->	1 pα	-->	2 pα
+
+Sιguα		 2 pα	-->     3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		75 ge	-->	75 ge	-->	80 ge
+
+Notμevα		95 ge
+______________________________________________________
+
+		211223		12024		2024+
+Mαyeq
+	Delαus	 2 ge	-->	2 ge	-->	4 ge
+	Proxeu	 3 ge	-->	5 ge	-->	5 ge
+	Soleu	 1 pα	-->	1 pα	-->	2 pα
+
+Neqeu
+	Delαus	 - ge	-->	2 ge	-->	5 ge
+	Soleu	 6 ge	-->	1 pα	-->	2 pα
+
+Sιguα		21 ge	-->     3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		75 ge	-->	75 ge	-->	80 ge
+
+Notμevα		96 ge
+______________________________________________________
+
+		211223		12024		2024+
+Mαyeq
+	Delαus	 2 ge	-->	2 ge	-->	4 ge
+	Proxeu	 5 ge	-->	5 ge	-->	5 ge
+	Soleu	 1 pα	-->	1 pα	-->	2 pα
+
+Neqeu
+	Delαus	 1 ge	-->	2 ge	-->	5 ge
+	Soleu	 6 ge	-->	1 pα	-->	2 pα
+
+Sιguα		24 ge	-->     3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		75 ge	-->	75 ge	-->	80 ge
+
+Notμevα		99 ge
+______________________________________________________
+
+		221223		12024		2024+
+Mαyeq
+	Delαus	 2 ge	-->	5 ge	-->	5 ge
+	Proxeu	 5 ge	-->	5 ge	-->	1 pα
+	Soleu	 1 pα	-->	1 pα	-->	2 pα
+
+Neqeu
+	Delαus	 1 ge	-->	2 ge	-->	5 ge
+	Soleu	 6 ge	-->	1 pα	-->	2 pα
+
+Sιguα		24 ge	-->     3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		75 ge	-->	75 ge	-->	80 ge
+
+Notμevα		99 ge
+_____________________________________________________
+
+		  221223	12024		2024+
+Mαyeq
+	Delαus	   2 ge	  -->	 2 ge	-->	5 ge
+	Proxeu	   5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	  12 ge	  -->	 1 pα	-->	2 pα
+
+Sιguα 		  19 ge	  -->	+2 pα	-->	3 pα
+
+Neqeu
+	Delαus	  1 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  6 ge	  -->	 1 pα	-->	2 pα
+
+Sιguα		 26 ge	  -->    3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ge
+
+Notμevα		111 ge
+_____________________________________________________
+
+		 231223		12024		2024+
+Mαyeq
+	Delαus	  2 ge	  -->	 2 ge	-->	5 ge
+	Proxeu	  5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 13 ge	  -->	 2 pα	-->	2 pα
+
+Sιguα 		  2 pα	  -->	+2 pα	-->	3 pα
+
+Neqeu
+	Delαus	  1 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  6 ge	  -->	 1 pα	-->	2 pα
+
+Sιguα		 27 ge	  -->    3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ge
+
+Notμevα		112 ge
+_____________________________________________________
+
+		 241223		12024		2024+
+Mαyeq
+	Delαus	  2 ge	  -->	 2 ge	-->	5 ge
+	Proxeu	  5 ge	  -->	 5 ge	-->	1 pα
+	Soleu	 14 ge	  -->	 2 pα	-->	2 pα
+
+Sιguα 		 21 ge	  -->	+2 pα	-->	3 pα
+
+Neqeu
+	Delαus	  1 ge	  -->	 2 ge	-->	5 ge
+	Soleu	  6 ge	  -->	 1 pα	-->	2 pα
+
+Sιguα		 28 ge	  -->    3 pα	-->    +5 pα	
+______________
+
+Nelαu Qopteu
+		 85 ge	-->	85 ge	-->	90 ge
+
+Notμevα		113 ge
+_____________________________________________________

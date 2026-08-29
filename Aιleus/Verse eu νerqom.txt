@@ -1,0 +1,168 @@
+Verqom
+
+              if strnum == 0:                                                                                                                                            
+                while True:                                                                                                                                              
+                  try:                                                                                                                                                   
+                    lαmνmαt('Verqom')
+                    νqnum = stdscr.getch()   
+
+                    if νqnum == 27:
+                      prompt = νmαν = str() ; numero = 0 ; selector(None) ; return
+                    elif νqnum == 10 or νqnum == ord('ǋ'): break
+                    elif νqnum == 0o10 or νqnum == ord('º'):
+                      prompt = ':' ; item = ''                          
+
+                    elif νqnum == ord('ƻ'):#   Ctrl Left key 
+                      νerseut = item[:-1]
+                    elif νqnum == ord('Ƽ'):#  Ctrl Right key 
+                      νerseut2 = item[:-1]
+
+                    elif νqnum == curses.KEY_UP or νqnum == curses.KEY_LEFT:# Up key 
+                      selector('αdινeu')
+                    elif νqnum == curses.KEY_DOWN or νqnum == curses.KEY_RIGHT:# Down key 
+                      selector('δινeu')
+                    
+                    # Num Pad
+                    elif νqnum == ord('Ǉ'):# Num(1) 
+                      item = lines[0] ; strnum = numero = 1
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǈ'):# Num(2) 
+                      item = lines[1] ; strnum = numero = 2
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǉ'):# Num(3) 
+                      item = lines[2] ; strnum = numero = 3
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('Ǆ'):# Num(4) 
+                      item = lines[3] ; strnum = numero = 4
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǅ'):# Num(5) 
+                      item = lines[4] ; strnum = numero = 5
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǆ'):# Num(6) 
+                      item = lines[5] ; strnum = numero = 6
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǁ'):# Num(7) 
+                      item = lines[6] ; strnum = numero = 7
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǂ'):# Num(8) 
+                      item = lines[7] ; strnum = numero = 8
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('ǃ'):# Num(9) 
+                      item = lines[8] ; strnum = numero = 9
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum == ord('Ǻ'):# Num(0) 
+                      item = lines[9] ; strnum = numero = 10
+                      if len(lines) < 9: prompt = f'{strnum} │  {item}'
+                      else:                      
+                        if strnum > 9: prompt = f'{strnum} │  {item}'
+                        else: prompt = f'{strnum}  │  {item}'
+                    elif νqnum != -1: 
+                        try:                                                
+                          oppel = open(νιdeu,encoding='utf8')
+                          lines = oppel.readlines()
+
+                          νqnum = chr(νqnum)
+                          numero = int(νqnum)
+                          if numero == 0: 
+                            if len(lines) > 9: numero = 10
+                            else: numero = len(lines)
+                          strnum = str(numero)
+
+                          item = lines[numero-1]
+                          stdscr.addstr('\n')
+                          if len(lines) < 10: prompt = f'{strnum} │  {lines[numero-1]}'
+                          else:                      
+                            if int(strnum) > 9: prompt = f'{strnum} │  {item}'
+                            else: prompt = f'{strnum}  │  {item}'
+                          strnum = int(strnum)
+                          stvlitem = item.rstrip('\n')
+                          stνlαt('Verqom',f'{stvlitem}',7)
+                        except ValueError: pass
+                        except IndexError: toreg = ''
+                  except Exception as e:                                                                                                                                 
+                    stναδeut(αδeutαr,e,'Verqom ')
+              else: selector(None)
+
+
+Verse
+
+
+              '''if strnum == 0:                                                                                                                                            
+                while True:                                                                                                                                              
+                  try:#                                                                                    | Item selector                                                  
+                    lαmνmαt('Verse')
+                    νsnum = stdscr.getch()   
+
+                    if νsnum == 27:#                                                                       | Esc                                                         
+                      prompt = νmαν = toreg     = str()
+                      strnum                    = 0
+                      break
+                    elif νsnum == 10 or νsnum == ord('ǋ'):#                                                | Enter                                                         
+                      break
+                    elif νsnum == 0o10 or νsnum == ord('º'):#                                              | Backspace                                                   
+                      prompt = ':' ; item = ''                          
+                    elif νsnum == ord('ƻ'):#                                        Ctrl Left key          item to νerseut |                                             
+                      νerseut = item[:-1]
+                    elif νsnum == ord('Ƽ'):#                                        Ctrl Right key        item to νerseut2 |                                             
+                      νerseut2 = item[:-1]
+                    elif νsnum == curses.KEY_UP or νsnum == curses.KEY_LEFT:#       Up/left key                                                                          
+                      selector('αdινeu')
+                    elif νsnum == curses.KEY_DOWN or νsnum == curses.KEY_RIGHT:#    Down/right key                                                                       
+                      selector('δινeu')
+                    # Num Pad
+                    elif νsnum == ord('Ǉ'):# Num(1)                                                                                                                      
+                      item = lines[0] ; strnum = numero = 1
+                    elif νsnum == ord('ǈ'):# Num(2)                                                                                                                      
+                      item = lines[1] ; strnum = numero = 2
+                    elif νsnum == ord('ǉ'):# Num(3)                                                                                                                      
+                      item = lines[2] ; strnum = numero = 3
+                    elif νsnum == ord('Ǆ'):# Num(4)                                                                                                                      
+                      item = lines[3] ; strnum = numero = 4
+                    elif νsnum == ord('ǅ'):# Num(5)                                                                                                                      
+                      item = lines[4] ; strnum = numero = 5
+                    elif νsnum == ord('ǆ'):# Num(6)                                                                                                                      
+                      item = lines[5] ; strnum = numero = 6
+                    elif νsnum == ord('ǁ'):# Num(7)                                                                                                                      
+                      item = lines[6] ; strnum = numero = 7
+                    elif νsnum == ord('ǂ'):# Num(8)                                                                                                                      
+                      item = lines[7] ; strnum = numero = 8
+                    elif νsnum == ord('ǃ'):# Num(9)                                                                                                                      
+                      item = lines[8] ; strnum = numero = 9
+                    elif νsnum == ord('Ǻ'):# Num(0)                                                                                                                      
+                      item = lines[9] ; strnum = numero = 10
+                    elif νsnum != -1:                                                                                                                                    
+                      try:                                       
+                        numero = int(chr(νsnum))
+                        if numero == 0: numero = 10
+                        strnum = str(numero)
+                      except ValueError: pass                            
+                      except IndexError: toreg = ''
+                  except Exception as e: stναδeut(αδeutαr,e,'Verse   ') ; toreg = ''
+              else: selector(None)'''

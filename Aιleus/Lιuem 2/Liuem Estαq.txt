@@ -1,0 +1,159 @@
+Logreu | Logreu
+___________________________________________________________________________________________
+
+Ligar Estaq con Teνuα y con Vιαret
+
+
+| Comandos
+
+Internos
+- mαtιν
+
+Externos
+No hay interacción, excepto para salir, y en δoνte al confirmar la orden. El resto de la orden es externa al Lιuem
+- δoνte
+- Sedge
+
+
+| Pantallas
+Son espacios con información fija, con los cuales no se puede interactuar. No existen comandos. No se puede gestionar (agregar, eliminar o modificar información)
+Espacios de gestión externa
+
+De las pantallas se sale con la tecla Enter
+
+- Viaret
+- Qampar
+
+
+| Programas
+Los programas son espacios que incluyen comandos, interacción absoluta y permanente con el usuario, y pantallas dinámicas, que se pueden gestionar (agregar, eliminar y modificar)
+Espacios autónomos
+
+De los programas se sale con el símbolo º
+
+
+- Tevna: 2 pantallas estáticas (Híbrido entre pantalla y programa)
+- Mυsselαιtμ: 1 pantalla dinámica
+- Dyαtēν: 1 pantalla dinámica
+- Vermat: Varias pantallas dinámicas
+- Augest: Base de datos
+- Mυuιtsyα: Base de datos
+
+
+ACTUALIZAR:
+
+
+| Operación
+
+
+Logreu
+- Contiene operaciones, y un aqehr obligatorio
+
+Operación
+- No requiere aqehr necesariamente, pero sí una forma de salir
+- No siempre aparece en la barra de Operaciones
+
+f(Lιuem)
+    input()			clear.logreu.menu.rl:input
+    Loop			Prompt
+       - Lamuv 			   Continue(repeat.loop)
+       - Aqehr 			   Exit
+       - Mαtιν 			   Continue
+       - f(Vermat)		   Vermat
+	     -Loop		      Clean'Input
+		-Lamυν
+		-Aqehr			clear.logreu.return.rl:input | Envía a Lιuem
+		-f(Dyatēν)		   Dyatēν
+		     -Loop		      Clean
+			-Loop			 Input
+		     	   -Aqehr		   return | Envía a Vermat
+			   -Signa		   Siguα
+			      -Aqehr		      break   | Envía a Dyαtēν
+			   -Intrēν		      input() | Envía a Dyatēν
+			   -Aqtaudeμ		      input() | Envía a Dyatēν
+		-f(Verpιlμα)
+		
+
+		
+INTREV
+- Debe correr el programa
+- Se empieza desde el prompt más inmediato
+- Se recorre de arriba a abajo hasta el último según input().menu
+
+1. Logreu ιtαude
+
+2. Bucle input()
+	Debe funcionar:
+	- input().prompt debe lanzar Menú
+	- Menú o input().menu debe retornar a input().prompt
+		- Si Menú retoma a prompt: no debe limpiar Menu
+		- Si requiere input().menu, puede limpiar Menu
+	- Debe haber un bucle input().Menú - input().prompt
+	- Debe haber una relación sana entre el título del prompt y el prompt
+		- clear.logreu.menu.[repeat.loop]:prompt
+		- [repeat.loop]:clear.logreu.menu.prompt
+3. Función Aqehr
+	Debe salir del programa con la función 'aqehr'
+
+4. Repetir operación en los programas del menú
+
+
+   - Dyαtevuα
+   - Verpιlμα
+	Show - Edit(Add-Change-Save) - Exit...
+- Augest
+	- Show (Lαmeδt) - Edit (Siguα)
+	Add - Show - Exit...
+- Mυuιtsyα
+- Aqeμr
+
+
+
+
+Mυuιtsyα
+
+
+4/4
+Ideu	= [1,2,3,4]
+Figuras = [0.5,1,2,3,4,5,6]
+Corchea = 0.5
+Negra	= 1
+Negra.  = Negra + Corchea
+Blanca	= 2
+Blanca. = Blanca + Negra
+Redonda	= 4
+3sillo	= ...
+
+3/4
+Ideu	= [1,2,3]
+Figuras = [0.5,1,2,3]
+Corchea	= 0.5
+Negra	= 1
+Blanca	= 2
+Blanca. = 3
+3sillo	= ...
+
+6/8
+Ideu	= [1,2,3,4,5,6]
+Figuras = [1,2,3,4,6]
+Corchea = 1
+Negra	= 2
+Negra.	= 3
+Blanca	= 4
+Blanca.	= 6
+
+
+Input('Métrica | ')
+
+
+
+
+
+
+
+
+
+
+Notas
+
+

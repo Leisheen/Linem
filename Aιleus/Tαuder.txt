@@ -1,0 +1,32 @@
+PILHA
+
+ 1 │ Arl		Edge  │ https://www.sura.co/arl/afiliacion/consulta					Generar certificado..
+ 5 │ Sergio		Nequi │ Enviar â†’ Bancos â†’ Favoritos							Ahorros: 70222219262	    	CC 1016002872		100 lq
+ 9 │ Gas		Edge  │ https://pagosenlinea.grupovanti.com/						61141578						100 lq
+12 │ Recordar		Edge  │ https://www.psepagos.co/PSEHostingUI/ShowTicketOffice.aspx?ID=4418		1032461866						41  lq
+25 │ Etb MÃ³vil		Edge  │ https://mietb.etb.com/login/ | App | 						3057087637						17  lq
+28 │ Etb hogar		Edge  │ https://etb.com/pagos/								6016177014						
+.. │ UlÊ¯á¾±Î½		Nequi │ Sugeridos (â†’ MÃ¡s servicios â†’ Transporte y viajes) â†’ Maas Tullave		1010 0002 7034 0110					100 lq
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Ou Ollama lyÉ’uzeq:
+    'ollama pull llama3.1:latest' uÉ’ DOS lÉ’g
+    Ut 'ollama list' lÉ’g Î½É¢r version Î¹uÊ¯É¢rze
+
+https://www.binance.com/es/my/wallet/account/earn - https://www.binance.com/es/copy-trading/spot - https://www.binance.com/es/markets/overview - https://www.binance.com/es/trading-bots
+
+Exacta misma imagen, pero en lugar de ser un mapa, es la vista satelital de dicho mapa.
+La figura del centro es una densa megalÃ³polis que tiene exactamente la misma forma. A la derecha hay una cordillera nevada y la regiÃ³n de la izquierda es mar
+
+Sanitas 0012974613
+
+Nombres de lugares
+VeutÎ¼Î±r - NevÎ±Î¼l, Thalnir - Lovenn, Vennelth - Thalassir, Mussvain - Lethan, Lethel - Musseth, Thelna - Nervalen, Thalissen - Vernath
+
+Modules for LÎ¹uem
+pylint
+_curses, numpy, pandas, psutil, pygame, requests, sounddevice, bs4, google-auth google-auth-oauthlib google-api-python-client googlesearch-python, rich, tabulate, PySide6
+Curses is getting old .. CLI alternatives: Unicurses, Blessed, prompt_toolkit JiraTUI, Textual
+
+droguería : lima, droguería = lima, [droguería] : lima
