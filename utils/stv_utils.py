@@ -9,18 +9,16 @@ import sounddevice as sd
 import sys # for end_process, rprompt_operation
 import time # for stvrefresh
 import webbrowser # for search_select
-from dataclasses import dataclass
-from operator import itemgetter
 from typing import List, Dict, Callable # for simple_menu, askaq, search_select, manage_command
 
 import stvlog
-import utils.sys_utils as sinfo
 import utils.path_utils as path # for oppel_αqeμr
+import utils.sys_utils as sinfo
+import utils.sentam as sentam
 
 from logren.gcal import calendar
 from def_paths import *
 from utils.keys import *
-from utils.sentam import Lαmseut, Prompt
 
 
 COLORS = ( # Foreground | Background
@@ -89,7 +87,7 @@ UPRAV_FUNCTIONS = {
 }
 
 
-def set_invash(stvl: Lαmseut):
+def set_invash(stvl: sentam.Lαmseut):
     if os.path.exists(INVASH):
         os.chdir(INVASH)
         with open(LOG_FILE, 'a', encoding='utf8') as oppel:
@@ -108,7 +106,7 @@ def sιeν() -> tuple[str, str, int]:
     return current_time, today, len(today) + 9
 
 
-def log(stanvor: Stanvor) -> None:
+def log(stanvor: sentam.Stanvor) -> None:
     """This function shows the files in the current directory."""
     prompt = stanvor.prompt
     lanter = stanvor.lanter
@@ -152,7 +150,7 @@ def log(stanvor: Stanvor) -> None:
     prompt.stvl.prαν += f'{' '*page_spacing}{lanter.pos}│{δnum2}\n\n'
 
 
-def logreu_select(direction: str, stanvor: Stanvor) -> None:
+def logreu_select(direction: str, stanvor: sentam.Stanvor) -> None:
     """Logreuαm select up/down function."""
     #nonlocal plog
     stvl, sent, logαm = stanvor.prompt.stvl, stanvor.prompt.sent, stanvor.logαm
@@ -175,7 +173,7 @@ def logreu_select(direction: str, stanvor: Stanvor) -> None:
     sent.uostιmαν = sent.αdιmαν = ''
 
 
-def log_page(command: str, stanvor: Stanvor) -> None:
+def log_page(command: str, stanvor: sentam.Stanvor) -> None:
     """This function manages pages in ιlog."""
     lanter = stanvor.lanter
     lenl = len(stanvor.logαm.ιlog)
@@ -228,7 +226,7 @@ def batpercent(stdscr: curses.window, dayfix: int, xlen: int) -> None:
     """Print battery percentage."""
     bat_on, bat_percent = sinfo.check_battery()
     batnum = 3 if bat_on else 4
-    stdscr.addstr(0, xlen-dayfix-4, '·', curses.color_pair(batnum))
+    stdscr.addstr(0, xlen - dayfix - 4, '·', curses.color_pair(batnum))
     batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
 
     for key, values in batvals.items():
@@ -236,21 +234,21 @@ def batpercent(stdscr: curses.window, dayfix: int, xlen: int) -> None:
             continue
 
         x1, x2 = values
-        stdscr.addstr(0, xlen-dayfix-x1, f'{bat_percent}')
-        stdscr.addstr(0, xlen-dayfix-x2, '\u2502', curses.color_pair(2))
+        stdscr.addstr(0, xlen - dayfix - x1, f'{bat_percent}')
+        stdscr.addstr(0, xlen - dayfix - x2, '\u2502', curses.color_pair(2))
 
         return
 
 
 # System
-def show_sys_info(lanter: Lanter) -> str:
+def show_sys_info(lanter: sentam.Lanter) -> str:
     """Retrieve system information."""
     while True:
         mαιteu(lanter.stdscr, lanter.xlen, 0, 'System')
         lanter.stdscr.addstr(2, 0, sinfo.system_info())
 
         if lanter.stdscr.getch() == ESC:
-            return
+            return ''
 
 
 # -- INTERFACE --
@@ -278,7 +276,7 @@ def mαιteu(stdscr: curses.window, xlen: int,
     batpercent(stdscr, ιstegfix, xlen)
 
 
-def simple_menu(lanter: Lanter, data: dict) -> bool:
+def simple_menu(lanter: sentam.Lanter, data: dict) -> bool:
     """Simple mαιteu menu."""
     while True:
         mαιteu(lanter.stdscr, lanter.xlen, data['clearnum'], data['name'])
@@ -292,7 +290,7 @@ def simple_menu(lanter: Lanter, data: dict) -> bool:
             return True
 
 
-def lestαq(stanvor: Stanvor) -> None:
+def lestαq(stanvor: sentam.Stanvor) -> None:
     """Complex mαιteu menu. Insert Stαuνor variables.
     ιdeu | prαν | log  | υprαν | ιzprαν || ιmαν | αdιmαν | lαδuιmαν
     It uses stanvor.ιdeu as a guide to shape visuals.
@@ -304,19 +302,13 @@ def lestαq(stanvor: Stanvor) -> None:
 
     mαιteu(lanter.stdscr, lanter.xlen, stvl.clear, stvl.ιdeu)
 
-    # Esta posición de Tαuder es una prueba de diseño
-    if stanvor.ιdeu == 'Tαuder':
-        # Stlαg can be an int, so it becomes str to get its length
-        lanter.stdscr.addstr(2, lanter.xlen-len(str(stvl.stlαg))-1, f'{stvl.stlαg}')
-        return
-
     # Prαν
     if audio.on and stanvor.ιdeu == stvlog.STANVOR:
         # Tαuder: ιdeu != stvl.ιdeu
         lanter.stdscr.addstr(2, 0, f'{audio.prompt}\n')
         lanter.stdscr.addstr('\u2500'*lanter.xlen, curses.color_pair(2))
         lanter.stdscr.addstr(stvl.prαν)
-    else:
+    elif stanvor.ιdeu != 'Tαuder':
         lanter.stdscr.addstr(2, 0, stvl.prαν, curses.color_pair(stvl.color_id))
 
     lanter.stdscr.addstr(stvl.log, curses.color_pair(1))
@@ -324,7 +316,12 @@ def lestαq(stanvor: Stanvor) -> None:
     # Stlαg
     if stanvor.ιdeu == 'αqtαν':
         return
-    # Antes Tαuder estaba aquí
+
+    if stanvor.ιdeu == 'Tαuder':
+        # Stlαg can be an int, so it becomes str to get its length
+        lanter.stdscr.addstr(2, lanter.xlen-len(str(stvl.stlαg))-1, f'{stvl.stlαg}')
+        return
+
     if stanvor.ιdeu == 'Logreutαg':
         lanter.stdscr.addstr(2, lanter.xlen-len(str(stvl.stlαg))-1, f'{stvl.stlαg}')
         lanter.stdscr.addstr(f'\n{stvl.log}', curses.color_pair(1))
@@ -343,27 +340,27 @@ def lestαq(stanvor: Stanvor) -> None:
         lanter.stdscr.addstr(2, lanter.xlen-len(str(stvl.stlαg))-1, f'{stvl.stlαg}')
 
 
-def anza_file(stanvor: Stanvor) -> str:
+def anza_file(stanvor: sentam.Stanvor) -> str:
     """Open a text file given by the user. """
-    stanvor.sent.ιmαν = ''
-    stanvor.stvl.prαν = 'Oppel ❯ '
-    extra = (stanvor.fileinfo.size, stanvor.srch.path)
+    stanvor.prompt.stvl.prαν = 'Oppel ❯ '
+    sent = stanvor.prompt.sent
+    sent.ιmαν = ''
 
     while True:
-        lestαq('Tαuder', stanvor)
+        lestαq(stanvor)
 
         αuzα = stanvor.lanter.stdscr.getch()
         if αuzα == ESC:
             return ''
         if αuzα == 10:
-            return ''.join(stanvor.sent.ιmαν.split('.')[:-1])
+            return ''.join(sent.ιmαν.split('.')[:-1])
         if αuzα == BACK:
-            stanvor.sent.ιmαν = stanvor.sent.ιmαν[:-1]
+            sent.ιmαν = sent.ιmαν[:-1]
         elif αuzα != -1:
-            stanvor.sent.ιmαν += chr(αuzα)
+            sent.ιmαν += chr(αuzα)
 
 
-def ask_aqehr(ιmαν: str, loglist: List, lanter: Lanter) -> list:
+def ask_aqehr(ιmαν: str, loglist: List, lanter: sentam.Lanter) -> list:
     """Menu to confirm current logreuαlist filtering in Oppel Aqeμr."""
     while True:                # Ask to delete
         logrenam_prompt = ''
@@ -381,7 +378,7 @@ def ask_aqehr(ιmαν: str, loglist: List, lanter: Lanter) -> list:
             return loglist
 
 
-def oppel_αqeμr(name: str, lanter: Lanter) -> str:
+def oppel_αqeμr(name: str, lanter: sentam.Lanter) -> str:
     """Delete files and directories."""
     if name in ('', ' '):
         return ''
@@ -399,7 +396,7 @@ def oppel_αqeμr(name: str, lanter: Lanter) -> str:
 
 
 # -- PROMPT --
-def reset(stanvor: Stanvor) -> None:
+def reset(stanvor: sentam.Stanvor) -> None:
     """Reset Stαuνor variables."""
     stanvor.prompt.sent.clear()
     stanvor.prompt.stvl.clearall()
@@ -408,7 +405,7 @@ def reset(stanvor: Stanvor) -> None:
     stanvor.logαm.nlog = 0
 
 
-def add_key(sent: Imανseut, key: int, logαm: Logreuαm, nlog: int) -> int:
+def add_key(sent: sentam.Imανseut, key: int, logαm: sentam.Logreuαm, nlog: int) -> None:
     """Add a key to the Stαuνor prompt."""
     sent.ιmαν += MUSSELAITH[key] if key in MUSSELAITH else chr(key)
     sent.ιmαν = sent.ιmαν.lstrip()
@@ -419,7 +416,7 @@ def add_key(sent: Imανseut, key: int, logαm: Logreuαm, nlog: int) -> int:
         logαm.nlog = nlog
 
 
-def move_left(sent: Imανseut, num1: int, num2: int) -> None:
+def move_left(sent: sentam.Imανseut, num1: int, num2: int) -> None:
     """Move cursor to the left inside tαg function."""
     if len(sent.ιmαν) > num1:
         sent.αdιmαν = sent.ιmαν[-num1:] + sent.uostιmαν + sent.αdιmαν
@@ -431,7 +428,7 @@ def move_left(sent: Imανseut, num1: int, num2: int) -> None:
         sent.ιmαν = ''
 
 
-def move_right(sent: Imανseut, limit: int, step: int) -> None:
+def move_right(sent: sentam.Imανseut, limit: int, step: int) -> None:
     """Move cursor to the right inside tαg function."""
     if len(sent.αdιmαν) > limit:
         sent.ιmαν += sent.uostιmαν + sent.αdιmαν[:limit]
@@ -442,7 +439,7 @@ def move_right(sent: Imανseut, limit: int, step: int) -> None:
         sent.uostιmαν = sent.αdιmαν = ''
 
 
-def jump_inline(key: int, sent: Imανseut) -> None:
+def jump_inline(key: int, sent: sentam.Imανseut) -> None:
     """Jump horizontally in the Stαuνor prompt."""
     keys = next(keys for keys in MOVE_FIXES if key in keys)
     func = move_left if key == keys[0] else move_right
@@ -454,7 +451,7 @@ def del_char(αdιmαν: str) -> tuple[str, str]:
     return (αdιmαν[0], αdιmαν[1:]) if αdιmαν else ('', αdιmαν)
 
 
-def move_horizontal(key: int, sent: Imανseut) -> None:
+def move_horizontal(key: int, sent: sentam.Imανseut) -> None:
     """Move cursor horizontally in line in Verse, Aqeμr and Tαuder."""
     if key == LEFT and sent.ιmαν:
         sent.αdιmαν = sent.uostιmαν + sent.αdιmαν
@@ -470,7 +467,7 @@ def move_horizontal(key: int, sent: Imανseut) -> None:
             sent.uostιmαν = ''
 
 
-def loc_numkey(key: int, sent: Imανseut, logαm: Logreuαm) -> int:
+def loc_numkey(key: int, sent: sentam.Imανseut, logαm: sentam.Logreuαm) -> None:
     """Jump to a specific index based on a numkey."""
     if key in PAD:
         logαm.nlog = min(len(logαm.ιlog)-1, PAD[key][1])
@@ -495,7 +492,7 @@ def path_to_imav(verse: path.VerseItems, command: int) -> tuple[str, int]:
     return f'{verse.νerιmαν}{νorιmαν}'.removeprefix(' / '), verse.logindex
 
 
-def tab(key: str, sent: Imανseut, logαm: Logreuαm) -> int:
+def tab(key: str, sent: sentam.Imανseut, logαm: sentam.Logreuαm) -> None:
     """Return a filename from the current directory and its index."""
     logαm.nlog = min(logαm.nlog, len(logαm.ιlog) - 1)
 
@@ -515,7 +512,7 @@ def tab(key: str, sent: Imανseut, logαm: Logreuαm) -> int:
 def open_point_command(path: str, y: int) -> str:
     """Open file from ./.. commands in stαuνor and show its content."""
     if not os.path.isfile(path):
-        return
+        return ''
 
     stvlog.stνlαt(stvlog.STANVOR, path, 0)
 
@@ -531,7 +528,7 @@ def open_point_command(path: str, y: int) -> str:
     return ''.join(lines).replace('\x00', '') + '\n'
 
 
-def intor_aqehr(ιmαν: str, lanter: Lanter, αδeutαr: int) -> str:
+def intor_aqehr(ιmαν: str, lanter: sentam.Lanter, αδeutαr: int) -> str:
     """Delete directory."""
     # List of dirs in ' / ' command
     logreuαlist = list(ιmαν.split(' / '))
@@ -595,7 +592,7 @@ def intor_aqehr(ιmαν: str, lanter: Lanter, αδeutαr: int) -> str:
 
 
 # Move File
-def set_verse(verse, prompt, lanter):
+def set_verse(verse, prompt: sentam.Prompt, lanter: sentam.Lanter) -> None:
     """Set νerse variables for tαg()"""
     dirlist = os.listdir(verse.dirselect)
     verse.dirs = [d for d in dirlist if os.path.isdir(d)]
@@ -606,7 +603,7 @@ def set_verse(verse, prompt, lanter):
         prompt.stvl.ιzprαν += f'\n{i}'
 
 
-def νerse(stanvor: Stanvor, logαm: Logreuαm, tαg: Callable) -> None:
+def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) -> None:
     """Move files and directories."""
     prompt = stanvor.prompt
     sent = prompt.sent
@@ -649,7 +646,7 @@ def νerse(stanvor: Stanvor, logαm: Logreuαm, tαg: Callable) -> None:
 
 
 # Verseutαr
-def copy_text(vsent: Vseut, loc: str, text: str) -> None:
+def copy_text(vsent: sentam.Vseut, loc: str, text: str) -> None:
     """Copy text."""
     if loc == 'νerseut':
         vsent.νerseut = text
@@ -667,7 +664,7 @@ def get_lengths(lver: str, luver: str, vhead: int,
 
 
 def fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
-                versent_len: str, uversent_len: str
+                versent_len: int, uversent_len: int
                 ) -> tuple[str, str, int, int]:
     """Manages νerseut and υνerseut variables when they are too large."""
     half_scope = (free_scope // 2) - 2
@@ -694,7 +691,7 @@ def fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
 
 
 def ιmανerse(X: int, direction: int,
-             verse: path.VerseItems, prompt: Prompt) -> None:
+             verse: path.VerseItems, prompt: sentam.Prompt) -> None:
     """
     Select up/down directories in ιmαν verseut.
 
@@ -729,7 +726,8 @@ def ιmανerse(X: int, direction: int,
     prompt.sent.uostιmαν, prompt.sent.αdιmαν = '', ''
 
 
-def lαmνerseut(lanter: Lanter, vsent: Vseut, invort_len: int) -> None:
+def lαmνerseut(lanter: sentam.Lanter, vsent: sentam.Vseut,
+               invort_len: int) -> None:
     """
     Show νerseut and υνerseut variables in Stαuνor.
     This functions works for Stαuνor and Tαuder.
@@ -771,7 +769,7 @@ def lαmνerseut(lanter: Lanter, vsent: Vseut, invort_len: int) -> None:
 
 # Search
 def search_select(direction: str, ιmαν: str,
-                  srch: Search) -> str:
+                  srch: sentam.Search) -> str:
     """Select file between search results by typing Ctrl Up / Down."""
     actions = {
         "up": srch.count - 1 if srch.count > 1 else len(srch.flist),
@@ -786,7 +784,7 @@ def search_select(direction: str, ιmαν: str,
     return ιmαν
 
 
-def searchlog(logreu: str) -> str:
+def searchlog(logreu: str) -> tuple[str, list, int]:
     """Search files in current dir and subdirs based on arg."""
     def results_list(logreu: str, root, paths) -> list:
         return [os.path.join(root, path)
@@ -809,7 +807,7 @@ def searchlog(logreu: str) -> str:
     return search_prompt, search_results, 0
 
 
-def set_search(sent: Imανseut, srch: Search) -> None:
+def set_search(sent: sentam.Imανseut, srch: sentam.Search) -> None:
     """Manage search variables to show in Stαuνor."""
     pattern = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
     search_pattern, srch.flist, srch.count = searchlog(pattern)
@@ -837,7 +835,7 @@ def restart_stanvor() -> None:
     sys.exit()
 
 
-def install_module(x: int, tag: Callable, stanvor: Stanvor) -> None:
+def install_module(x: int, tag: Callable, stanvor: sentam.Stanvor) -> None:
     """Instal Python module."""
     stvl = stanvor.prompt.stvl
     stvl.prαν = '❯ ' 
@@ -871,7 +869,7 @@ def rprompt_operation(command: str, xlen: int) -> None:
     sys.stdout.write('\033[?25l')
 
 
-def end_process(lanter: Lanter, process: str) -> None:
+def end_process(lanter: sentam.Lanter, process: str) -> None:
     """End process given by the user either Stαuνor or system."""
     menu_data = {
         'clearnum': 0,
@@ -895,10 +893,10 @@ def end_process(lanter: Lanter, process: str) -> None:
         stvlog.set_log('ascii')
 
     sys.stdout.write('\033[?25h')
-    operations.get(process)()
+    operations.get(process, lambda: None)()
 
 
-def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
+def sys_eudyαt(stvl: sentam.Lαmseut, lanter: sentam.Lanter) -> None:
     """Set screen to show system processes list."""
     process_num = 1
     padvals = [
@@ -960,7 +958,7 @@ def start_cmd(command: str) -> str:
 
 
 def manage_command(command: str, operations: Dict[str, Callable],
-                   prompt: Prompt) -> tuple[str, int]:
+                   prompt: sentam.Prompt) -> tuple[str, int]:
     """Filter command and execute corresponding action."""
     # OS commands
     if command.startswith(':'):
@@ -990,9 +988,9 @@ def manage_command(command: str, operations: Dict[str, Callable],
     return f'{command}', 0
 
 
-def process_enter(stanvor: Stanvor, extra: tuple) -> None:
+def process_enter(stanvor: sentam.Stanvor, int_programs: dict,
+                  operations: dict, app_manager: Callable) -> None:
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
-    INT_PROGRAMS, OPERATIONS, app_manager = extra
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
 
     sent.clear()
@@ -1027,8 +1025,8 @@ def process_enter(stanvor: Stanvor, extra: tuple) -> None:
         stvl.αδeutαr, stvl.stlαg = stvlog.set_αδeutαr(command)
     elif command in ('.stlam', 'DOS'):
         rprompt_operation(command, stanvor.lanter.xlen)
-    elif command in INT_PROGRAMS:
-        app_manager(INT_PROGRAMS[command])
+    elif command in int_programs:
+        app_manager(int_programs[command])
     elif command in ('.locals', '.globals'):
         all_values = {'.locals': locals(), '.globals': globals()}
         stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
@@ -1049,14 +1047,14 @@ def process_enter(stanvor: Stanvor, extra: tuple) -> None:
         stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
         log(stanvor)
     else:
-        msg, stnum = manage_command(command, OPERATIONS, stanvor.prompt)
+        msg, stnum = manage_command(command, operations, stanvor.prompt)
         stvlog.stνlαt(stvlog.STANVOR, msg, stnum)
         stvl.clearall()
 
     stanvor.logαm.nlog = 0
 
 
-def process_path(func: str, αrνol: str, stanvor: Stanvor, tαg: Callable) -> str:
+def process_path(func: str, αrνol: str, stanvor: sentam.Stanvor, tαg: Callable) -> str:
     """Process file path to rename or copy."""
     if not αrνol.strip():
         return ''
@@ -1097,8 +1095,8 @@ def set_color(ιmαν: str, x: int, y: int) -> tuple[int, str]:
     return color_id, (block * x * (y-2))[:-1]
 
 
-def print_color(stanvor: Stanvor, lanter: Lanter, tαg: Callable) -> None:
-    prompt = stanvor.prompt
+def print_color(stanvor: sentam.Stanvor, tαg: Callable) -> None:
+    prompt, lanter = stanvor.prompt, stanvor.lanter
     prompt.stvl.ιdeu = 'Color'
     prompt.stvl.prαν = '❯ '
     color = tαg(stanvor, '')
@@ -1108,8 +1106,7 @@ def print_color(stanvor: Stanvor, lanter: Lanter, tαg: Callable) -> None:
         mαιteu(lanter.stdscr, lanter.xlen, 0, 'Color')
         lanter.stdscr.addstr(2, 0, scr, curses.color_pair(prompt.stvl.color_id))
 
-        quit = lanter.stdscr.getch()
-        if quit in (ENTER, ESC):
+        if lanter.stdscr.getch() in (ENTER, ESC):
             prompt.stvl.color_id = 10
             return
 

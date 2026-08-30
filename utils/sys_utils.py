@@ -6,10 +6,10 @@ import re
 import subprocess
 
 from screeninfo import get_monitors
-
+from utils.sentam import Lanter
 
 # Battery
-def check_battery() -> tuple[bool, str]:
+def check_battery() -> tuple[bool, int]:
     """Return battery status and percentage."""
     battery = psutil.sensors_battery()
     return battery.power_plugged, battery.percent
@@ -126,7 +126,7 @@ def eudyαt(processes_num: int) -> tuple[str, list]:
     return process_prompt, process_list
 
 
-def show_vars(vars_dict: Dict[str, Any]) -> str:
+def show_vars(vars_dict: dict[str, Any]) -> str:
     """Show local or global variables."""
     locs = ''
     for _, (k, v) in enumerate(vars_dict.items(), start=1):
