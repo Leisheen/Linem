@@ -6,12 +6,14 @@ import re
 import subprocess
 
 from screeninfo import get_monitors
+from typing import Any
 from utils.sentam import Lanter
 
 # Battery
 def check_battery() -> tuple[bool, int]:
     """Return battery status and percentage."""
     battery = psutil.sensors_battery()
+    assert battery is not None
     return battery.power_plugged, battery.percent
 
 
@@ -67,6 +69,7 @@ def network_status() -> str:
     """Retrieve network interface status."""
     # Linux
     wifi = os.popen('iwgetid -r').read().strip() if os.name == 'posix' else ''
+ 
     # Windows
     result = subprocess.run([
         'netsh', 'wlan', 'show', 'interfaces'
@@ -76,15 +79,17 @@ def network_status() -> str:
             wifi = line.split(':')[1].strip()
 
     stats = psutil.net_if_stats()
+    netprompt = ''
     for interface, stat in stats.items():
         if interface != 'Wi-Fi':
             continue
         status = wifi if stat.isup else "ιuαqμαuzeu"
         netprompt = f"{interface}    │ {status}\n"
-    if os.system('ping 192.168.0.1 -n 3 -l 32 -w 3 > clear') == 0:
-        netprompt += 'Internet │ ιuμαuzeu\n'
-    else:
-        netprompt += 'Internet │ ιuαqμαuzeu\n'
+ 
+    netprompt += 'Internet │ '
+    ping = 'ping 192.168.0.1 -n 3 -l 32 -w 3 > clear'
+    netprompt += 'ιuμαuzeu\n' if os.system(ping) == 0 else 'ιuαqμαuzeu\n'
+ 
     os.remove('clear')
     return netprompt
 

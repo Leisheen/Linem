@@ -6,9 +6,10 @@ from logren import logren
 from stvlog import stνlαt, stναδeut, stlαgreu, STANVOR
 from dataclasses import dataclass, field, fields
 from def_paths import SAGET
+from typing import Callable
 from utils.keys import *
+from utils.sentam import Stanvor, Prompt, Lanter
 from utils.stv_utils import anza_file
-
 
 DEFTANDER = r'Tαuder\Tαuder.txt'
 MENU = '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ │ Aιleus │ Auzα │ Lαg │'
