@@ -1,5 +1,5 @@
 # Lῑuemαg Stαuνor
-Lῑuemαg Stαuνor is a command line workstation.
+Lῑuemαg Stαuνor is a command line workstation.  
 With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
 
