@@ -4,10 +4,9 @@ With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
 
 The main interface is the Stαuνor prompt, which includes:  
-- Title
-- Battery percentage
-- Day of the week + date
-- Hour
+>Title                  | Battery % | (Day of the week).(date) | Hour
+>────────────────────────────────────────────────────────────────────
+>User input
 
 This command line can manage several operations, such as:  
 - SO file system browse and manage
