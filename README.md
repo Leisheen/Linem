@@ -38,7 +38,7 @@ Title                 │ batt % │ day.date │ hour
 ```
 
 This command line can manage several operations, such as:  
-- SO file system browse and manage
+- Browse and manage SO file system
 - Basic system cmd commands (:)
 - Open programs and files
 - Web calls with query
