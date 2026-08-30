@@ -1,20 +1,20 @@
 # Lῑuemαg Stαuνor
 Lῑuemαg Stαuνor is a command line workstation.  
 With several features, it's aimed to manage events and tasks info,
-to do lists, and also manage files, apps and some native os functions.  
+to do lists, and also manage files, apps and some native os functions.
 
 The main interface is the Stαuνor prompt, which includes:  
 - Title
 - Battery percentage
 - Day of the week + date
-- Hour  
+- Hour
 
 This command line can manage several operations, such as:  
 - SO file system browse and manage
 - Basic system cmd commands (:)
 - Open programs and files
 - Web calls with query
-- Open internal programs and some predefined functions  
+- Open internal programs and some predefined functions
 
 Stαuνor has 11 internal programs:  
 `F1      Euναrt          Activities checklist`  
