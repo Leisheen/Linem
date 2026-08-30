@@ -5,11 +5,13 @@ to do lists, and also manage files, apps and some native os functions.
 
 **Operations**  
 An operation is a bundle of actions made by the user intented to get a result.
+- Written commands
+- Key strokes
 
 **Activities**  
-An activity is a shared state between the program and the user.
-- The program shows information related to the activity.
-- The user do operations to manage the activity.
+An activity is a shared state between the Stαuνor and the user.
+- The program: shows information related to the activity.
+- The user: do operations to manage the activity.
 
 **Programs**  
 Stαuνor has 11 internal programs:  
@@ -27,7 +29,7 @@ F10     Help            Shows help
 ALT F1  Proutel         Game
 ```
 
-**Interface**  
+## Interface
 The main interface is the Stαuνor prompt:  
 ```
 Title                 │ batt % │ day.date │ hour
