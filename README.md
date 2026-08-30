@@ -5,8 +5,8 @@ to do lists, and also manage files, apps and some native os functions.
 
 The main interface is the Stαuνor prompt, which includes:  
 ```
-Title                                  │ batt % │ day.date │ hour
-─────────────────────────────────────────────────────────────────
+Title                  │ batt % │ day.date │ hour
+─────────────────────────────────────────────────
 ❯ user input
 ```
 
