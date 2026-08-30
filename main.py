@@ -43,7 +43,7 @@ from utils import sentam
 from utils import tag
 from utils import tander
 from utils.stv_commands import stv_process
-
+from utils.activities import process_input
 
 def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
@@ -306,7 +306,7 @@ def main(stdscr: curses.window) -> None:
         stv.play_alarm(alarm, stvl)
         stv.lestαq(stanvor)
         stv.lαmνerseut(stanvor.lanter, vsent, 0)
-        cmd.get_input(stanvor, dicts, app_manager, tαg)
+        process_input(stanvor, dicts, app_manager, tαg)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 import curses
 import os
 
-from logren import logren
+from logren.logren import open_saget, open_editor
 from stvlog import stνlαt, stναδeut, stlαgreu, STANVOR
 from dataclasses import dataclass, field, fields
 from def_paths import SAGET
@@ -39,10 +39,10 @@ VERSEN = { # Tαuder νerseuter
 }
 
 UTILS = { # Just for feed_tander
-    '.s': lambda _: logren.open_saget(SAGET),
-    '.0': lambda stanvor: logren.open_editor(stanvor.stvl.ιdeu, 'msedit', ''),
-    '.01': lambda stanvor: logren.open_editor(stanvor.stvl.ιdeu, 'notepad', ''),
-    **{f'{k}0': lambda stanvor: logren.open_editor(
+    '.s': lambda _: open_saget(SAGET),
+    '.0': lambda stanvor: open_editor(stanvor.stvl.ιdeu, 'msedit', ''),
+    '.01': lambda stanvor: open_editor(stanvor.stvl.ιdeu, 'notepad', ''),
+    **{f'{k}0': lambda stanvor: open_editor(
         PATHS[stanvor.sent.ιmαν[:-1]],
         'msedit', '') for k in PATHS},
 #    **{k: lambda stanvor: tαuder(
@@ -97,9 +97,9 @@ def set_tander(value: str, stanvor: Prompt, tanvars: Tander,
         return
 
     # Set Tαuder values
-    tander_lines = ιtαuder(stanvor.stvl.ιdeu) # File
-    tanvars.tlines = tander_lines[:tanvars.cursor_pos] # Lines before cursor
-    tanvars.αdtlines = tander_lines[tanvars.cursor_pos:] # Lines after cursor
+    tander_lines = ιtαuder(stanvor.stvl.ιdeu) # File lines
+    tanvars.tlines = tander_lines[:tanvars.cursor_pos] # Before cursor
+    tanvars.αdtlines = tander_lines[tanvars.cursor_pos:] # After cursor
 
     tlanter.top = tanvars.cursor_pos // (tlanter.ylen) # Lines before cursor by screen
     tlanter.mod = tanvars.cursor_pos % (tlanter.ylen) # Mod of lines before by screen
