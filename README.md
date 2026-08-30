@@ -5,9 +5,9 @@ to do lists, and also manage files, apps and some native os functions.
 
 The main interface is the Stαuνor prompt, which includes:  
 ```
-Title                                  | Battery % | day.date | Hour
-────────────────────────────────────────────────────────────────────
-User input
+(Title)                                  │ Batt % │ day.date │ Hour
+───────────────────────────────────────────────────────────────────
+❯ User input
 ```
 
 This command line can manage several operations, such as:  
