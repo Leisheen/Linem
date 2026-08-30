@@ -3,7 +3,7 @@ Lῑuemαg Stαuνor is a command line workstation.
 With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
 
-## Operations
+**Operations**  
 An operation is a bundle of actions made by the user intented to get a result.
 
 **Activities**  
