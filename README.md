@@ -20,7 +20,7 @@ This command line can manage several operations, such as:
 
 
 Stαuνor has 11 internal programs:  
-´F1      Euναrt          Activities checklist  ´
+`F1      Euναrt          Activities checklist  `
 F2      Vermαt          To do list  
 F3      Tαuder          Text editor  
 F4      Augestαq        Financial information  
