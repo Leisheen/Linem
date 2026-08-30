@@ -5,7 +5,7 @@ With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
 """
 
-# Standard libraries imports
+# Standard libraries
 import curses
 import os
 import os.path
@@ -23,7 +23,6 @@ import stvlog
 import utils.audio as aud
 import utils.commands as cmd
 import utils.keys as key
-import utils.path_operations as pathop
 import utils.path_utils as path
 import utils.stv_utils as stv
 
@@ -43,6 +42,7 @@ from logren.soshat import soδᾱt as soshat
 from utils import sentam
 from utils import tag
 from utils import tander
+from utils.stv_commands import stv_process
 
 
 log_vals = {
@@ -50,22 +50,6 @@ log_vals = {
     (key.ALT_LEFT,  key.ALT_RIGHT): lambda code, stanvor: stv.log_page(chr(code), stanvor),
 }
 
-stv_process = {
-    key.ESC: lambda stanvor, _: stv.reset(stanvor),
-    key.CTL_PADENTER: lambda *_: stv.eudαμl_stαuνor(),
-    key.SHF_PADENTER: lambda *_: stv.restart_stanvor(),
-    key.SHF_PADMINUS: lambda stanvor, _: stv.reset(stanvor),
-    key.UP: lambda stanvor, _: stv.logreu_select('up', stanvor),
-    key.DOWN: lambda stanvor, _: stv.logreu_select('down', stanvor),
-    key.CTL_PADSLASH: lambda stanvor, _: stv.set_search(stanvor.prompt.sent, stanvor.srch),
-    key.SHF_F12: lambda stanvor, _: stv.end_process(stanvor.lanter, 'Systɢm δoνt'),
-    key.CTL_PADSTOP: lambda stanvor, _: stv.end_process(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
-    key.PADSTAR: lambda stanvor, tαg: pathop.logreuιδαt('Lαιue', stanvor, tαg),
-    key.PADSLASH: lambda stanvor, tαg: pathop.logreuιδαt('Verse', stanvor, tαg),
-    key.SHF_PADPLUS: lambda stanvor, tαg: pathop.logreuιδαt('Copy', stanvor, tαg),
-    key.PADPLUS: lambda stanvor, tαg: pathop.logreutαg('Eudαμl', stanvor, tαg),
-    key.PADMINUS: lambda stanvor, tαg: pathop.logreutαg('Aqeμr', stanvor, tαg),
-}
 
 
 def main(stdscr: curses.window) -> None:
@@ -300,6 +284,7 @@ def main(stdscr: curses.window) -> None:
         key.SHF_F1: lambda _: os.system('start . command'),
         key.ALT_F1: lambda stanvor: proutel(stanvor.lanter),
     }
+
     int_programs = {
         '.chr': lambda: eval_char(lanter),
         '.logαt': lambda: set_logat(stanvor, tαg),
@@ -308,6 +293,7 @@ def main(stdscr: curses.window) -> None:
         '.sιeν': lambda: siev.ιsιeν(stanvor, lanter, alarm, tαg),
         '.tαg': lambda: stv.install_module(lanter.xlen, tαg, stanvor),
     }
+
     operations = {
         dfp.IMG_EXT: lambda command: logren.open_pyside(command),
         dfp.VIDEO_EXT: lambda command: logren.open_video(command),

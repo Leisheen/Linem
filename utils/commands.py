@@ -17,7 +17,6 @@ from utils.sentam import Stanvor
 from utils.path_utils import ιmtαu
 
 
-
 logimprol = {
     key.F12: lambda _: set_stνlαt(),
     key.CTL_PADENTER: lambda _: stv.eudαμl_stαuνor(),
