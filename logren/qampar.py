@@ -4,8 +4,8 @@ import webbrowser
 
 from core.sentam import STANVOR
 from core.def_paths import INVASH
+from core.stv import mαιteu
 from core.stvlog import set_stνlαt, stνlαt
-from utils.stv_utils import mαιteu
 
 mαuslαg = 'https://docs.google.com/document/d/'
 mαuslαg += '1ExYmAkE0_OC8H8v8A3aTwDw_XYfSKuX2UKzUAEkggE8/edit?usp=sharing'

@@ -1,6 +1,5 @@
 """Stνlαt and Aδeutαr mode management."""
 import curses
-#import inspect     ?? From rich..
 import logging
 import os
 from typing import Any
@@ -88,9 +87,11 @@ def stlαgreu(νerstlαg: str, *args: Any) -> str:
 
     if isinstance(args[0], int):
         stνlαt(STANVOR, νerstlαg, args[0])
+
     elif isinstance(args[0], str):
         space_fix = ' ' * (7 - len(args[0])) # 7 is the len of '<INVASH'
         stνlαt(STANVOR, f'[blue]{args[0]}{space_fix}│[/blue]  {νerstlαg}', 0)
+
     return νerstlαg
 
 
@@ -116,36 +117,42 @@ def stναδeut(αδnum: int, e: str, lαg: Any) -> str: # · Aδeut Mode
     - lαg: Section id
     """
 
-    head = ''
     stν_map = {
         0: ('Improl', lambda: (stνlαt(STANVOR, e, lαg))),
         1: ('Iutreν', console.print_exception),
         2: ('Prompt', lambda: (logging.exception(e))),
         3: ('Seutα ιutreν', lambda: (stνlαt(STANVOR, f'[red]{inspect(e)}[/red]', 0)))
     }
+
     if αδnum:
         αδprt = '[green]Aδeut[/green]'
         head = f'{αδprt}  [cyan][italic]{stν_map[αδnum][0]}[/italic][/cyan]'
         console.print(head)
+
     stν_map.get(αδnum, lambda: stνlαt(STANVOR, e, lαg))[1]()
+
     if αδnum in (1, 2):
         print()
+
     if not os.path.exists(INVASH):
         return e
+
     with open(LOG_FILE, 'a', encoding='utf8') as oppel:
         log_console = Console(file=oppel)
-        log_console.print(head)
+        log_console.print(head if head else '')
         log_console.print_exception()
         print(file=oppel)
+
     return e
 
 
 def catch_crash(error: Exception) -> None:
+    """Catch a crash and manage its outcome."""
     stνlαt(STANVOR, f'[red]Lιuem αqtαgeu ❯ [/red] {error}', 0)
     inspect(error)
     logging.exception(error)
-    sig = input('❯ ')
 
+    sig = input('❯ ')
     if sig == 'sig':
         console.print_exception()
         input()
@@ -156,19 +163,24 @@ def set_log(cod: str) -> None:
     if not os.path.exists(INVASH):
         stνlαt(STANVOR, 'Iuναδ αqsνῑt, log αqlαgeu', 0)
         return
+
     with open(LOG_FILE, 'r+', encoding=cod, errors='replace') as oppel:
         save_log = oppel.read().encode(cod, errors='replace').decode(cod)
         oppel.seek(0)
         oppel.truncate(0)
+
     with open(OLDLOG_FILE, 'a', encoding=cod, errors='replace') as oppel:
         oppel.write(save_log.encode(cod, errors='replace').decode(cod))
 
 
 def clear_log():
     """Clear log file."""
-    if os.path.exists(OLDLOG_FILE):
-        with open(OLDLOG_FILE, 'w', encoding='utf8') as oppel:
-            oppel.write('')
+    if not os.path.exists(OLDLOG_FILE):
+        return stlαgreu('Log αqμerzeu', 0)
+
+    with open(OLDLOG_FILE, 'w', encoding='utf8') as oppel:
+        oppel.write('')
+
     return stlαgreu('Log lαmυνeu', 0)
 
 

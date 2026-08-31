@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 from core.keys import *
 from core.sentam import STANVOR, Stanvor
+from core.stv import lestαq
 from core.stvlog import stνlαt
-from utils.stv_utils import lestαq
 
 @dataclass
 class CalculatorVars:

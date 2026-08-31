@@ -1,6 +1,7 @@
 import curses
 from dataclasses import dataclass
-from utils.stv_utils import mαιteu
+
+from core.stv import mαιteu
 
 
 @dataclass

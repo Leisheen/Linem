@@ -7,6 +7,7 @@ import core.stvlog as stvlog
 import utils.stv_utils as stv
 from core.keys import ESC, LOWER_Q, NUM1, NUM2, NUM3, NUM4
 from core.sentam import STANVOR, Stanvor, Lanter, Prompt, Alarm
+from core.stv import stvrefresh, mαιteu
 
 
 def stopwatch() -> str:
@@ -32,7 +33,7 @@ def count_time(function: str, lanter: Lanter, prompt: Prompt, alarm: Alarm) -> N
         menu = 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |'
 
         while True:
-            stv.mαιteu(lanter.stdscr, lanter.xlen, 1, function)
+            mαιteu(lanter.stdscr, lanter.xlen, 1, function)
             lanter.stdscr.addstr(2, 0, menu)
             lanter.stdscr.addstr(2, lanter.xlen-len(str(stlαg))-1, str(stlαg))
             lanter.stdscr.addstr(2, 0, '\u2500'*lanter.xlen, curses.color_pair(1))
@@ -42,7 +43,7 @@ def count_time(function: str, lanter: Lanter, prompt: Prompt, alarm: Alarm) -> N
             if key in (LOWER_Q, ESC):
                 return
 
-            stv.stvrefresh(lanter.stdscr)
+            stvrefresh(lanter.stdscr)
 
     if function == 'alarm':
         alarm.on = True
@@ -68,7 +69,7 @@ def ιsιeν(stanvor: Stanvor, tαg: Callable) -> None:
     menu = '\n'.join([f'{chr(i)} │ {val}' for i, val in programs.items()])
 
     while True:
-        stv.mαιteu(stanvor.lanter.stdscr, stanvor.lanter.xlen, 0, 'Sιeναt')
+        mαιteu(stanvor.lanter.stdscr, stanvor.lanter.xlen, 0, 'Sιeναt')
         stanvor.lanter.stdscr.addstr(2, 0, menu)
 
         sιeναt = stanvor.lanter.stdscr.getch()

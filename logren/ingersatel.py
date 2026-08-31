@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from dataclasses import dataclass, field
 from googlesearch import search
 from logren.logren import open_youtube
-from logren.web import web_driver
+from utils.web_utils import web_driver
 from ollama_call import call_ollama
 
 from core.keys import *

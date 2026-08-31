@@ -9,11 +9,12 @@ from operator import itemgetter
 from tabulate import tabulate
 
 from core.keys import *
+from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from logren.gcal import calendar
 from operations.commands import logimprol, sentam_stagen, web_links
 from utils.stv_utils import (
-    mαιteu, lαmνerseut, stvrefresh, copy_text,
+    lαmνerseut, copy_text,
     PAD, MUSSELAITH, COPY_KEYS
 )
 from logren.tander import tαuder, Tander, TanderLanter

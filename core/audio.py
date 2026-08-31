@@ -1,13 +1,19 @@
 import os
 import pygame
 
-from core.keys import LESS, GREATER, SHF_F2, SHF_F3, QUESTION
+from core.keys import (
+    LESS, GREATER, SHF_F2, SHF_F3, QUESTION, ALT_F1, ALT_F2, SHF_F2, SHF_F3
+)
 from core.sentam import STANVOR, Lαmseut, Audio
 from core.stvlog import stνlαt
 
 
-ALS = ['stop', 'pause', 'rewind', 'forward']
-AUDIO_ACTIONS = {ord(k): v for k, v in zip(['ĭ', 'Į', 'Ė', 'ė'], ALS)}
+AUDIO_ACTIONS = {
+    ALT_F1: 'stop',
+    ALT_F2: 'pause',
+    SHF_F2: 'rewind',
+    SHF_F3: 'forward',
+} 
 
 
 def set_audio(audio: Audio):

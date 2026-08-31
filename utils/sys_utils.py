@@ -9,13 +9,6 @@ from typing import Any
 
 from core.sentam import Lanter
 
-# Battery
-def check_battery() -> tuple[bool, int]:
-    """Return battery status and percentage."""
-    battery = psutil.sensors_battery()
-    assert battery is not None
-    return battery.power_plugged, battery.percent
-
 
 # System
 def system_info() -> str:

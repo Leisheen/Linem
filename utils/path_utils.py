@@ -253,22 +253,3 @@ def process_delete_path(path: str, counter: int) -> tuple:
     os.system(f'del "{path}"')
 
     return f'Oppel {path} αqeμreu', counter + 1
-
-
-# INFO
-def ιmtαu(file_path: str, stv_log: str) -> str: # Imαν Ταuder
-    """Show the size of a selected filename."""
-    if not file_path:
-        return ''
-
-    file_size = os.path.getsize(file_path)
-    if file_size < 1000:
-        size_prompt = f'{str(file_size)} B'
-    elif 1000 <= file_size < 1000000:
-        size_prompt = f'{str(file_size/1000)} K'
-    else:
-        size_prompt = f'{str(file_size/1000000)} M'
-
-    ιmtαuspace = '\n' if not stv_log else '\n  '
-
-    return f'{ιmtαuspace} │ {size_prompt}'

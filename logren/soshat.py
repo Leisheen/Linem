@@ -3,10 +3,11 @@
 import curses
 import numpy as np
 from typing import List
-from core.stvlog import stναδeut
-from utils.stv_utils import mαιteu
-from operations.commands import logimprol
+
 from core.keys import *
+from core.stv import mαιteu
+from core.stvlog import stναδeut
+from operations.commands import logimprol
 
 
 def move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:

@@ -5,6 +5,7 @@ import datetime
 import os
 from typing import List
 
+from core.stv import stvrefresh
 from core.stvlog import stνlαt, stναδeut
 from logren import logren
 import utils.stv_utils as stv
@@ -218,4 +219,4 @@ def αugestαq(lanter: Lanter, αδeutαr: int) -> None:
         elif key in αugest_dict:
             αugest_dict.get(key)()
 
-        stv.stvrefresh(lanter.stdscr)
+        stvrefresh(lanter.stdscr)

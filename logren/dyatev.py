@@ -6,12 +6,11 @@ from dataclasses import dataclass
 
 from core.def_paths import INVASH
 from core.keys import *
+from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt
 from logren.logren import open_editor
 from operations.commands import logimprol
-from utils.stv_utils import mαιteu, stvrefresh
 from logren.tander import tαuder
-
 
 
 @dataclass

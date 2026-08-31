@@ -15,10 +15,10 @@ from dataclasses import dataclass, field
 from core.def_paths import ABPATH
 from core.keys import *
 from core.sentam import STANVOR
+from core.stv import stvrefresh, mαιteu, lestαq
+from core.stvlog import stνlαt, stlαgreu
 from logren import logren
 from operations.commands import logimprol
-from core.stvlog import stνlαt, stlαgreu
-from utils.stv_utils import mαιteu, lestαq, stvrefresh
 from logren.tander import tαuder
 
 

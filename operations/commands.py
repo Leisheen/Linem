@@ -6,13 +6,16 @@ import webbrowser
 
 import core.keys as key
 import utils.stv_utils as stv
+from utils.sys_utils import network_status, monitor_info
 
+from core.stv import log_page
 from core.def_paths import (
     INVASH, STVPATH, SAGET, PROSERV_PATH, PIANO_PATH, CITIES_PATH,
     VERKLAIT_PATH, FINALE_PATH, DAVINCI_PATH, DATA_PATH,
     VSCODE_PATH, GDRIVE_PATH, GCAL_PATH, NOTION_PATH, MUSDEV_PATH
 )
 from logren.char import eval_char
+from logren.gcal import calendar
 from logren.logat import set_logat
 from logren.qampar import qαmpαr
 from logren.siev import ιsιeν
@@ -24,7 +27,12 @@ main_paths = {
     '.invash': ('Iuναδ ιutorαg | ', INVASH),
     '.nostal': ('Nostαl ιutorαg ❯ ', os.getcwd()),
 }
-
+uprav_functions = {
+    '.izv':  lambda _: stv.izvart_info(),
+    '.net':  lambda _: network_status(),
+    '.lan':  lambda stanvor: monitor_info(stanvor.lanter),
+    '.dyαt': lambda stanvor: calendar(False, stanvor.gcal_creds, stanvor.prompt.stvl.αδeutαr),
+}
 int_programs = {
     '.chr': lambda stanvor, _: eval_char(stanvor.lanter),
     '.logαt': lambda stanvor, tαg: set_logat(stanvor, tαg),
@@ -85,7 +93,7 @@ sentam_stagen = {
 }
 log_vals = {
     (key.TAB, key.SHF_TAB): lambda code, stanvor: stv.tab(chr(code), stanvor.prompt.sent, stanvor.logαm),
-    (key.ALT_LEFT,  key.ALT_RIGHT): lambda code, stanvor: stv.log_page(chr(code), stanvor),
+    (key.ALT_LEFT,  key.ALT_RIGHT): lambda code, stanvor: log_page(chr(code), stanvor),
 }
 
 web_links = { # For euναrt and νermαt

@@ -84,12 +84,13 @@ F10             = 274
 F11             = 275
 F12             = 276
 SHF_F1          = 277       # ord('ĕ') / curses.KEY_F13
-SHF_F2          = 278       # ..
-SHF_F3          = 279
+SHF_F2          = 278       # ord('Ė')
+SHF_F3          = 279       # ord('ė')
 SHF_F12         = 288
 
 # ALT FUNCTION
 ALT_F1          = 301       # ord('ĭ') / curses.KEY_F37
+ALT_F2          = 302       # ord('Į')
 ALT_F3          = 303       # ord('į')
 ALT_F5          = 305       # ord('ı')
 ALT_F6          = 306       # ord('Ĳ')

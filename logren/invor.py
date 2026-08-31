@@ -8,12 +8,13 @@ import utils.stv_utils as stv
 from core.sentam import STANVOR, Stanvor, Lanter
 from core.def_paths import INVASH, STVPATH, INVROOT
 from core.keys import *
+from core.stv import mαιteu
 from core.stvlog import stνlαt
 
 
 def display_invor(lanter: Lanter) -> None:
     """Display the INVOR menu."""
-    stv.mαιteu(lanter.stdscr, lanter.xlen, 0, 'Iuνor')
+    mαιteu(lanter.stdscr, lanter.xlen, 0, 'Iuνor')
     lanter.stdscr.addstr(1, 0, '\u2500'*lanter.xlen, curses.color_pair(1))
 
     INVOR_MENU = {
