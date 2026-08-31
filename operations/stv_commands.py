@@ -1,8 +1,8 @@
-from utils.keys import (
+from core.keys import (
     ESC, CTL_PADENTER, SHF_PADENTER, SHF_PADMINUS, UP, DOWN, CTL_PADSLASH,
     SHF_F12, CTL_PADSTOP, PADSTAR, PADSLASH, SHF_PADPLUS, PADPLUS, PADMINUS
 )
-from utils.path_operations import logreutαg, logreuιδαt
+from operations.path_operations import logreutαg, logreuιδαt
 from utils.stv_utils import (
     reset, eudαμl_stαuνor, restart_stanvor,
     logreu_select, set_search, end_process

@@ -1,9 +1,10 @@
+"""Main objects for Stαuνor."""
 import curses
 import os
-
 from dataclasses import dataclass, field, fields
-from stvlog import STANVOR
 
+
+STANVOR = 'Stαuνor'
 
 @dataclass
 class Lanter:
@@ -82,7 +83,7 @@ class Audio:
     length: str = ''
     on: bool = False
     paused: bool = False
-    pos: int = 0
+    pos: float = 0
 
     def start(self):
         self.on = True

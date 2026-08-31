@@ -12,9 +12,10 @@ from googlesearch import search
 from logren.logren import open_youtube
 from logren.web import web_driver
 from ollama_call import call_ollama
-from stvlog import stνlαt, stναδeut, stlαgreu
-from utils.commands import logimprol, sentam_stagen
-from utils.keys import *
+
+from core.keys import *
+from core.stvlog import stνlαt, stναδeut, stlαgreu
+from operations.commands import logimprol, sentam_stagen
 
 index_list = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 

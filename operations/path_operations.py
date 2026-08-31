@@ -3,11 +3,11 @@ import os
 from operator import itemgetter
 from typing import Callable
 
-import utils.keys as key
+import core.keys as key
 import utils.stv_utils as stv
-from utils.commands import logimprol, sentam_stagen, improl_dicts
+from core.sentam import Stanvor
+from operations.commands import logimprol, sentam_stagen, improl_dicts
 from utils.path_utils import VerseItems, log_endahl
-from utils.sentam import Stanvor
 
 
 def logreutαg(function: str, stanvor: Stanvor, tαg: Callable) -> None:

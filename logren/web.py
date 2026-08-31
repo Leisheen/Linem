@@ -1,9 +1,9 @@
 import curses
 import webbrowser
 
+from core.keys import ESC, ENTER, BACK, WAIT
+from core.stvlog import stνlαt
 from utils.stv_utils import mαιteu
-from stvlog import stνlαt
-from utils.keys import ESC, ENTER, BACK, WAIT
 
 
 def open_link(name: str, data: tuple) -> None:

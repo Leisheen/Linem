@@ -2,14 +2,15 @@
 import curses
 import os
 import webbrowser
-from utils.stv_utils import mαιteu, stvrefresh
 from dataclasses import dataclass
-from def_paths import INVASH
+
+from core.def_paths import INVASH
+from core.keys import *
+from core.stvlog import stνlαt
 from logren.logren import open_editor
-from stvlog import stνlαt
-from utils.commands import logimprol
-from utils.keys import *
-from utils.tander import tαuder
+from operations.commands import logimprol
+from utils.stv_utils import mαιteu, stvrefresh
+from logren.tander import tαuder
 
 
 

@@ -6,11 +6,13 @@ import os
 from typing import Any
 
 from datetime import datetime
-from def_paths import *
 from rich import inspect
 from rich.console import Console
 
-STANVOR = 'Stαuνor'
+from core.def_paths import INVASH, LOG_FILE, OLDLOG_FILE
+from core.sentam import STANVOR, Lαmseut
+
+
 console = Console()
 ASHENTAR_LIST = ['Improl', 'Iutreν', 'Prompt', 'Seutα']
 ASHENTAR_MODES = {f'αδ{i}': (i, e) for i, e in enumerate(ASHENTAR_LIST)}

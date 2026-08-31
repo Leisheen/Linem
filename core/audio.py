@@ -1,8 +1,9 @@
 import os
 import pygame
 
-from stvlog import stνlαt, STANVOR
-from utils.keys import LESS, GREATER, SHF_F2, SHF_F3, QUESTION
+from core.keys import LESS, GREATER, SHF_F2, SHF_F3, QUESTION
+from core.sentam import STANVOR, Lαmseut, Audio
+from core.stvlog import stνlαt
 
 
 ALS = ['stop', 'pause', 'rewind', 'forward']

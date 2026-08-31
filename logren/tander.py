@@ -1,14 +1,14 @@
 """Essential functions for Tαuder."""
 import curses
 import os
-
-from logren.logren import open_saget, open_editor
-from stvlog import stνlαt, stναδeut, stlαgreu, STANVOR
 from dataclasses import dataclass, field, fields
-from def_paths import SAGET
 from typing import Callable
-from utils.keys import *
-from utils.sentam import Stanvor, Prompt, Lanter
+
+from core.def_paths import SAGET
+from core.keys import *
+from core.sentam import STANVOR, Stanvor, Prompt, Lanter
+from core.stvlog import stνlαt, stναδeut, stlαgreu
+from logren.logren import open_saget, open_editor
 from utils.stv_utils import anza_file
 
 DEFTANDER = r'Tαuder\Tαuder.txt'

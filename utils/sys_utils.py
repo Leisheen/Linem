@@ -4,10 +4,10 @@ import platform
 import psutil
 import re
 import subprocess
-
 from screeninfo import get_monitors
 from typing import Any
-from utils.sentam import Lanter
+
+from core.sentam import Lanter
 
 # Battery
 def check_battery() -> tuple[bool, int]:

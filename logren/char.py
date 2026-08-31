@@ -1,10 +1,10 @@
 """Retrieves info about a given input character."""
 import curses
 import pyperclip
+from dataclasses import dataclass
 
-from dataclasses import dataclass, field
+from core.keys import *
 from utils.stv_utils import mαιteu, copy_to_clipboard
-from utils.keys import *
 
 
 @dataclass

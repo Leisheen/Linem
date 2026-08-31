@@ -4,8 +4,11 @@ import curses
 import os
 
 import utils.stv_utils as stv
-from stvlog import stνlαt, STANVOR, STVPATH, INVASH, INVROOT
-from utils.keys import *
+
+from core.sentam import STANVOR, Stanvor, Lanter
+from core.def_paths import INVASH, STVPATH, INVROOT
+from core.keys import *
+from core.stvlog import stνlαt
 
 
 def display_invor(lanter: Lanter) -> None:

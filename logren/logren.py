@@ -10,7 +10,9 @@ import vlc
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QKeySequence, QPixmap, QShortcut
 from PySide6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
-from stvlog import stνlαt, STANVOR
+
+from core.sentam import STANVOR
+from core.stvlog import stνlαt
 
 
 # System Text editor

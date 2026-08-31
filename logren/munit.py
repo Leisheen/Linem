@@ -10,15 +10,16 @@ import numpy as np # 0.7s
 import pygame # 1.6s
 import sounddevice as sd
 import yt_dlp
-
 from dataclasses import dataclass, field
-from def_paths import ABPATH
+
+from core.def_paths import ABPATH
+from core.keys import *
+from core.sentam import STANVOR
 from logren import logren
-from utils.commands import logimprol
+from operations.commands import logimprol
+from core.stvlog import stνlαt, stlαgreu
 from utils.stv_utils import mαιteu, lestαq, stvrefresh
-from stvlog import stνlαt, stlαgreu, STANVOR
-from utils.keys import *
-from utils.tander import tαuder
+from logren.tander import tαuder
 
 
 @dataclass

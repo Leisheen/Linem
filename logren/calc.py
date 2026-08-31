@@ -1,13 +1,15 @@
 """Calculator for Lιuemαg Stαuνor"""
 from dataclasses import dataclass
+
+from core.keys import *
+from core.sentam import STANVOR, Stanvor
+from core.stvlog import stνlαt
 from utils.stv_utils import lestαq
-from utils.keys import *
-from stvlog import stνlαt, STANVOR
 
 @dataclass
 class CalculatorVars:
     num1: int = 0
-    result: bool = None
+    result: bool = False
     history: str = ''
     historynum: str = ''
     num2: str = ''
@@ -66,4 +68,4 @@ def calculator(stanvor: Stanvor) -> None:
     cvars.result = int(float(cvars.result)) if str(cvars.result).endswith('.0') else cvars.result
     cvars.historynum = sent.ιmαν = str(cvars.result)
     cvars.history = f'{stvl.prαν}'
-    cvars.result = None
+    cvars.result = False

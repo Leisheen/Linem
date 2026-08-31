@@ -3,7 +3,7 @@ import os
 import sys
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QPixmap, QKeySequence, QShortcut
+#from PySide6.QtGui import QPixmap, QKeySequence, QShortcut
 from PySide6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QWidget
 from rich.layout import Layout
 from rich.console import Console

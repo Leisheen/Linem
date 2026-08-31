@@ -3,9 +3,11 @@ for file and directory creation, renaming, copying and deletion.
 """
 import os
 import shutil
-from utils.keys import LESS, GREATER
 from dataclasses import dataclass, field, fields
-from stvlog import stνlαt, stναδeut, stlαgreu, STANVOR
+
+from core.keys import LESS, GREATER
+from core.sentam import STANVOR, Lαmseut, Imανseut
+from core.stvlog import stνlαt, stναδeut, stlαgreu
 
 
 ROOTPATH = r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem'
@@ -184,7 +186,7 @@ def copy(original_name: str, new_name: str) -> str:
 
 
 # -- DELETE --
-def aqehr_directions(way: int, verse: VerseItems) -> tuple:
+def aqehr_directions(way: int, verse: VerseItems) -> None:
     """Move cursor up/down in Aqeμr."""
     if way == -1:
         if verse.logindex <= 0:

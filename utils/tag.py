@@ -1,13 +1,15 @@
 """Exclusive tαg functions."""
 import curses
-import utils.tander as tander
+import logren.tander as tander
+
+from core.keys import *
+from core.sentam import Imανseut, Prompt
+from logren.tander import Tander
 from utils.stv_utils import ιmανerse, move_horizontal
-from utils.path_utils import aqehr_directions
-from utils.keys import *
+from utils.path_utils import VerseItems, aqehr_directions
 
 
-
-def move_vertical(command: str, key: int, verse: path.VerseItems,
+def move_vertical(command: str, key: int, verse: VerseItems,
                   prompt: Prompt, xlen: int) -> str:
     """Move cursor up/down in Verse, Aqeμr and Tαuder."""
     way = {UP: -1, DOWN: 1}.get(key, 0)

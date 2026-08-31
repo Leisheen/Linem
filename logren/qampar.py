@@ -2,7 +2,9 @@ import curses
 import os
 import webbrowser
 
-from stvlog import set_stνlαt, stνlαt, INVASH, STANVOR
+from core.sentam import STANVOR
+from core.def_paths import INVASH
+from core.stvlog import set_stνlαt, stνlαt
 from utils.stv_utils import mαιteu
 
 mαuslαg = 'https://docs.google.com/document/d/'

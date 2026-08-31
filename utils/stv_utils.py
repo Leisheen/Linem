@@ -11,14 +11,14 @@ import time # for stvrefresh
 import webbrowser # for search_select
 from typing import List, Dict, Callable # for simple_menu, askaq, search_select, manage_command
 
-import stvlog
+import core.sentam as sentam
+import core.stvlog as stvlog
 import utils.path_utils as path # for oppel_αqeμr
 import utils.sys_utils as sinfo
-import utils.sentam as sentam
 
+from core.def_paths import *
+from core.keys import *
 from logren.gcal import calendar
-from def_paths import *
-from utils.keys import *
 
 
 COLORS = ( # Foreground | Background
@@ -86,6 +86,13 @@ UPRAV_FUNCTIONS = {
     '.dyαt': lambda stanvor: calendar(False, stanvor.gcal_creds, stanvor.prompt.stvl.αδeutαr),
 }
 
+WEBSITES = {
+    'E': '',
+    'P': 'https://www.google.com/search?q=',
+    'M': 'https://www.google.com/maps/search/',
+    'L': 'https://www.youtube.com/results?search_query=',
+}
+
 
 def set_invash(stvl: sentam.Lαmseut):
     if os.path.exists(INVASH):
@@ -126,7 +133,7 @@ def log(stanvor: sentam.Stanvor) -> None:
     try:
         logαm.ιlog = [i for i in os.listdir() if i != 'desktop.ini']
     except PermissionError as e:
-        prompt.stvl.stlαg = stvlog.stναδeut(prompt.stvl.αδeutαr, str(e), stvlog.STANVOR)
+        prompt.stvl.stlαg = stvlog.stναδeut(prompt.stvl.αδeutαr, str(e), sentam.STANVOR)
         return
 
     logαm.ιlog.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))
@@ -197,7 +204,7 @@ def print_timervals(active: bool, timer_values: dict) -> None:
 
     for key, value in timer_values.items():
         spacing = ' ' * (11 - len(key))
-        stvlog.stνlαt(stvlog.STANVOR, f'{key}:{spacing}{value:.5f}s', 0)
+        stvlog.stνlαt(sentam.STANVOR, f'{key}:{spacing}{value:.5f}s', 0)
 
 
 def play_alarm(alarm, stvl):
@@ -303,7 +310,7 @@ def lestαq(stanvor: sentam.Stanvor) -> None:
     mαιteu(lanter.stdscr, lanter.xlen, stvl.clear, stvl.ιdeu)
 
     # Prαν
-    if audio.on and stanvor.ιdeu == stvlog.STANVOR:
+    if audio.on and stanvor.ιdeu == sentam.STANVOR:
         # Tαuder: ιdeu != stvl.ιdeu
         lanter.stdscr.addstr(2, 0, f'{audio.prompt}\n')
         lanter.stdscr.addstr('\u2500'*lanter.xlen, curses.color_pair(2))
@@ -390,7 +397,7 @@ def oppel_αqeμr(name: str, lanter: sentam.Lanter) -> str:
 
     for i in loglist:
         msg, counter = path.process_delete_path(i, counter)
-        stvlog.stνlαt(stvlog.STANVOR, msg, 4)
+        stvlog.stνlαt(sentam.STANVOR, msg, 4)
     
     return stvlog.stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
 
@@ -514,7 +521,7 @@ def open_point_command(path: str, y: int) -> str:
     if not os.path.isfile(path):
         return ''
 
-    stvlog.stνlαt(stvlog.STANVOR, path, 0)
+    stvlog.stνlαt(sentam.STANVOR, path, 0)
 
     lines = []
     with open(f"{path}", "r", encoding='utf-8', errors='ignore') as file:
@@ -581,7 +588,7 @@ def intor_aqehr(ιmαν: str, lanter: sentam.Lanter, αδeutαr: int) -> str:
             os.rmdir(i)
         except (OSError, PermissionError) as e:
             stlαg = f'Pαδuαq uα ιutorαg {i} αqeμr │ {e}'
-            _ = stvlog.stναδeut(αδeutαr, stlαg, stvlog.STANVOR)
+            _ = stvlog.stναδeut(αδeutαr, stlαg, sentam.STANVOR)
             continue
 
         if i not in os.listdir(os.getcwd()):
@@ -622,7 +629,7 @@ def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) ->
 
     if not logαm.loglist:
         prompt.stvl.stlαg = 'Logreu αqμerzeu'
-        stvlog.stνlαt(stvlog.STANVOR, prompt.stvl.stlαg, 0)
+        stvlog.stνlαt(sentam.STANVOR, prompt.stvl.stlαg, 0)
         return
 
     prompt.stvl.ιdeu = f'Verse │ {logαm.logreu}'
@@ -799,13 +806,13 @@ def searchlog(logreu: str) -> tuple[str, list, int]:
         search_results.extend(results_list(logreu, root, files))
         search_results.extend(results_list(logreu, root, dirs))
 
-    stvlog.stνlαt(stvlog.STANVOR, f'Search results for [cyan]{logreu}[/cyan]:', 'Search')
+    stvlog.stνlαt(sentam.STANVOR, f'Search results for [cyan]{logreu}[/cyan]:', 'Search')
 
     search_prompt = ''
     align = len(str(len(search_results)))
     for index, result in enumerate(search_results, start=1):
         search_prompt += f'{index:{align}d} │  {result}\n'
-        stvlog.stνlαt(stvlog.STANVOR, f'   {result}', curses.color_pair(5))
+        stvlog.stνlαt(sentam.STANVOR, f'   {result}', curses.color_pair(5))
 
     return search_prompt, search_results, 0
 
@@ -829,7 +836,7 @@ def set_search(sent: sentam.Imανseut, srch: sentam.Search) -> None:
 def eudαμl_stαuνor() -> None:
     """Open a new Lιuem Stαuνor instance."""
     os.startfile(r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem\main.py')
-    stvlog.stνlαt(stvlog.STANVOR, 'Lιuem Stαuνor', 2)
+    stvlog.stνlαt(sentam.STANVOR, 'Lιuem Stαuνor', 2)
 
 
 def restart_stanvor() -> None:
@@ -847,11 +854,11 @@ def install_module(stanvor: sentam.Stanvor, tαg: Callable, ) -> None:
     try:
         stvlog.lαmlιuem('Tαg', stanvor.lanter.xlen)
         os.system(f'py -m pip install {module}')
-        stvlog.stνlαt(f'{'Tαg':<7}', module, stvlog.STANVOR)
+        stvlog.stνlαt(f'{'Tαg':<7}', module, sentam.STANVOR)
         input()
         stvl.prαν = ''
     except Exception as e:
-        stvl.stlαg = stvlog.stναδeut(stvl.αδeutαr, f'{'Tαg':<7}│ {e}', stvlog.STANVOR)
+        stvl.stlαg = stvlog.stναδeut(stvl.αδeutαr, f'{'Tαg':<7}│ {e}', sentam.STANVOR)
 
     curses.curs_set(0)
 
@@ -867,8 +874,8 @@ def rprompt_operation(command: str, xlen: int) -> None:
         os.system('cmd')
         #os.system('powershell -NoLogo')
 
-    stvlog.lαmlιuem(stvlog.STANVOR, xlen)
-    stvlog.stνlαt(stvlog.STANVOR, f'{os.getcwd()}', 1)
+    stvlog.lαmlιuem(sentam.STANVOR, xlen)
+    stvlog.stνlαt(sentam.STANVOR, f'{os.getcwd()}', 1)
     sys.stdout.write('\033[?25l')
 
 
@@ -888,7 +895,7 @@ def end_process(lanter: sentam.Lanter, process: str) -> None:
         'Systɢm δoνt': lambda: os.system('shutdown /s /t 0'),
     }
 
-    stvlog.stνlαt(stvlog.STANVOR, process, 0)
+    stvlog.stνlαt(sentam.STANVOR, process, 0)
 
     try:
         stvlog.set_log('utf8')
@@ -991,79 +998,13 @@ def manage_command(command: str, operations: Dict[str, Callable],
     return f'{command}', 0
 
 
-def process_enter(stanvor: sentam.Stanvor, int_programs: dict,
-                  operations: dict, app_manager: Callable, tαg: Callable) -> None:
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
-    command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
-
-    sent.clear()
-    stvl.set_stanvor()
-    stanvor.lanter.stdscr.clrtoeol()
-    stvl.stlαg = ''
-    stanvor.srch.path = ''
-
-    # Tαuder
-    if command == '.wifi': # WiFi Connection
-        stanvor.wifi_on, stvl.υprαν = sinfo.wifi_status(stanvor.wifi_on)
-    elif command == '.log': # Log View   DOESN'T WORK
-        stvl.ιdeu = 'Log'
-        stvl.prαν = open_point_command(LOG_FILE, stanvor.lanter.ylen)
-    elif command == '.lam:oldlog':
-        stvl.stlαg = stvlog.clear_log()
-    elif command == '.mat': # Nostαl ιsteg tαuder
-        date2 = datetime.date.today().strftime('%w.%#e%#m%y | %j')
-        stvl.prαν = f'Mαtιν \u276f  {date2}\n'
-
-    elif command == '.end': # System Process List
-        sys_eudyαt(stvl, stanvor.lanter)
-
-    elif command in MAIN_PATHS: # Qαιteu ιutorαg νerseut
-        stvl.log, sent.ιmαν = MAIN_PATHS[command]
-    elif command in EXT_PROGRAMS:
-        EXT_PROGRAMS.get(command, lambda: None)()
-        stvlog.stνlαt(stvlog.STANVOR, f'❯ {command}', 0)
-    elif command in UPRAV_FUNCTIONS:
-        stvl.υprαν = UPRAV_FUNCTIONS[command](stanvor)
-    elif command in stvlog.ASHENTAR_MODES:
-        stvl.αδeutαr, stvl.stlαg = stvlog.set_αδeutαr(command)
-    elif command in ('.stlam', 'DOS'):
-        rprompt_operation(command, stanvor.lanter.xlen)
-    elif command in int_programs:
-        app_manager(int_programs[command], stanvor, tαg)
-    elif command in ('.locals', '.globals'):
-        all_values = {'.locals': locals(), '.globals': globals()}
-        stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
-        stvl.υprαν = sinfo.show_vars(all_values[command])
-    elif command != '..' and command.endswith('..'):
-        command = command[:-2]
-        if not os.path.isfile(command):
-            return
-        os.startfile(f'"{command}"')
-        stvlog.stνlαt(stvlog.STANVOR, f'{command}', 2)
-    elif command not in ('.', '..') and command.endswith('.'):
-        open_point_command(command, stanvor.lanter.ylen)
-        stvl.ιdeu, stvl.log = command[:-1], '❯ '
-    # Go to directory
-    elif os.path.isdir(command):
-        os.chdir(command)
-        stvlog.stνlαt(stvlog.STANVOR, os.getcwd(), 1)
-        stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
-        log(stanvor)
-    else:
-        msg, stnum = manage_command(command, operations, stanvor.prompt)
-        stvlog.stνlαt(stvlog.STANVOR, msg, stnum)
-        stvl.clearall()
-
-    stanvor.logαm.nlog = 0
-
-
 def process_path(func: str, αrνol: str, stanvor: sentam.Stanvor, tαg: Callable) -> str:
     """Process file path to rename or copy."""
     if not αrνol.strip():
         return ''
     if not os.path.exists(αrνol):
         msg = f'Logreu [cyan]{αrνol}[/cyan] [red]αqμerzeu[/red]'
-        stvlog.stνlαt(stvlog.STANVOR, msg, 0)
+        stvlog.stνlαt(sentam.STANVOR, msg, 0)
         return f'{αrνol} logreu αqμerzeu'
 
     stanvor.prompt.stvl.ιdeu = f'{func} │ {αrνol}'
@@ -1119,7 +1060,7 @@ def copy_to_clipboard(text: str) -> None:
     """Copy text to clipboard."""
     if text:
         pyperclip.copy(text)
-        stvlog.stνlαt(stvlog.STANVOR, f"'{text}' copied to clipboard", 0)
+        stvlog.stνlαt(sentam.STANVOR, f"'{text}' copied to clipboard", 0)
 
 
 # Math for Calculator

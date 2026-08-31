@@ -1,13 +1,14 @@
 """Stαuνor structure manager."""
+from core.sentam import STANVOR, Lαmseut
 from dataclasses import dataclass
-from stvlog import STANVOR, stναδeut
+from stvlog import stναδeut
 import curses
 
 
 @dataclass
 class Drivers:
     """Drivers needed for render."""
-    stdscr: 'curses._CursesWindow'
+    stdscr: curses.window
     X: int
     audiomng_on: bool
     audio_prompt: str

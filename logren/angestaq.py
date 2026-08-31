@@ -5,10 +5,9 @@ import datetime
 import os
 from typing import List
 
+from core.stvlog import stνlαt, stναδeut
 from logren import logren
-from stvlog import stνlαt, stναδeut
 import utils.stv_utils as stv
-from utils.stv_utils import mαιteu
 
 
 ANGPATH = r'Augest\Augestαq.csv'
@@ -48,7 +47,7 @@ def lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
     sub1, sub2 = subs
     #chn = ''
 
-    mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+    stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
     lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
     lanter.stdscr.addstr('Sιguα')
     lanter.stdscr.addstr(' │', curses.color_pair(2))
@@ -171,7 +170,7 @@ def delete_angest():
 
 def inaq_menu(lanter, sub1):
     while True:
-        mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+        stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
         lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
         lanter.stdscr.addstr('Iuαq')
         lanter.stdscr.addstr(' │', curses.color_pair(2))
@@ -207,7 +206,7 @@ def αugestαq(lanter: Lanter, αδeutαr: int) -> None:
     }
 
     while True:
-        mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+        stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
         lαmαugest(lanter, [ANGPATH, ISQPATH], sub1)
 
         key = lanter.stdscr.getch()
