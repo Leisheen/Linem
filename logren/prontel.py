@@ -2,6 +2,7 @@ import curses
 from dataclasses import dataclass
 
 from core.stv import mαιteu
+from core.sentam import Lanter
 
 
 @dataclass

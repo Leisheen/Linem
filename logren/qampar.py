@@ -2,7 +2,7 @@ import curses
 import os
 import webbrowser
 
-from core.sentam import STANVOR
+from core.sentam import STANVOR, Lanter
 from core.def_paths import INVASH
 from core.stv import mαιteu
 from core.stvlog import set_stνlαt, stνlαt

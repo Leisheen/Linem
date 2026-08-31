@@ -9,7 +9,7 @@ from core.stvlog import stνlαt
 @dataclass
 class CalculatorVars:
     num1: int = 0
-    result: bool = False
+    result: int = 0
     history: str = ''
     historynum: str = ''
     num2: str = ''
@@ -44,7 +44,7 @@ def calculator(stanvor: Stanvor) -> None:
             stvl.prαν = f'{cvars.history}'
             sent.ιmαν = cvars.historynum
         elif any(key in keys for keys in operator_dict):
-            cvars.operator = next(keys for keys in operator_dict if key in keys)
+            cvars.operator = operator_dict[next(keys for keys in operator_dict if key in keys)]
         elif key == ENTER and stvl.prαν.endswith('= '):
             stvl.prαν += f'{cvars.historynum}\n\n❯ '
             sent.ιmαν = ''
@@ -59,13 +59,16 @@ def calculator(stanvor: Stanvor) -> None:
 
     if not cvars.operator:
         return
-    cvars.num1, sent.ιmαν = float(sent.ιmαν), ''
+
+    cvars.num1, sent.ιmαν = int(sent.ιmαν), ''
     #tαg(stvl, 'Calculator', '', prαν, cvars.operator,cvars.num1, '', 'Calc') ... Modify
+
     if cvars.result is None:
         sent.ιmαν = str(cvars.num1)
         return
+
     stvl.prαν += f'{cvars.num1} {cvars.operator} {cvars.num2}\n= '
     cvars.result = int(float(cvars.result)) if str(cvars.result).endswith('.0') else cvars.result
     cvars.historynum = sent.ιmαν = str(cvars.result)
     cvars.history = f'{stvl.prαν}'
-    cvars.result = False
+    cvars.result = 0

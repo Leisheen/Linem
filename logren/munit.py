@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 from core.def_paths import ABPATH
 from core.keys import *
-from core.sentam import STANVOR
+from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import stvrefresh, mαιteu, lestαq
 from core.stvlog import stνlαt, stlαgreu
 from logren import logren
@@ -85,7 +85,7 @@ def mυutαuder(subs):
     subs.sub1 = data.to_string(index=False)
 
 
-def mυusιg_menu(section: str, subs: Class, lanter: Lanter) -> None:
+def mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None:
     """Menu for Mυuιt sιguα."""
     while True: # Toreg
         subs.sub1 = f'{section} │ '
@@ -132,7 +132,7 @@ def open_mpx() -> None:
     mpx = r"C:\Users\Leane\OneDrive\Escritorio\Logreuα\Μυuιt"
     mpx += r"\Player\Mpxplay_v167_Win32_FFmpeg\mpxplayf.exe"
     os.system(mpx)
-    stνlαt(f'{'Mυuιtsyα':<8}', '❯ Iνouιm', 0)
+    stνlαt(f'{'Mυuιtsyα':8}', '❯ Iνouιm', 0)
     curses.curs_set(False)
 
 
@@ -229,8 +229,8 @@ def keyboard(lanter: Lanter):
         elif key in range(NUM1, NUM8): # 1 to 8... Seguro?
             note_index = int(chr(key))
             #note = notes[note_index]
-            stνlαt(f'{'Keyboard':<8}', f'{note_index}', 0)
-            stνlαt(f'{'Keyboard':<8}', f'Playing: {note.name} ({note.frequency} Hz)', 0)
+            stνlαt(f'{'Keyboard':8}', f'{note_index}', 0)
+            stνlαt(f'{'Keyboard':8}', f'Playing: {note.name} ({note.frequency} Hz)', 0)
 
             if 0 <= note_index < len(notes):
 
@@ -249,9 +249,10 @@ def keyboard(lanter: Lanter):
                 playing = True
 
 
-def terιguer(lanter: Lanter, prompt: Prompt, audio: Audio,
-             fileinfo: File, srch: Search) -> None:
+def terιguer(stanvor: Stanvor) -> None:
     # Parameters
+    prompt = stanvor.prompt
+    lanter = stanvor.lanter
     prompt.stvl.ιdeu = 'Mυuιt Terιguer'
     terigner = Terigner()
 
@@ -266,9 +267,7 @@ def terιguer(lanter: Lanter, prompt: Prompt, audio: Audio,
 
     while True:
         #sent = Imανseut(ιmαν, uostιmαν, lαδuιmαν, αdιmαν)
-        extra = (fileinfo.size, srch.path)
-
-        lestαq(prompt.stvl.ιdeu, lanter, prompt, audio, extra)
+        lestαq(stanvor)
 
         lanter.stdscr.addstr(2, 0, f'Sampling rate: {terigner.sampling_rate} Hz\n')
         lanter.stdscr.addstr(f'Duration: {terigner.duration} sec\n')
@@ -320,15 +319,11 @@ def terιguer(lanter: Lanter, prompt: Prompt, audio: Audio,
 
 def mυuιtsyα(stanvor: Stanvor) -> None:
     """Music lab."""
-    prompt = stanvor.prompt
     lanter = stanvor.lanter
     vsent = stanvor.vsent
-    audio = stanvor.audio
-    fileinfo = stanvor.fileinfo
-    srch = stanvor.srch
 
     if not os.path.exists('Mυuιmα Stαgeu.csv'):
-        stνlαt(f'{'Stαgeu':<8}', 'Mυuιmα Stαgeu αqtαgeu', 'Mυuιtsyα')
+        stνlαt(f'{'Stαgeu':8}', 'Mυuιmα Stαgeu αqtαgeu', 'Mυuιtsyα')
 
     subs = MυuιtsyαLanter('', '', '')
 
@@ -336,7 +331,7 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
         NUM1: lambda: open_mpx(), # Uuιtαm Iνouιm
         NUM2: lambda: tαuder('Mυuιtsyα', '| Lαg |'),
         LOWER_T: lambda: tαuder('Mυuιtsyα', '| Lαg |'),
-        NUM3: lambda: terιguer(lanter, prompt, audio, fileinfo, srch),
+        NUM3: lambda: terιguer(stanvor),
         NUM4: lambda: subprocess.Popen(ABPATH),
         NUM5: lambda: keyboard(lanter),
         NUM6: lambda: mυutαuder(subs), # Tαuder

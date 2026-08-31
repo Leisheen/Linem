@@ -5,6 +5,7 @@ import numpy as np
 from typing import List
 
 from core.keys import *
+from core.sentam import Lanter
 from core.stv import mαιteu
 from core.stvlog import stναδeut
 from operations.commands import logimprol
