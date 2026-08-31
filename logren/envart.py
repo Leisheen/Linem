@@ -10,7 +10,7 @@ from core.keys import *
 from core.sentam import Stanvor, Lanter
 from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt, stναδeut
-from logren import logren
+from utils import logren
 from logren.vermat import νermαt
 from operations.commands import logimprol, web_links
 from logren.tander import tαuder

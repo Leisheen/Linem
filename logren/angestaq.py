@@ -7,7 +7,7 @@ from typing import List
 
 from core.stv import stvrefresh
 from core.stvlog import stνlαt, stναδeut
-from logren import logren
+from utils import logren
 import utils.stv_utils as stv
 
 

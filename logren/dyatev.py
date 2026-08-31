@@ -8,7 +8,7 @@ from core.def_paths import INVASH
 from core.keys import *
 from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt
-from logren.logren import open_editor
+from utils.logren import open_editor
 from operations.commands import logimprol
 from logren.tander import tαuder
 

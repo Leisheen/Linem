@@ -9,7 +9,7 @@ import utils.stv_utils as stv
 from bs4 import BeautifulSoup
 from dataclasses import dataclass, field
 from googlesearch import search
-from logren.logren import open_youtube
+from utils.logren import open_youtube
 from utils.web_utils import web_driver
 from ollama_call import call_ollama
 

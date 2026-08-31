@@ -4,7 +4,6 @@ import time
 from typing import Callable
 
 import core.stvlog as stvlog
-import utils.stv_utils as stv
 from core.keys import ESC, LOWER_Q, NUM1, NUM2, NUM3, NUM4
 from core.sentam import STANVOR, Stanvor, Lanter, Prompt, Alarm
 from core.stv import stvrefresh, mαιteu

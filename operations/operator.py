@@ -5,22 +5,38 @@ import os
 from operator import itemgetter
 from typing import Callable
 
+import core.audio as aud
 import core.keys as key
 import core.stvlog as stvlog
-import core.audio as aud
 import utils.stv_utils as sutils
 import utils.sys_utils as sinfo
 
 from core.def_paths import LOG_FILE
 from core.sentam import STANVOR, Stanvor
-from core.stv import stvrefresh, lestαq, ιmtαu
+from core.stv import stvrefresh, lestαq, ιmtαu, logreu_select
 from core.stvlog import set_ashentar_mode, stναδeut
 from operations.commands import (
     logimprol, int_programs, log_vals, sentam_stagen,
     main_paths, ext_programs, web_channels, uprav_functions
 )
-from operations.stv_commands import stv_process
+from operations.path_operations import logreutαg, logreuιδαt
 
+stv_process = {
+    key.ESC: lambda stanvor, _: sutils.reset(stanvor),
+    key.CTL_PADENTER: lambda *_: sutils.eudαμl_stαuνor(),
+    key.SHF_PADENTER: lambda *_: sutils.restart_stanvor(),
+    key.SHF_PADMINUS: lambda stanvor, _: sutils.reset(stanvor),
+    key.UP: lambda stanvor, _: logreu_select('up', stanvor),
+    key.DOWN: lambda stanvor, _: logreu_select('down', stanvor),
+    key.CTL_PADSLASH: lambda stanvor, _: sutils.set_search(stanvor.prompt.sent, stanvor.srch),
+    key.SHF_F12: lambda stanvor, _: sutils.end_process(stanvor.lanter, 'Systɢm δoνt'),
+    key.CTL_PADSTOP: lambda stanvor, _: sutils.end_process(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
+    key.PADSTAR: lambda stanvor, tαg: logreuιδαt('Lαιue', stanvor, tαg),
+    key.PADSLASH: lambda stanvor, tαg: logreuιδαt('Verse', stanvor, tαg),
+    key.SHF_PADPLUS: lambda stanvor, tαg: logreuιδαt('Copy', stanvor, tαg),
+    key.PADPLUS: lambda stanvor, tαg: logreutαg('Eudαμl', stanvor, tαg),
+    key.PADMINUS: lambda stanvor, tαg: logreutαg('Aqeμr', stanvor, tαg),
+}
 
 def process_enter(stanvor: Stanvor, int_programs: dict,
                   operations: dict, app_manager: Callable, tαg: Callable) -> None:

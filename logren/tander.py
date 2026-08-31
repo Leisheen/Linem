@@ -8,7 +8,7 @@ from core.def_paths import SAGET
 from core.keys import *
 from core.sentam import STANVOR, Stanvor, Prompt, Lanter
 from core.stvlog import stνlαt, stναδeut, stlαgreu
-from logren.logren import open_saget, open_editor
+from utils.logren import open_saget, open_editor
 from utils.stv_utils import anza_file
 
 DEFTANDER = r'Tαuder\Tαuder.txt'

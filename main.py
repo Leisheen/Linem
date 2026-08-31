@@ -35,16 +35,15 @@ from logren import calc
 from logren import dyatev as dt
 from logren import envart as env
 from logren import ingersatel as ing
-from logren import logren, munit
+from logren import munit
 from logren import tander
 from logren import vermat as vmat
 from logren.angestaq import αugestαq as angestaq
 from logren.invor import ιuνor as invor
 from logren.prontel import proutel
 from logren.soshat import soδᾱt as soshat
-from operations.activities import start_interface
-from utils import tag_utils
-
+from operations.operator import start_interface
+from utils import logren, tag_utils
 
 
 def main(stdscr: curses.window) -> None:

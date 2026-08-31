@@ -17,7 +17,7 @@ from core.keys import *
 from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import stvrefresh, mαιteu, lestαq
 from core.stvlog import stνlαt, stlαgreu
-from logren import logren
+from utils import logren
 from operations.commands import logimprol
 from logren.tander import tαuder
 
