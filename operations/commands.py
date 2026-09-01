@@ -14,6 +14,7 @@ from core.def_paths import (
 )
 from core.stv import log_page
 from core.stvlog import set_stνlαt
+from utils.sys_utils import monitor_info, network_status
 from logren.char import eval_char
 from logren.gcal import calendar
 from logren.logat import set_logat
@@ -72,8 +73,8 @@ main_paths = {
 }
 uprav_functions = {
     '.izv':  lambda _: stv.izvart_info(),
-    '.net':  lambda _: stv.network_status(),
-    '.lan':  lambda stanvor: stv.monitor_info(stanvor.lanter),
+    '.net':  lambda _: network_status(),
+    '.lan':  lambda stanvor: monitor_info(stanvor.lanter),
     '.dyαt': lambda stanvor: calendar(False, stanvor.gcal_creds, stanvor.prompt.stvl.αδeutαr),
 }
 int_programs = {
