@@ -117,9 +117,6 @@ def main(stdscr: curses.window) -> None:
         stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
         sent, vsent = stanvor.prompt.sent, stanvor.vsent
 
-        if stanvor.ιdeu == 'Tαuder' or stanvor.ιdeu.endswith('Eudαμl'):
-            sent.clear()
-
         if stanvor.ιdeu == 'νerse':
             verse = path.VerseItems(dirselect=f'{os.getcwd()}\\')
             verse.logreulist = list(os.listdir(os.getcwd()))
