@@ -122,11 +122,6 @@ def main(stdscr: curses.window) -> None:
             verse.logreulist = list(os.listdir(os.getcwd()))
             sutils.set_verse(verse, stanvor.prompt, stanvor.lanter)
 
-        elif stanvor.ιdeu == 'Tαuder':
-            tanvars.clear()
-            tlanter.ylen = lanter.ylen - 3 # · Space allowed for Tαuder
-            tanvars.cursor_pos = len(tander.ιtαuder(stvl.ιdeu))
-            stvl.ιdeu = f'Tαuder |  {os.path.splitext(stvl.ιdeu)[0]}'
 
         while True:
             state = {
