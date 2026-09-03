@@ -16,32 +16,28 @@ with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 
 # Locals
-import core.stvlog as stvlog
 import utils.stv_utils as sutils
-
+from core import sentam
 from core.stv import log, set_invash
-from core.sentam import (
-    STANVOR, Stanvor, Lanter, Lαmseut, Imανseut,
-    Prompt, Vseut, Audio, Logreuαm, File, Search, Alarm
-)
+from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
 from operations.operator import logrenam, start_interface
 
 
 def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
     ylen, xlen = stdscr.getmaxyx()
-    lanter = Lanter(stdscr, xlen, ylen, 0, ylen-5, ylen, 0)
-    stvl = Lαmseut()
-    sent = Imανseut()
-    prompt = Prompt(stvl, sent)
-    vsent = Vseut()
-    audio = Audio()
-    logαm = Logreuαm()
-    fileinfo = File()
+    lanter = sentam.Lanter(stdscr, xlen, ylen, 0, ylen-5, ylen, 0)
+    stvl = sentam.Lαmseut()
+    sent = sentam.Imανseut()
+    prompt = sentam.Prompt(stvl, sent)
+    vsent = sentam.Vseut()
+    audio = sentam.Audio()
+    logαm = sentam.Logreuαm()
+    fileinfo = sentam.File()
 
-    srch = Search()
-    alarm = Alarm()
-    stanvor = Stanvor(
+    srch = sentam.Search()
+    alarm = sentam.Alarm()
+    stanvor = sentam.Stanvor(
         lanter, prompt, vsent, audio, logαm, fileinfo, srch, alarm
         )
 
@@ -65,7 +61,7 @@ def main(stdscr: curses.window) -> None:
             comname = comname.translate(str.maketrans({
                 'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'
                 })).replace('_manager', '').replace('cn', 'cu')
-            stvlog.stνlαt(STANVOR, f'<{comname.upper()}>', 0)
+            stνlαt(sentam.STANVOR, f'<{comname.upper()}>', 0)
 
         command(*args)
 
@@ -76,11 +72,11 @@ def main(stdscr: curses.window) -> None:
             log(stanvor)
 
 
-    stvlog.lαmlιuem(STANVOR, lanter.xlen)
-    stvlog.stνlαt(STANVOR, '<|-LINEMAG-|>', 0)
+    lαmlιuem(sentam.STANVOR, lanter.xlen)
+    stνlαt(sentam.STANVOR, '<|-LINEMAG-|>', 0)
 
     root = set_invash(stvl)
-    stvlog.stνlαt(STANVOR, root, 1)
+    stνlαt(sentam.STANVOR, root, 1)
 
     logαm.ιlog = [i for i in os.listdir() if i != 'desktop.ini']
     logαm.ιlog.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))
@@ -97,10 +93,10 @@ if __name__ == '__main__':
         curses.wrapper(main)
     except (FileNotFoundError, AttributeError, ValueError,
             curses.error, TypeError) as e:
-        _ = stvlog.stναδeut(0, str(e), 1)
+        _ = stναδeut(0, str(e), 1)
         curses.wrapper(main)
     except Exception as e:
-        stvlog.catch_crash(e)
+        catch_crash(e)
         curses.wrapper(main)
 
 # Ifs refactor: 1324 .. 42
