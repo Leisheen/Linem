@@ -457,3 +457,5 @@ def tαuder_manager(stanvor: Stanvor, tαg: Callable, *args) -> None:
 
     stvl.clearall()
     sent.clear()
+
+# tαuder:       set_section(), sιguα() in vermat

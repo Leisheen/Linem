@@ -1,5 +1,4 @@
 #!Linem\Scripts\python.exe
-# pylint: disable=C0302,C2401,W0718,E0611,W0621,W0404,C0415,R1732,R0913,R0914,R0911,R0917,W0143,W0101,E1101,E1126,W0108
 """Lιuemαg Stαuνor is a task workstation.
 With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
@@ -16,11 +15,11 @@ with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 
 # Locals
-import utils.stv_utils as sutils
 from core import sentam
 from core.stv import log, set_invash
 from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
-from operations.operator import logrenam, start_interface
+from operations.operator import logrenam, run_interface
+from utils.stv_utils import COLORS
 
 
 def main(stdscr: curses.window) -> None:
@@ -41,7 +40,7 @@ def main(stdscr: curses.window) -> None:
         lanter, prompt, vsent, audio, logαm, fileinfo, srch, alarm
         )
 
-    for pair_id, fg, bg in sutils.COLORS:
+    for pair_id, fg, bg in COLORS:
         curses.init_pair(pair_id, fg, bg)
 
 
@@ -85,7 +84,7 @@ def main(stdscr: curses.window) -> None:
     curses.curs_set(False)
     sys.stdout.write('\033[?25l')
 
-    start_interface(stanvor, app_manager)
+    run_interface(stanvor, app_manager)
 
 
 if __name__ == '__main__':
@@ -98,10 +97,3 @@ if __name__ == '__main__':
     except Exception as e:
         catch_crash(e)
         curses.wrapper(main)
-
-# Ifs refactor: 1324 .. 42
-# SEND: < .. ǀ > || ATL_PGUP: Imαν up +40 || ALT_PGDN: Imαν up +40
-# Pylint made CLIENT_SECRET_FILE and SCOPES in Ingersαtel lowercase
-# tαg():        νerse(), ιugersαtel(), install_module(), print_color()
-# tαuder:       set_section(), sιguα() in vermat
-# ❯│׃'

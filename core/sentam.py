@@ -141,3 +141,6 @@ class Stanvor:
     ιdeu: str = STANVOR
     wifi_on: str = 'enable' if os.name == 'nt' else 'on'
     gcal_creds: str = ''
+
+# SEND: < .. ǀ > || ATL_PGUP: Imαν up +40 || ALT_PGDN: Imαν up +40
+# ❯│׃'
