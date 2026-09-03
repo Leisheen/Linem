@@ -756,15 +756,15 @@ def start_cmd(command: str) -> str:
 
 
 def manage_command(command: str, operations: Dict[str, Callable],
-                   prompt: sentam.Prompt) -> tuple[str, int]:
+                   stanvor: sentam.Stanvor) -> tuple[str, int]:
     """Filter command and execute corresponding action."""
     # OS commands
     if command.startswith(':'):
         return start_cmd(command[1:]), 0
     
     # Open query in website
-    if prompt.stvl.log:
-        code = prompt.stvl.log[0]
+    if stanvor.prompt.stvl.log:
+        code = stanvor.prompt.stvl.log[0]
         if code in WEBSITES:
             query = '+'.join(command.split(' '))
             webbrowser.open(f'{WEBSITES[code]}{query}')
@@ -778,7 +778,7 @@ def manage_command(command: str, operations: Dict[str, Callable],
     # Open known file types
     ext = os.path.splitext(command)[1].lower()
     if any(ext in exts for exts in operations):
-        operations[next(exts for exts in operations if ext in exts)](command)
+        operations[next(exts for exts in operations if ext in exts)](command, stanvor)
     # Open other file types
     else:
         os.startfile(f'"{command}"')

@@ -4,11 +4,9 @@ import pyperclip
 import subprocess
 import webbrowser
 
-import core.def_paths as dfp
 import core.keys as key
 import utils.stv_utils as sutils
 
-from core.audio import drive_audio
 from core.def_paths import (
     INVASH, STVPATH, SAGET, PROSERV_PATH, PIANO_PATH, CITIES_PATH,
     VERKLAIT_PATH, FINALE_PATH, DAVINCI_PATH, DATA_PATH,
@@ -21,8 +19,6 @@ from logren.gcal import calendar
 from logren.logat import set_logat
 from logren.qampar import qαmpαr
 from logren.siev import ιsιeν
-from logren.tander import tαuder_manager
-from utils.logren import open_pyside, open_video
 from utils.sys_utils import monitor_info, network_status
 
 
@@ -57,13 +53,6 @@ sentam_stagen = {
     key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
     key.ALT_F5: {'stlαg': lambda *_: sutils.lαuterbright(-10)},
     key.ALT_F6: {'stlαg': lambda *_: sutils.lαuterbright(10)},
-}
-
-operations = {
-    dfp.IMG_EXT: lambda command, _: open_pyside(command),
-    dfp.VIDEO_EXT: lambda command, _: open_video(command),
-    dfp.AUDIO_EXT: lambda file, stanvor: drive_audio(file, 'play', stanvor),
-    dfp.TEXT_EXT: lambda file, stanvor: tαuder_manager(stanvor, file),
 }
 
 log_vals = {

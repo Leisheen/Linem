@@ -16,7 +16,7 @@ from utils.stv_utils import (
 from core.sentam import Stanvor
 from core.stv import lestαq
 from core.stvlog import stναδeut
-import logren.tander as tander
+import utils.tander_utils as tander
 
 from operations.commands import (
     sentam_stagen, improl_dicts, default_dirs, sentam_stagen,
