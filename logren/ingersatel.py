@@ -5,7 +5,6 @@ import requests
 import sys
 import webbrowser
 from operator import itemgetter
-from typing import Callable
 
 import utils.stv_utils as stv
 from bs4 import BeautifulSoup
@@ -20,7 +19,7 @@ import core.keys as key
 from core.sentam import Stanvor, Prompt, Imανseut
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from operations.commands import logimprol, sentam_stagen
-
+from operations.tag import tαg
 
 index_list = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 
@@ -204,12 +203,14 @@ def ask_ollama(stanvor, ingersat):
         ingersat.ιzprαν = f'❯ {str(e)}\n{olm_msg}'
 
 
-def ιugersαtel(stanvor: Stanvor, ingersat: Ingersatel, tαg: Callable) -> None:
+def ιugersαtel(stanvor: Stanvor) -> None:
     """Web search interface."""
     prompt = stanvor.prompt
     vsent = stanvor.vsent
     lanter = stanvor.lanter
     logαm = stanvor.logαm
+
+    ingersat = Ingersatel()
 
     def get_webinfo(prompt: Prompt, ingersat, logαm) -> None:
         """Get info from web."""

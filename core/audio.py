@@ -4,7 +4,7 @@ import pygame
 from core.keys import (
     LESS, GREATER, SHF_F2, SHF_F3, QUESTION, ALT_F1, ALT_F2, SHF_F2, SHF_F3
 )
-from core.sentam import STANVOR, Lαmseut, Audio
+from core.sentam import STANVOR, Stanvor, Audio
 from core.stvlog import stνlαt
 
 
@@ -32,8 +32,9 @@ def set_audio(audio: Audio):
         audio.prompt = ''
 
 
-def drive_audio(file: str, function: str, audio: Audio, stvl: Lαmseut) -> None:
+def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
     """Module to play an audio file."""
+    audio, stvl = stanvor.audio, stanvor.prompt.stvl
     pygame.mixer.init()
 
     def play() -> str:
@@ -94,9 +95,9 @@ def drive_audio(file: str, function: str, audio: Audio, stvl: Lαmseut) -> None:
 
 
 AUDIO_PROCESS = {
-    LESS: lambda file, a, s: drive_audio(file, 'stop', a, s),
-    GREATER: lambda file, a, s: drive_audio(file, 'pause', a, s),
-    SHF_F2: lambda file, a, s: drive_audio(file, 'rewind', a, s),
-    SHF_F3: lambda file, a, s: drive_audio(file, 'forward', a, s),
-    QUESTION: lambda file, a, s: drive_audio(file, 'audio_mode', a, s),
+    LESS: lambda file, stanvor: drive_audio(file, 'stop', stanvor),
+    GREATER: lambda file, stanvor: drive_audio(file, 'pause', stanvor),
+    SHF_F2: lambda file, stanvor: drive_audio(file, 'rewind', stanvor),
+    SHF_F3: lambda file, stanvor: drive_audio(file, 'forward', stanvor),
+    QUESTION: lambda file, stanvor: drive_audio(file, 'audio_mode', stanvor),
 }

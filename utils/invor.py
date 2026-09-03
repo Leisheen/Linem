@@ -3,12 +3,10 @@
 import curses
 import os
 
-import utils.stv_utils as stv
-
 from core.sentam import STANVOR, Stanvor, Lanter
 from core.def_paths import INVASH, STVPATH, INVROOT
 from core.keys import *
-from core.stv import mαιteu
+from core.stv import log, mαιteu
 from core.stvlog import stνlαt
 
 
@@ -66,6 +64,6 @@ def ιuνor(stanvor: Stanvor) -> None:
     os.chdir(f'{get_intorag(stanvor.lanter)}')
 
     stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
-    stv.log(stanvor)
+    log(stanvor)
     stνlαt(STANVOR, os.getcwd(), 1)
     stanvor.lanter.stdscr.nodelay(True)

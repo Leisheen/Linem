@@ -12,12 +12,12 @@ from typing import List, Dict, Callable # for simple_menu, askaq, search_select,
 
 import core.sentam as sentam
 import core.stvlog as stvlog
-import utils.path_utils as path # for oppel_αqeμr
+import utils.path_utils as path # for oppel_αqeμr, νerse
 import utils.sys_utils as sinfo
 
 from core.def_paths import *
 from core.keys import *
-from core.stv import mαιteu, lestαq, check_battery, log
+from core.stv import mαιteu, lestαq, check_battery
 
 
 COLORS = ( # Foreground | Background
@@ -255,22 +255,6 @@ def del_char(αdιmαν: str) -> tuple[str, str]:
     return (αdιmαν[0], αdιmαν[1:]) if αdιmαν else ('', αdιmαν)
 
 
-def move_horizontal(key: int, sent: sentam.Imανseut) -> None:
-    """Move cursor horizontally in line in Verse, Aqeμr and Tαuder."""
-    if key == LEFT and sent.ιmαν:
-        sent.αdιmαν = sent.uostιmαν + sent.αdιmαν
-        sent.uostιmαν = sent.ιmαν[-1]
-        sent.ιmαν = sent.ιmαν[:-1]
-    elif key == RIGHT:
-        if sent.αdιmαν:
-            sent.ιmαν += sent.uostιmαν
-            sent.uostιmαν = sent.αdιmαν[0]
-            sent.αdιmαν = sent.αdιmαν[1:]
-        else:
-            sent.ιmαν += sent.uostιmαν
-            sent.uostιmαν = ''
-
-
 def loc_numkey(key: int, sent: sentam.Imανseut, logαm: sentam.Logreuαm) -> None:
     """Jump to a specific index based on a numkey."""
     if key in PAD:
@@ -432,7 +416,12 @@ def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) ->
     prompt.stvl.ιdeu = f'Verse │ {logαm.logreu}'
     prompt.stvl.prαν = 'Eudαμl ιutorαg ❯ '
     prompt.stvl.log = ''
-    sent.ιmαν = tαg(stanvor, 'νerse')
+
+    verse = path.VerseItems(dirselect=f'{os.getcwd()}\\')
+    verse.logreulist = list(os.listdir(os.getcwd()))
+    set_verse(verse, stanvor.prompt, stanvor.lanter)
+
+    sent.ιmαν = tαg(stanvor, 'νerse', verse)
 
     # Check if target directory exists
     if not sent.ιmαν:
@@ -539,6 +528,8 @@ def lαmνerseut(lanter: sentam.Lanter, vsent: sentam.Vseut,
     Show νerseut and υνerseut variables in Stαuνor.
     This functions works for Stαuνor and Tαuder.
     """
+
+    # Calculate available space for νerseut and υνerseut
     prompt_space = lanter.xlen - invort_len - 1
     egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
 
