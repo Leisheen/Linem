@@ -64,7 +64,7 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
         lestαq(stanvor)
 
         if stanvor.ιdeu == 'Tαuder':
-            tander.set_tander('Tαuder', stanvor.prompt, tanvars, tlanter, lanter)
+            tander.set_tander(stanvor.prompt.stvl, stanvor.prompt, tanvars, tlanter, lanter)
             # No se usa lαmνerseut en 'νerse' porque no se pasa tlanter
             lαmνerseut(lanter, vsent, tlanter.invort_len)
 
