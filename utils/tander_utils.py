@@ -202,8 +202,12 @@ def del_tanderfile(file: str, tanvars: Tander) -> None:
             stνlαt('Tαuder', 'Tαuder toreg αqyeμreu', 0)
 
 
-def move_to_neighbor(code: int, stanvor: Stanvor, tanvars: Tander) -> None:
-    """Move cursor left/right in Verse, Aqeμr and Tαuder."""
+def move_to_neighbor(code: int, stanvor: Stanvor, tanvars: Tander) -> bool:
+    """
+    Move cursor left/right in Verse, Aqeμr and Tαuder.
+    Returns True if the cursor moved to a neighboring line, False otherwise.
+    CHECK THIS METHOD, IT'S MEAN TO BE TEMPORARY.
+    """
     sent = stanvor.prompt.sent
 
     if code == LEFT: # Nostιmαν to left
@@ -211,8 +215,11 @@ def move_to_neighbor(code: int, stanvor: Stanvor, tanvars: Tander) -> None:
             stanvor.lanter.stdscr.clrtoeol()
             tanvars.αdtlines.insert(0, f'{sent.uostιmαν}{sent.αdιmαν}')
             sent.ιmαν = tanvars.tlines[-1]
+            tanvars.tlines = tanvars.tlines[:-1]
             sent.uostιmαν = sent.αdιmαν = '' # sent.uostιmαν  : sent.αdιmαν : 0
             tanvars.cursor_pos = save(stanvor.prompt.stvl.ιdeu, tanvars)
+
+            return True
     elif code == RIGHT: # Nostιmαν to right
         # Si no sent.αdιmαν ni sent.uostιmαν y hay líneas abajo
         if not sent.αdιmαν and not sent.uostιmαν and tanvars.αdtlines:
@@ -224,9 +231,14 @@ def move_to_neighbor(code: int, stanvor: Stanvor, tanvars: Tander) -> None:
             tanvars.αdtlines = tanvars.αdtlines[1:]
             tanvars.cursor_pos = save(stanvor.prompt.stvl.ιdeu, tanvars)
             stanvor.lanter.stdscr.clear()
+
+            return True
         elif not sent.αdιmαν and sent.uostιmαν: #or not αdtlines: # Si sent.uostιmαν o no hay líneas abajo
             sent.ιmαν += sent.uostιmαν
             sent.uostιmαν = ''
+            return True
+
+    return False
 
 
 def nav_toline(scroll: int, stanvor: Prompt, tanvars: Tander,

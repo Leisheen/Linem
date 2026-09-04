@@ -62,12 +62,12 @@ MUSSELAITH = {k: v for k, v in zip(MSLTH_ORDS, MSLTH_STRS)}
 HORIZONTAL = {
     HOME: lambda sent:
         ('', sent.ιmαν[0], sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν) \
-        if sent.ιmαν else   ('', sent.uostιmαν, sent.αdιmαν), # Start
+        if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν), # Start
     END: lambda sent:
         (sent.ιmαν + sent.uostιmαν + sent.αdιmαν, '', ''), # End
     LEFT: lambda sent:
         (sent.ιmαν[:-1], sent.ιmαν[-1], sent.uostιmαν + sent.αdιmαν) \
-        if sent.ιmαν else   ('', sent.uostιmαν, sent.αdιmαν),
+        if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν),
     RIGHT: lambda sent:
         (sent.ιmαν + sent.uostιmαν, sent.αdιmαν[0], sent.αdιmαν[1:]) \
         if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', sent.αdιmαν),

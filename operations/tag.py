@@ -68,7 +68,6 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
             # No se usa lαmνerseut en 'νerse' porque no se pasa tlanter
             lαmνerseut(lanter, vsent, tlanter.invort_len)
 
-
         try:
             tkey = lanter.stdscr.getch()
 
@@ -92,10 +91,10 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
             if tkey in line_limits:
                 line_limits[tkey](sent)
             elif tkey in (key.LEFT, key.RIGHT):
-                move_horizontal(tkey, sent)
-
                 if stanvor.ιdeu == 'Tαuder':
-                    tander.move_to_neighbor(tkey, stanvor, tanvars)
+                    if tander.move_to_neighbor(tkey, stanvor, tanvars):
+                        continue
+                move_horizontal(tkey, sent)
             elif any(tkey in keys for keys in MOVE_FIXES):
                 jump_inline(tkey, sent)
 

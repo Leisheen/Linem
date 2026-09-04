@@ -106,6 +106,7 @@ def open_file(command):
 
 def process_enter(stanvor: Stanvor, int_programs: dict,
                   operations: dict, app_manager: Callable) -> None:
+    """Process input when the Enter key is pressed."""
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
 
@@ -165,6 +166,7 @@ def process_enter(stanvor: Stanvor, int_programs: dict,
 
 
 def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
+    """Process user input and handle various commands and key presses."""
     sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
     vsent, fileinfo = stanvor.vsent, stanvor.fileinfo
 
@@ -181,6 +183,7 @@ def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
     try:
         code = stanvor.lanter.stdscr.getch()
 
+        # Info
         if code == key.ALT_F12: # αδeutαr mode
             stvl.αδeutαr = set_ashentar_mode(stvl)
         elif code == key.CTL_ENTER: # fileinfo.size
@@ -188,6 +191,8 @@ def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
         elif code in (key.ORD_O, key.SHF_PADSTAR): # Log
             log(stanvor)
             stvl.stlαg = ''
+
+        # Prompt
         elif code == key.DEL: # uostιmαν, αdιmαν
             sent.uostιmαν, sent.αdιmαν = (sent.αdιmαν[0], sent.αdιmαν[1:]) if sent.αdιmαν else ('', '')
         elif code == key.ALT_DEL: # uostιmαν, αdιmαν │ αdιmαν Reset
