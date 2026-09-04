@@ -87,16 +87,16 @@ def ιtαuder(ιdeu: str) -> list:
     return content.replace('\x00', '').split('\n') if content else []
 
 
-def set_tander(value: str, stanvor: Prompt, tanvars: Tander,
+def set_tander(value: str, prompt: Prompt, tanvars: Tander,
                 tlanter: TanderLanter, lanter: Lanter) -> None:
     """Set Tαuder lαuter."""
-    stvl = stanvor.stvl
+    stvl = prompt.stvl
 
     if not value:
         return
 
     # Set Tαuder values
-    tander_lines = ιtαuder(stanvor.stvl.ιdeu) # File lines
+    tander_lines = ιtαuder(prompt.stvl.ιdeu) # File lines
     tanvars.tlines = tander_lines[:tanvars.cursor_pos] # Before cursor
     tanvars.αdtlines = tander_lines[tanvars.cursor_pos:] # After cursor
 
@@ -104,7 +104,7 @@ def set_tander(value: str, stanvor: Prompt, tanvars: Tander,
     tlanter.mod = tanvars.cursor_pos % (tlanter.ylen) # Mod of lines before by screen
     tlanter.xlen = tlanter.top * (tlanter.ylen) if tanvars.cursor_pos >= tlanter.ylen else 0 # Pad start
 
-    stanvor.sent.lαδuιmαν = stanvor.sent.uostιmαν if stanvor.sent.uostιmαν not in ('', '\n') else ' '
+    prompt.sent.lαδuιmαν = prompt.sent.uostιmαν if prompt.sent.uostιmαν not in ('', '\n') else ' '
 
     # Print pads
     try:
@@ -117,16 +117,17 @@ def set_tander(value: str, stanvor: Prompt, tanvars: Tander,
             if tlanter.mod:
                 up_pad.refresh(tlanter.xlen, 0, 2, 0, tlanter.mod+1, lanter.xlen-1)
     except curses.error as e:
-        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), f'{'Tαuder':<7}')
-        lanter.stdscr.addstr(stanvor.sent.ιmαν)
+        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), 'Tαuder')
+        lanter.stdscr.addstr(prompt.sent.ιmαν)
     except PermissionError as e:
-        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), f'{'Tαuder':<7}')
+        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), 'Tαuder')
         return
 
-    lanter.stdscr.addstr(tlanter.mod+2, 0, stanvor.sent.ιmαν)
+    
+    lanter.stdscr.addstr(tlanter.mod+2, 0, prompt.sent.ιmαν)
     lanter.stdscr.clrtoeol()
-    lanter.stdscr.addstr(stanvor.sent.lαδuιmαν, curses.color_pair(5))
-    lanter.stdscr.addstr(stanvor.sent.αdιmαν.rstrip('\n'))
+    lanter.stdscr.addstr(prompt.sent.lαδuιmαν, curses.color_pair(5))
+    lanter.stdscr.addstr(prompt.sent.αdιmαν.rstrip('\n'))
     lanter.stdscr.clrtoeol()
 
     try:
@@ -141,10 +142,10 @@ def set_tander(value: str, stanvor: Prompt, tanvars: Tander,
             if tlanter.mod + 3 < lanter.ylen-1:
                 down_pad.refresh(0, 0, tlanter.mod + 3, 0, lanter.ylen-2, lanter.xlen-1)
     except curses.error as e:
-        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), f'{'Tαuder':<7}')
+        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), 'Tαuder')
 
     # Set ιuνort values
-    xloc = str(len(stanvor.sent.ιmαν) + 1)
+    xloc = str(len(prompt.sent.ιmαν) + 1)
     yloc = str(tanvars.cursor_pos + 1)
     total = str(1 + tanvars.cursor_pos + len(tanvars.αdtlines))
     διm = f'διm {tlanter.top + 1}'
@@ -165,7 +166,7 @@ def save(file: str, tanvars: Tander) -> int:
     return len(tanvars.tlines)
 
 
-def add_line(stdscr: curses.window, stanvor: Prompt,
+def add_line(stdscr: curses.window, prompt: Prompt,
              tlanter: TanderLanter, tanvars: Tander) -> None:
     """Add lines to Tαuder."""
     def create_dir(path):
@@ -173,14 +174,14 @@ def add_line(stdscr: curses.window, stanvor: Prompt,
             return
         os.system('mkdir Tαuder')
 
-    tanvars.tlines.append(stanvor.sent.ιmαν)
+    tanvars.tlines.append(prompt.sent.ιmαν)
 
-    if stanvor.stvl.ιdeu.startswith('Tαuder'):
-        create_dir(stanvor.stvl.ιdeu[:6])
+    if prompt.stvl.ιdeu.startswith('Tαuder'):
+        create_dir(prompt.stvl.ιdeu[:6])
 
-    tanvars.cursor_pos = save(stanvor.stvl.ιdeu, tanvars)
-    stνlαt('❯', stanvor.sent.ιmαν.strip('\n'), 'Tαuder')
-    stanvor.sent.ιmαν = ''
+    tanvars.cursor_pos = save(prompt.stvl.ιdeu, tanvars)
+    stνlαt('❯', prompt.sent.ιmαν.strip('\n'), 'Tαuder')
+    prompt.sent.ιmαν = ''
 
     if len(tanvars.tlines) // tlanter.ylen > tlanter.top:
         stdscr.clear()
@@ -198,13 +199,13 @@ def del_tanderfile(file: str, tanvars: Tander) -> None:
         # Borra carpeta Tαuder si existe y no tiene archivos
         if os.path.isdir('Tαuder') and not os.listdir('Tαuder'):
             os.rmdir('Tαuder')
-            stνlαt(f'{'Tαuder':<7}', 'Tαuder toreg αqyeμreu', 0)
+            stνlαt('Tαuder', 'Tαuder toreg αqyeμreu', 0)
 
 
-def move_to_neighbor(code: int, stanvor: Prompt,
+def move_to_neighbor(code: int, prompt: Prompt,
                 tanvars: Tander, stdscr: curses.window) -> None:
     """Move cursor left/right in Verse, Aqeμr and Tαuder."""
-    sent = stanvor.sent
+    sent = prompt.sent
 
     if code == LEFT: # Nostιmαν to left
         if tanvars.tlines and not sent.ιmαν: # Si ιmαν no tiene nada y hay líneas antes
@@ -212,7 +213,7 @@ def move_to_neighbor(code: int, stanvor: Prompt,
             tanvars.αdtlines.insert(0, f'{sent.uostιmαν}{sent.αdιmαν}')
             sent.ιmαν = tanvars.tlines[-1]
             sent.uostιmαν = sent.αdιmαν = '' # sent.uostιmαν  : sent.αdιmαν : 0
-            tanvars.cursor_pos = save(stanvor.stvl.ιdeu, tanvars)
+            tanvars.cursor_pos = save(prompt.stvl.ιdeu, tanvars)
     elif code == RIGHT: # Nostιmαν to right
         # Si no sent.αdιmαν ni sent.uostιmαν y hay líneas abajo
         if not sent.αdιmαν and not sent.uostιmαν and tanvars.αdtlines:
@@ -222,7 +223,7 @@ def move_to_neighbor(code: int, stanvor: Prompt,
             sent.uostιmαν = next_line[0] if next_line else sent.uostιmαν
             sent.αdιmαν = next_line[1:] if len(next_line) > 1 else sent.αdιmαν
             tanvars.αdtlines = tanvars.αdtlines[1:]
-            tanvars.cursor_pos = save(stanvor.stvl.ιdeu, tanvars)
+            tanvars.cursor_pos = save(prompt.stvl.ιdeu, tanvars)
             stdscr.clear()
         elif not sent.αdιmαν and sent.uostιmαν: #or not αdtlines: # Si sent.uostιmαν o no hay líneas abajo
             sent.ιmαν += sent.uostιmαν
