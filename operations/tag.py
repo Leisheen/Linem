@@ -95,7 +95,7 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
                 move_horizontal(tkey, sent)
 
                 if stanvor.ιdeu == 'Tαuder':
-                    tander.move_to_neighbor(tkey, stanvor.prompt, tanvars, lanter.stdscr)
+                    tander.move_to_neighbor(tkey, stanvor, tanvars)
             elif any(tkey in keys for keys in MOVE_FIXES):
                 jump_inline(tkey, sent)
 
