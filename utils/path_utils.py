@@ -104,21 +104,29 @@ def verse_filter(path: str, logreu_name: str) -> list:
     return files_list
 
 
-def move_logren(i: str, sent: Imανseut, stvl: Lαmseut) -> str:
-    """Move path."""
-    if os.path.exists(f'{sent.ιmαν}\\{i}'):
-        msg = f'Logreu {sent.ιmαν}\\{i} sνιt ye'
+def move_logren(path: str, destination: str) -> str:
+    """
+    Move path to destination folder (from sent.ιmαν in stv_utils).
+    - Check if the path already exists to avoid duplications.
+    - Check if the source and destination paths are the same.
+    - If the path is valid, move it to the destination.
+    - Check success verifying if the file exists in the destination.
+    - Return a message based on the result.
+    """
 
-    elif os.path.abspath(i) == os.path.abspath(sent.ιmαν):
-        msg = f'{i} sινιel {sent.ιmαν}'
+    if os.path.exists(f'{destination}\\{path}'):
+        msg = f'Logreu {destination}\\{path} sνιt ye'
+
+    elif os.path.abspath(path) == os.path.abspath(destination):
+        msg = f'{path} sινιel {destination} νerseu'
 
     else:
-        os.system(f'move "{i}" "{sent.ιmαν}"')
+        os.system(f'move "{path}" "{destination}"')
 
-        if os.path.exists(f'{sent.ιmαν}\\{i}'):
-            msg = f'{i} → {sent.ιmαν}'
+        if os.path.exists(f'{destination}\\{path}'):
+            msg = f'{path} → {destination}'
         else:
-            msg = f'{stvl.stlαg} αqνerseu'
+            msg = f"{path} αqνerseu' zυ Stαuνorem δαιuα αqyêν"
 
     return stlαgreu(msg, 'Verse')
 

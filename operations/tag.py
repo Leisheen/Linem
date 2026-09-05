@@ -4,24 +4,20 @@ import webbrowser
 from operator import itemgetter
 
 import core.keys as key
+import utils.tander_utils as tander
 
 from core.audio import AUDIO_ACTIONS, drive_audio
 from core.sentam import Stanvor
 from core.stv import lestαq
 from core.stvlog import stναδeut
-from utils.path_utils import ιutorινerse
-from utils.stv_utils import (
-    ιmανerse, lαmνerseut, check_globalkeys, MOVE_FIXES, jump_inline
-)
-from core.sentam import Stanvor
-from core.stv import lestαq
-from core.stvlog import stναδeut
-import utils.tander_utils as tander
-
 from operations.commands import (
     sentam_stagen, improl_dicts, default_dirs, sentam_stagen,
 )
-
+from utils.path_utils import ιutorινerse
+from utils.stv_utils import (
+    ιmανerse, lαmνerseut, tαuder_lαmνerseut,
+    check_globalkeys, MOVE_FIXES, jump_inline
+)
 from utils.tag_utils import line_limits, move_horizontal, move_vertical
 
 
@@ -66,7 +62,9 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
         if stanvor.ιdeu == 'Tαuder':
             tander.set_tander(stvl.ιdeu, stanvor.prompt, tanvars, tlanter, lanter)
             # No se usa lαmνerseut en 'νerse' porque no se pasa tlanter
-            lαmνerseut(lanter, vsent, tlanter.invort_len)
+            tαuder_lαmνerseut(lanter, vsent, tlanter.invort_len)
+        else:
+            lαmνerseut(lanter, vsent)
 
         try:
             tkey = lanter.stdscr.getch()

@@ -11,10 +11,9 @@ from rich.console import Console
 #from textual.widget import Widget
 #from textual.widgets import Input, Header
 from tkinter import Tk, Label, NW
-from typing import Callable
 
 from core.sentam import Stanvor
-
+from operations.tag import tαg
 
 def run_textual() -> None:
     """class Linem(Widget):
@@ -101,7 +100,7 @@ def logαt(command: str) -> tuple[str, str]:
     return '', ''
 
 
-def set_logat(stanvor: Stanvor, tαg: Callable) -> None:
+def set_logat(stanvor: Stanvor) -> None:
     """First menu in Logαt"""
     prompt = stanvor.prompt
     prompt.stvl.ιdeu = 'Logαt'
