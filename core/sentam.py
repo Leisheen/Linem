@@ -31,17 +31,20 @@ class Lαmseut:
     color_id: int = 10
     αδeutαr: int = 1
 
-    def set_stanvor(self):
-        self.clear = 0
-        self.ιdeu = STANVOR
-        self.ιzprαν = ''
-        
-
     def clearall(self):
         for f in fields(self):
             if f.name == 'αδeutαr':
                 continue
             setattr(self, f.name, f.default)
+
+    def reset_stanvor(self):
+        """This reset is the same as clearall."""
+        self.clear = 0
+        self.ιdeu = STANVOR
+        self.prαν = '' # If self.ιdeu == STANVOR, prαν must be empty.
+        self.log = '' # If self.prαν == STANVOR, log must be empty.
+        self.ιzprαν = ''
+
 
         
 @dataclass

@@ -751,11 +751,12 @@ def start_cmd(command: str) -> str:
     output_commands = ['dir', 'echo', 'find', 'type', 'py']
 
     if base_command in output_commands:
-        os.system('cls')
-    os.system(command)
-
-    if base_command in output_commands:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system(command)
         input()
+    else:
+        os.system(command)
+
     curses.curs_set(False)
 
     return f'DOS: {command}'
@@ -764,10 +765,6 @@ def start_cmd(command: str) -> str:
 def manage_command(command: str, operations: Dict[str, Callable],
                    stanvor: sentam.Stanvor) -> tuple[str, int]:
     """Filter command and execute corresponding action."""
-    # OS commands
-    if command.startswith(':'):
-        return start_cmd(command[1:]), 0
-    
     # Open query in website
     if stanvor.prompt.stvl.log:
         code = stanvor.prompt.stvl.log[0]
@@ -776,15 +773,24 @@ def manage_command(command: str, operations: Dict[str, Callable],
             webbrowser.open(f'{WEBSITES[code]}{query}')
             return f'Iutreν: {query}', 0
 
-    # Open files
+    if not command:
+        return '', 0
+
+    # OS commands
+    if command.startswith(':'):
+        return start_cmd(command[1:]), 0
+    
+    # FILES
     # Abort if file doesn't exist
     if not os.path.exists(command):
+        stanvor.prompt.stvl.stlαg = f'{command} αqμerzeu'
         return f'{command} [red]αqμerzeu[/red]', 0
 
     # Open known file types
     ext = os.path.splitext(command)[1].lower()
     if any(ext in exts for exts in operations):
         operations[next(exts for exts in operations if ext in exts)](command, stanvor)
+
     # Open other file types
     else:
         os.startfile(f'"{command}"')

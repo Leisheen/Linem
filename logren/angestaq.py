@@ -5,6 +5,7 @@ import datetime
 import os
 from typing import List
 
+from core.sentam import Lanter
 from core.stv import stvrefresh
 from core.stvlog import stνlαt, stναδeut
 from utils import logren
@@ -75,12 +76,15 @@ def sιguα_module(sub1: str, subtotal: int) -> List:
             sιguα_list.append(f' {subtotal//10} pα\n')
         else:
             sιguα_list.append(f'{subtotal} ge\n')
+
     with open(ANGPATH, 'a', encoding='utf8') as oppel:
         oppel.write(''.join(sιguα_list))
 
 
 def αusιguα(channels, lanter: Lanter): # Channel sιguα
     αugestαq = ''
+    sub1 = ''
+    total = 0
 
     for channel_name in channels:
         channel = channel_name

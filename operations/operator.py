@@ -118,19 +118,20 @@ def open_file(command):
     os.startfile(f'"{command}"')
 
 
-def process_enter(stanvor: Stanvor, int_programs: dict,
-                  operations: dict, app_manager: Callable) -> None:
+def process_enter(stanvor: Stanvor, operations: dict, app_manager: Callable) -> None:
     """Process input when the Enter key is pressed."""
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
 
+    # Clear fields
     sent.clear()
-    stvl.set_stanvor()
+    #if not stvl.prαν:
+    #    stvl.set_stanvor()
     stanvor.lanter.stdscr.clrtoeol()
     stvl.stlαg = ''
     stanvor.srch.path = ''
 
-    # Tαuder
+    # Info
     if command == '.wifi': # WiFi Connection
         stanvor.wifi_on, stvl.υprαν = sinfo.wifi_status(stanvor.wifi_on)
     elif command == '.log': # Log View   DOESN'T WORK
@@ -141,7 +142,6 @@ def process_enter(stanvor: Stanvor, int_programs: dict,
     elif command == '.mat': # Nostαl ιsteg tαuder
         date2 = datetime.date.today().strftime('%w.%#e%#m%y | %j')
         stvl.prαν = f'Mαtιν \u276f  {date2}\n'
-
     elif command == '.end': # System Process List
         sutils.sys_eudyαt(stvl, stanvor.lanter)
 
@@ -150,6 +150,7 @@ def process_enter(stanvor: Stanvor, int_programs: dict,
     elif command in ext_programs:
         ext_programs.get(command, lambda: None)()
         stvlog.stνlαt(STANVOR, f'❯ {command}', 0)
+        stanvor.prompt.stvl.clearall()
     elif command in uprav_functions:
         stvl.υprαν = uprav_functions[command](stanvor)
     elif command in stvlog.ASHENTAR_MODES:
@@ -166,7 +167,7 @@ def process_enter(stanvor: Stanvor, int_programs: dict,
         open_file(command)
         stvlog.stνlαt(STANVOR, f'{command}', 0)
     elif command not in ('.', '..') and command.endswith('.'):
-        sutils.open_point_command(command, stanvor.lanter.ylen)
+        stvl.prαν = sutils.open_point_command(command, stanvor.lanter.ylen)
         stvl.ιdeu, stvl.log = command[:-1], '❯ '
 
     elif os.path.isdir(command):
@@ -174,7 +175,6 @@ def process_enter(stanvor: Stanvor, int_programs: dict,
     else:
         msg, stnum = sutils.manage_command(command, operations, stanvor)
         stvlog.stνlαt(STANVOR, msg, stnum)
-        stvl.clearall()
 
     stanvor.logαm.nlog = 0
 
@@ -243,7 +243,7 @@ def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
         elif code in logrenam: # None
             app_manager(logrenam[code], stanvor)
         elif code in (key.ENTER, key.PADENTER): # None
-            process_enter(stanvor, int_programs, operations, app_manager)
+            process_enter(stanvor, operations, app_manager)
 
         elif code in (*sutils.PAD, *sutils.LOGPAD): # nlog
             sutils.loc_numkey(code, sent, stanvor.logαm)

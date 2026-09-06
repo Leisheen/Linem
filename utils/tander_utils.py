@@ -5,7 +5,7 @@ from dataclasses import dataclass, field, fields
 
 from core.def_paths import SAGET
 from core.keys import *
-from core.sentam import Prompt, Lanter
+from core.sentam import Stanvor, Prompt, Lanter
 from core.stvlog import stνlαt, stναδeut
 from utils.logren import open_saget, open_editor
 

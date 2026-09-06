@@ -441,7 +441,7 @@ def lαmνmαt(function: str, lanter: Lanter, stanvor: Stanvor,
             lanter.stdscr.addstr(cal_place, 0, vermat.dyeναst)
             lanter.stdscr.clrtobot()
 
-        lαmνerseut(lanter, vsent, 0)
+        lαmνerseut(lanter, vsent)
     except FileNotFoundError:
         pass
     except Exception as e:
