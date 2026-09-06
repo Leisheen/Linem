@@ -32,10 +32,10 @@ def count_time(function: str, lanter: Lanter, prompt: Prompt, alarm: Alarm) -> N
         menu = 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |'
 
         while True:
-            mαιteu(lanter.stdscr, lanter.xlen, 1, function)
+            mαιteu(lanter, 1, function)
             lanter.stdscr.addstr(2, 0, menu)
-            lanter.stdscr.addstr(2, lanter.xlen-len(str(stlαg))-1, str(stlαg))
-            lanter.stdscr.addstr(2, 0, '\u2500'*lanter.xlen, curses.color_pair(1))
+            lanter.stdscr.addstr(2, lanter.xlen-len(str(stlαg)) - 1, str(stlαg))
+            lanter.stdscr.addstr(2, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
             lanter.stdscr.addstr(4, 1, info[function](), curses.color_pair(5))
 
             key = lanter.stdscr.getch()
@@ -68,7 +68,7 @@ def ιsιeν(stanvor: Stanvor) -> None:
     menu = '\n'.join([f'{chr(i)} │ {val}' for i, val in programs.items()])
 
     while True:
-        mαιteu(stanvor.lanter.stdscr, stanvor.lanter.xlen, 0, 'Sιeναt')
+        mαιteu(stanvor.lanter, 0, 'Sιeναt')
         stanvor.lanter.stdscr.addstr(2, 0, menu)
 
         sιeναt = stanvor.lanter.stdscr.getch()

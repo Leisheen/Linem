@@ -21,7 +21,7 @@ def qαmpαr(lanter: Lanter) -> None:
         prαν = oppel.read()
 
     while True:
-        mαιteu(lanter.stdscr, lanter.xlen, 1, 'Stαuνor')
+        mαιteu(lanter, 1, 'Stαuνor')
         qpad1 = curses.newpad(1000, 200)
         qpad1.addstr(prαν)
         qpad1.refresh(0, 0, 4, 10, lanter.ylen - 1, lanter.xlen - 1)

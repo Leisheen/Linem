@@ -21,7 +21,7 @@ class Char:
 # Visuals
 def show_modes(options: list, lanter) -> None:
     """Show the modes menu."""
-    mαιteu(lanter.stdscr, lanter.xlen, 0, 'Char')
+    mαιteu(lanter, 0, 'Char')
 
     lanter.stdscr.move(2, 0)
     for index, item in enumerate(options, start=1):
@@ -30,26 +30,26 @@ def show_modes(options: list, lanter) -> None:
 
 def char_prompt(char: Char, lanter: Lanter) -> None:
     """Visuals for char prompt."""
-    prompt1 = f'{f'{char.mode} ❯':<10}'
+    prompt1 = f'{f'{char.mode} ❯':10}'
     char.lash.replace('\x00', '').replace('\n', '')
 
     if char.mode == 'Key':
-        prompt2 = f'{'Code':<10}'
+        prompt2 = f'{'Code':10}'
         val1 = char.lash if char.lash else '_'
         val2 = str(char.code) if char.code else ''
     else:
-        prompt2 = f'{'Key':<10}'
+        prompt2 = f'{'Key':10}'
         val1 = str(char.code) if char.code else '_'
         val2 = char.lash if char.lash else ''
         #val3 = char.keyname if char.code else ''
 
 
-    mαιteu(lanter.stdscr, lanter.xlen, 1, 'Char')
+    mαιteu(lanter, 1, 'Char')
     lanter.stdscr.addstr(2, 0, f'{prompt1}{val1}')
     lanter.stdscr.clrtoeol()
     lanter.stdscr.addstr(3, 0, f'{prompt2}{val2.replace('\x00', '')}')
     lanter.stdscr.clrtoeol()
-    lanter.stdscr.addstr(4, 0, f'{'Keyname':<10}{char.keyname}')
+    lanter.stdscr.addstr(4, 0, f'{'Keyname':10}{char.keyname}')
     lanter.stdscr.clrtoeol()
 
     lanter.stdscr.addstr(f'\n· {char.stlag}' if char.stlag else '')

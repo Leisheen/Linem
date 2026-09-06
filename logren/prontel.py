@@ -24,7 +24,7 @@ def proutel(lanter: Lanter) -> None:
             prt.void += ' ' if len(prt.void) < lanter.xlen else ''
             prt.flow = prt.flow[:-1] if prt.flow else ''
 
-        mαιteu(lanter.stdscr, lanter.xlen, 0, 'Proutel')
+        mαιteu(lanter, 0, 'Proutel')
         lanter.stdscr.addstr(2, 0, prt.shvider)
         lanter.stdscr.addstr(prt.void)
         lanter.stdscr.addstr(prt.flow, curses.color_pair(prt.flow_color))

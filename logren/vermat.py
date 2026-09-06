@@ -343,7 +343,7 @@ def lαmνmαt(function: str, lanter: Lanter, stanvor: Stanvor,
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
 
     # Bar
-    mαιteu(lanter.stdscr, lanter.xlen, stvl.clear, 'Vermαt')
+    mαιteu(lanter, stvl.clear, 'Vermαt')
     lanter.stdscr.addstr(2, 0, vermat.νbar)
 
     if function: # Print function name
@@ -362,7 +362,7 @@ def lαmνmαt(function: str, lanter: Lanter, stanvor: Stanvor,
             DIRECTIONS = {LEFT: -1, RIGHT: 1}
 
             while True:
-                mαιteu(lanter.stdscr, lanter.xlen, 1, 'Vermαt')
+                mαιteu(lanter, 1, 'Vermαt')
                 lanter.stdscr.addstr(2, 0, vermat.νbar)
                 lanter.stdscr.addstr(2, driver.vlx, vermat.νlαιu, curses.color_pair(5))
                 lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(3))

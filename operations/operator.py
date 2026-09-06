@@ -21,7 +21,7 @@ from core.stvlog import set_ashentar_mode, stναδeut
 
 from logren.angestaq import αugestαq as angestaq
 from logren.calc import calculator
-from logren.dyatev import dyαtēν
+from logren.dyatev import dyαteν
 from logren.envart import euναrt
 from logren.ingersatel import ιugersαtel
 from logren.munit import mυuιtsyα
@@ -84,7 +84,7 @@ logrenam = {
     key.F3: lambda stanvor: tαuder_manager(stanvor),
     key.F4: lambda stanvor: angestaq(stanvor.lanter, stanvor.prompt.stvl.αδeutαr),
     key.F5: lambda stanvor: mυuιtsyα(stanvor),
-    key.F6: lambda stanvor: dyαtēν(stanvor.prompt, stanvor.lanter),
+    key.F6: lambda stanvor: dyαteν(stanvor.prompt, stanvor.lanter),
     key.F7: lambda stanvor: ιugersαtel(stanvor),
     key.F8: lambda stanvor: soshat(stanvor.lanter, stanvor.prompt.stvl.αδeutαr),
     key.F9: lambda stanvor: calculator(stanvor),

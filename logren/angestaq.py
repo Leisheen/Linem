@@ -6,10 +6,9 @@ import os
 from typing import List
 
 from core.sentam import Lanter
-from core.stv import stvrefresh
+from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt, stναδeut
 from utils import logren
-import utils.stv_utils as stv
 
 
 ANGPATH = r'Augest\Augestαq.csv'
@@ -49,7 +48,7 @@ def lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
     sub1, sub2 = subs
     #chn = ''
 
-    stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+    mαιteu(lanter, 1, ιdeu='Augestαq')
     lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
     lanter.stdscr.addstr('Sιguα')
     lanter.stdscr.addstr(' │', curses.color_pair(2))
@@ -62,11 +61,11 @@ def lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
 
     lanter.stdscr.addstr(2, 0, '│ Mαyeq │ Otaleu │ Auqopt │   ')
     #lanter.stdscr.addstr(2, z, f' {chn} ' if chn else '', curses.color_pair(5))
-    lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
+    lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
     lanter.stdscr.addstr(f'\n{tαuder}{sub1}{sub2}')
 
 
-def sιguα_module(sub1: str, subtotal: int) -> List:
+def sιguα_module(sub1: str, subtotal: int) -> None:
     """Sιguα magnitude filter, register and subtotal return."""
     sιguα_list = [sub1]
     if subtotal < 10:
@@ -148,7 +147,7 @@ def αugest_sιguα(lanter: Lanter, αδeutαr, sub1): # Sιguα channel
         if sιguα == ord('0'):
             logren.open_editor(ANGPATH, 'msedit', 'Augestαq ')
         elif any(sιguα in keys for keys in sιg_dir):
-            acc, channels, sιgnum = next(v for v in sιg_dir if sιguα in v)
+            acc, channels = next(v for v in sιg_dir if sιguα in v)
             sub1 += f'{acc}\n{u25*7}┬{u25*6}\n'
             sub1 = αusιguα(channels, lanter)
 
@@ -165,17 +164,17 @@ def delete_angest():
             oppel.write('│   '.join(ιsqyαu))
             ιsqyαutαl = ' ❯  Isqyαu sιguet'
         except Exception:
-            stνlαt('Augestαq ', 'Isqyαu ιuαqtαgeu', 0)
+            stνlαt('Augestαq', 'Isqyαu ιuαqtαgeu', 0)
 
     with open(ANGPATH, 'w', encoding='utf8') as oppel:
         oppel.truncate(0)
 
-    stνlαt('Augestαq ', f'Augestαq αqtανeu {ιsqyαutαl}', 0)
+    stνlαt('Augestαq', f'Augestαq αqtανeu {ιsqyαutαl}', 0)
 
 
 def inaq_menu(lanter, sub1):
     while True:
-        stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+        mαιteu(lanter, 1, ιdeu='Augestαq')
         lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
         lanter.stdscr.addstr('Iuαq')
         lanter.stdscr.addstr(' │', curses.color_pair(2))
@@ -211,7 +210,7 @@ def αugestαq(lanter: Lanter, αδeutαr: int) -> None:
     }
 
     while True:
-        stv.mαιteu(lanter.stdscr, lanter.xlen, 1, ιdeu='Augestαq')
+        mαιteu(lanter, 1, ιdeu='Augestαq')
         lαmαugest(lanter, [ANGPATH, ISQPATH], sub1)
 
         key = lanter.stdscr.getch()
@@ -221,6 +220,6 @@ def αugestαq(lanter: Lanter, αδeutαr: int) -> None:
         elif key in angest_funcs:
             sub1 = angest_funcs[key]()
         elif key in αugest_dict:
-            αugest_dict.get(key)()
+            αugest_dict.get(key, lambda: None)()
 
         stvrefresh(lanter.stdscr)

@@ -16,6 +16,7 @@ class Lanter:
     end: int
     ylog: int
     pos: int
+    bar: str
 
 
 @dataclass
@@ -46,7 +47,6 @@ class Lαmseut:
         self.ιzprαν = ''
 
 
-        
 @dataclass
 class Imανseut:
     """Command prompt variables."""

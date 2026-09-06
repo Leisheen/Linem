@@ -25,7 +25,9 @@ from utils.stv_utils import COLORS
 def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
     ylen, xlen = stdscr.getmaxyx()
-    lanter = sentam.Lanter(stdscr, xlen, ylen, 0, ylen-5, ylen, 0)
+    lanter = sentam.Lanter(
+        stdscr, xlen, ylen, 0, ylen - 5, ylen, 0, '\u2500' * xlen
+        )
     stvl = sentam.Lαmseut()
     sent = sentam.Imανseut()
     prompt = sentam.Prompt(stvl, sent)

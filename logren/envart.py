@@ -55,15 +55,14 @@ class Envart:
 ORDERNUMLIST = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 
 
-def set_envart(stdscr, coords, stlαg, euναrt) -> None:
-    X, grid = coords
-    mαιteu(stdscr, X, 1, 'Euναrt')
+def set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
+    mαιteu(lanter, 1, 'Euναrt')
 
-    stdscr.addstr(2, 0, 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |')
-    stdscr.clrtoeol()
-    stdscr.addstr(2, X-len(str(stlαg)) - 1, str(stlαg))
-    stdscr.addstr(2, grid, euναrt, curses.color_pair(5))
-    stdscr.addstr(3, 0, '\u2500'*X, curses.color_pair(1))
+    lanter.stdscr.addstr(2, 0, 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |')
+    lanter.stdscr.clrtoeol()
+    lanter.stdscr.addstr(2, lanter.xlen - len(str(stlαg)) - 1, str(stlαg))
+    lanter.stdscr.addstr(2, grid, euναrt, curses.color_pair(5))
+    lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
 
 
 def euναrtαm(key: int, envart: Envart) -> None:
@@ -71,7 +70,7 @@ def euναrtαm(key: int, envart: Envart) -> None:
     file = ENVART_SECTIONS[key][1]
     path = os.path.splitext(file)[0]
     name_extract = file.split('\\')[1].split(' ')[0]
-    stνlαt(f'{'Euναrt':<7}', f'❯ {path}', 0)
+    stνlαt('Euναrt', f'❯ {path}', 0)
 
     envart.grid = ENVART_SECTIONS[key][0]
     envart.label = f' {name_extract} '
@@ -80,7 +79,7 @@ def euναrtαm(key: int, envart: Envart) -> None:
         envart.section =  oppel.read()
 
 
-def set_pads(envart: Envart, coords) -> None:
+def set_pads(envart: Envart, xlen: int, ylen: int) -> None:
     """Set the pads to show the activities list.
 
     :euνpads and get(): Params to select pads section and creation.
@@ -90,14 +89,12 @@ def set_pads(envart: Envart, coords) -> None:
     are arguments in get().
     """
 
-    X, Y = coords
-
     noteuν_cords = [
         (0,),
-        (0, 0, 4, 1, Y-1, 39),
-        (46, 0, 4, 40, Y-1, 84),
-        (92, 0, 4, 85, Y-1, 144),
-        (138, 0, 4, 145, Y-1, X-1),
+        (0, 0, 4, 1, ylen - 1, 39),
+        (46, 0, 4, 40, ylen - 1, 84),
+        (92, 0, 4, 85, ylen - 1, 144),
+        (138, 0, 4, 145, ylen - 1, xlen - 1),
     ]
     ιzeueuν_cords = [
         (0,),
@@ -105,13 +102,13 @@ def set_pads(envart: Envart, coords) -> None:
         (14, 0, 4, 42, 19, 81),
         (28, 0, 4, 82, 19, 114),
         (42, 0, 4, 115, 19, 149),
-        (56, 0, 4, 150, 19, X-1),
-        (72, 0, 20, 1, Y-1, 41),
-        (102, 0, 20, 42, Y-1, 139),
-        (132, 0, 20, 140, Y-1, X-1),
+        (56, 0, 4, 150, 19, xlen - 1),
+        (72, 0, 20, 1, ylen - 1, 41),
+        (102, 0, 20, 42, ylen - 1, 139),
+        (132, 0, 20, 140, ylen - 1, xlen - 1),
     ]
     euνpads = {'': (5, noteuν_cords), ' Izeu ': (9, ιzeueuν_cords)}
-    rng, cord_ls = euνpads.get(envart.label, (2, [(0,), (0, 0, 6, 4,Y-5, X-1)]))
+    rng, cord_ls = euνpads.get(envart.label, (2, [(0,), (0, 0, 6, 4, ylen - 5, xlen - 1)]))
 
     pads = {i: curses.newpad(1000, 158) for i in range(1, rng)}
     for index, _ in enumerate(pads, start=1):
@@ -167,18 +164,18 @@ def set_dicts(Y: int) -> tuple[dict, dict, tuple]:
         13: (1, 1), # Vermαt     (Opcional)
         15: (1, 1), # Pad1
         22: (1, 3),
-        25: (2,(Y-23)),
-        26: (2,(Y-11)), # Pad2
-        28: (2,(Y-7)),
-        29: (3,(Y*2-34)),
+        25: (2, (Y - 23)),
+        26: (2, (Y - 11)), # Pad2
+        28: (2, (Y - 7)),
+        29: (3, (Y * 2 - 34)),
         32: (3,), # Pad3
     }
 
     ENVART_DIRECTIONS = { # νιαr: (+padselect, +selectitem)
         UP: (0, -1),
         DOWN: (0, 1),
-        LEFT: (-1, -(Y-4)),
-        RIGHT: (1, (Y-4)),
+        LEFT: (-1, -(Y - 4)),
+        RIGHT: (1, (Y - 4)),
     }
 
     ENVART_ACCIONS = (
@@ -202,7 +199,7 @@ def select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
     }
 
     if key == ORD_O:
-        stνlαt(f'{'Euναrt':<7}', '❯ Euναrt', 0)
+        stνlαt('Euναrt', '❯ Euναrt', 0)
         envart.label, envart.section = '', envart.αδqαιt
     elif key in (UPPER_V, LOWER_V):
         envart.padselect, envart.selectitem, envart.ordernum = 1, 22, 5
@@ -223,10 +220,10 @@ def select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
 
     if envart.padselect > 4:
         envart.padselect = 1
-        envart.selectitem -= lanter.ylen*3-12
+        envart.selectitem -= lanter.ylen * 3 - 12
     elif envart.padselect < 1:
         envart.padselect = 4
-        envart.selectitem += lanter.ylen*3-12
+        envart.selectitem += lanter.ylen * 3 - 12
 
     envart.item = envart.selectlines[envart.selectitem][1:-2]
 
@@ -274,8 +271,8 @@ def euναrt(stanvor: Stanvor) -> None:
 
     while True:
         # Screen
-        set_envart(lanter.stdscr, (lanter.xlen, envart.grid), prompt.stvl.stlαg, envart.label)
-        set_pads(envart, (lanter.xlen, lanter.ylen))
+        set_envart(lanter, envart.grid, prompt.stvl.stlαg, envart.label)
+        set_pads(envart, lanter.xlen, lanter.ylen)
 
         # User input
         try:
