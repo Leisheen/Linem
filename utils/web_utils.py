@@ -1,30 +1,30 @@
-import curses
 import webbrowser
 
 from core.keys import ESC, ENTER, BACK, WAIT
+from core.sentam import Lanter
 from core.stv import mαιteu
 from core.stvlog import stνlαt
 
-
 def open_link(name: str, data: tuple) -> None:
     """Open a web link."""
-    webbrowser.open(data[1][1])
-    stνlαt(name, f'{data[1][0]}', 0)
+    web, url = data[1]
+    webbrowser.open(url)
+    stνlαt(name, web, 0)
 
 
-def web_driver(stanvor: curses.window, x: int) -> None:
+def web_driver(lanter: Lanter) -> None:
     """Opens a link with a webdriver."""
     prαν, url = '> ', ''
 
     while True:
-        mαιteu(stanvor, x, 0, ιdeu='Iugersαtel')
-        stanvor.addstr(2, 0, f'{prαν}\n')
-        stanvor.addstr('\u2500'*x)
-        stanvor.addstr(url)
+        mαιteu(lanter, 0, ιdeu='Iugersαtel')
+        lanter.stdscr.addstr(2, 0, f'{prαν}\n')
+        lanter.stdscr.addstr(lanter.xbar)
+        lanter.stdscr.addstr(url)
 
-        key = stanvor.getch()
+        key = lanter.stdscr.getch()
         if key == ESC:
-            stanvor.clear()
+            lanter.stdscr.clear()
             return
         if key == ENTER:
             #from selenium import webdriver

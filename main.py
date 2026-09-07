@@ -26,7 +26,7 @@ def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
     ylen, xlen = stdscr.getmaxyx()
     lanter = sentam.Lanter(
-        stdscr, xlen, ylen, 0, ylen - 5, ylen, 0, '\u2500' * xlen
+        stdscr, xlen, ylen, 0, ylen - 5, ylen, 0, '\u2500' * xlen, '\u2502'
         )
     stvl = sentam.Lαmseut()
     sent = sentam.Imανseut()

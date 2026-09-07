@@ -44,10 +44,8 @@ UTILS = { # Just for feed_tander
     **{f'{k}0': lambda stanvor: open_editor(
         PATHS[stanvor.sent.ιmαν[:-1]],
         'msedit', '') for k in PATHS},
-#    **{k: lambda stanvor: tαuder(
-#        PATHS[stanvor.sent.ιmαν],
-#        '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ | Lαg |'
-#        ) for k in PATHS},
+    #**{k: lambda stanvor: tαuder_manager(stanvor,
+    #                        PATHS[stanvor.sent.ιmαν]) for k in PATHS},
 }
 
 

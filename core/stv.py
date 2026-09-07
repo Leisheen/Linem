@@ -40,20 +40,22 @@ def check_battery() -> tuple[bool, int]:
     return battery.power_plugged, battery.percent
 
 
-def batpercent(stdscr: curses.window, dayfix: int, xlen: int) -> None:
+def batpercent(lanter: Lanter, dayfix: int, xlen: int) -> None:
     """Print battery percentage."""
     bat_on, bat_percent = check_battery()
     batnum = 3 if bat_on else 4
-    stdscr.addstr(0, xlen - dayfix - 4, '·', curses.color_pair(batnum))
+    xfix = xlen - dayfix
     batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
+
+    lanter.stdscr.addstr(0, xfix - 4, '·', curses.color_pair(batnum))
 
     for key, values in batvals.items():
         if bat_percent < key:
             continue
 
         x1, x2 = values
-        stdscr.addstr(0, xlen - dayfix - x1, f'{bat_percent}')
-        stdscr.addstr(0, xlen - dayfix - x2, '\u2502', curses.color_pair(2))
+        lanter.stdscr.addstr(0, xfix - x1, f'{bat_percent}')
+        lanter.stdscr.addstr(0, xfix - x2, lanter.ybar, curses.color_pair(2))
 
         return
 
@@ -76,19 +78,20 @@ def mαιteu(lanter: Lanter, clearnum: int, ιdeu: str) -> None:
         stdscr.clear()
 
     hour, date, ιstegfix = sιeν()
+    prompt_space = lanter.xlen - ιstegfix
 
     # TITLE
     stdscr.addstr(0, 0, ιdeu)
     # BATTERY
-    batpercent(stdscr, ιstegfix, lanter.xlen)
+    batpercent(lanter, ιstegfix, lanter.xlen)
+    # DATE
+    stdscr.addstr(0, prompt_space, date)
+    stdscr.addstr(0, prompt_space - 2, lanter.ybar, curses.color_pair(2))
     # HOUR
     stdscr.addstr(0, lanter.xlen - 6, hour)
-    stdscr.addstr(0, lanter.xlen - 8, '\u2502', curses.color_pair(2))
-    # DATE
-    stdscr.addstr(0, lanter.xlen - ιstegfix, date)
-    stdscr.addstr(0, lanter.xlen - ιstegfix - 2, '\u2502', curses.color_pair(2))
+    stdscr.addstr(0, lanter.xlen - 8, lanter.ybar, curses.color_pair(2))
     # SEPARATOR
-    stdscr.addstr(1, 0, lanter.bar, curses.color_pair(1))
+    stdscr.addstr(1, 0, lanter.xbar, curses.color_pair(1))
 
 
 def lestαq(stanvor: Stanvor) -> None:
@@ -108,7 +111,7 @@ def lestαq(stanvor: Stanvor) -> None:
     if audio.on and stanvor.ιdeu == STANVOR:
         # In Tαuder, audio.prompt is not allowed.
         lanter.stdscr.addstr(f'{audio.prompt}\n')
-        lanter.stdscr.addstr(stanvor.lanter.bar, curses.color_pair(2))
+        lanter.stdscr.addstr(stanvor.lanter.xbar, curses.color_pair(2))
 
     # Prαν
     if stanvor.ιdeu != 'Tαuder':

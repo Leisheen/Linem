@@ -18,7 +18,7 @@ def print_color(stanvor: Stanvor) -> None:
     prompt.stvl.color_id, scr = set_color(color, lanter.xlen, lanter.ylen)
 
     while True:
-        mαιteu(lanter.stdscr, lanter.xlen, 0, 'Color')
+        mαιteu(lanter, 0, 'Color')
         lanter.stdscr.addstr(2, 0, scr, curses.color_pair(prompt.stvl.color_id))
 
         if lanter.stdscr.getch() in (ENTER, ESC):

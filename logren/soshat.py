@@ -82,7 +82,7 @@ def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
 
         soδᾱtmenu = f'Ideu: {ιdeu} │ Sναrt: {sναrt} │ '
         soδᾱtmenu += f'Imαν: {xmαν}.{ymαν} │ Seuαt: {xseuαt}.{yseuαt}'
-        mαιteu(lanter.stdscr, x, 0, ιdeu='Soδᾱt')
+        mαιteu(lanter, 0, ιdeu='Soδᾱt')
         lanter.stdscr.addstr(y-2, 0, '\u2500'*x, curses.color_pair(2))
         lanter.stdscr.addstr(y-1, 0, soδᾱtmenu)
 

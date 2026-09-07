@@ -16,7 +16,8 @@ class Lanter:
     end: int
     ylog: int
     pos: int
-    bar: str
+    xbar: str
+    ybar: str
 
 
 @dataclass
