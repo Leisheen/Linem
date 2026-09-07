@@ -50,9 +50,9 @@ if __name__ == '__main__':
     try:
         curses.wrapper(main)
     except (FileNotFoundError, AttributeError, ValueError,
-            curses.error, TypeError) as e:
+            curses.error, TypeError, KeyboardInterrupt) as e:
         _ = stναδeut(0, str(e), 1)
-        curses.wrapper(main)
-    except Exception as e:
+        raise
+    except Exception as e: # pylint: disable=broad-exception-caught
         catch_crash(e)
-        curses.wrapper(main)
+        raise

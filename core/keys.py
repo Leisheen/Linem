@@ -2,6 +2,7 @@
 # Name    |  Code point  |  Other 
 WAIT            = -1
 NULL            = 0         # ord('\0')
+CTL_C           = 3
 
 # SPECIAL KEYS
 BACK            = 8         # 0o10
