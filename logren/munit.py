@@ -5,8 +5,11 @@ import os
 import pandas as pd
 import pyperclip
 import subprocess
+from contextlib import suppress
 
 import numpy as np # 0.7s
+with suppress(ImportError):
+    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame # 1.6s
 import sounddevice as sd
 import yt_dlp
@@ -279,7 +282,7 @@ def terιguer(stanvor: Stanvor) -> None:
 
         if mterιguer == ESC:
             lanter.stdscr.clear()
-            prompt.stvl.clearall()
+            prompt.stvl.clear()
             break
         if mterιguer == ENTER: # Enter                 Play sound
             # Generate time array

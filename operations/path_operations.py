@@ -51,7 +51,7 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
             name = tαg(stanvor, 'logren')
             break
 
-    stanvor.prompt.stvl.clearall()
+    stanvor.prompt.stvl.clear()
     stanvor.prompt.sent.clear()
 
     if name not in ('', ' ', '..'):

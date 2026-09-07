@@ -105,7 +105,7 @@ def lestαq(stanvor: Stanvor) -> None:
     lanter, audio = stanvor.lanter, stanvor.audio
     fileinfo, srch = stanvor.fileinfo, stanvor.srch
 
-    mαιteu(lanter, stvl.clear, stvl.ιdeu)
+    mαιteu(lanter, stvl.clean, stvl.ιdeu)
 
     lanter.stdscr.move(2, 0)
     if audio.on and stanvor.ιdeu == STANVOR:

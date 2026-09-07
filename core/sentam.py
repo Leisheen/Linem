@@ -6,46 +6,74 @@ from dataclasses import dataclass, field, fields
 
 STANVOR = 'Stαuνor'
 
+
+COLORS = ( # Foreground | Background
+    (1,  curses.COLOR_BLUE, curses.COLOR_BLACK),
+    (2,  curses.COLOR_CYAN, curses.COLOR_BLACK),
+    (3,  curses.COLOR_GREEN, curses.COLOR_BLACK),
+    (4,  curses.COLOR_RED, curses.COLOR_BLACK),
+    (5,  curses.COLOR_WHITE, curses.COLOR_BLUE),
+    (6,  curses.COLOR_BLACK, curses.COLOR_CYAN),
+    (7,  curses.COLOR_MAGENTA, curses.COLOR_BLACK),
+    (8,  curses.COLOR_YELLOW, curses.COLOR_BLACK),
+    (9,  curses.COLOR_CYAN, curses.COLOR_BLUE),
+    (10, curses.COLOR_WHITE, curses.COLOR_BLACK),
+    (11, curses.COLOR_BLACK, curses.COLOR_RED),
+    (12, curses.COLOR_BLACK, curses.COLOR_WHITE),
+    (13, curses.COLOR_BLUE, curses.COLOR_CYAN),
+    (14, curses.COLOR_BLACK, curses.COLOR_BLUE), # Doesn't work
+)
+
+def get_screen(stdscr):
+    return stdscr.getmaxyx()
+
 @dataclass
 class Lanter:
     """Screen points."""
     stdscr: curses.window
-    xlen: int
-    ylen: int
-    start: int
-    end: int
-    ylog: int
-    pos: int
-    xbar: str
-    ybar: str
+    xlen: int = 0
+    ylen: int = 0
+    start: int = 0
+    end: int = 0
+    ylog: int = 0
+    pos: int = 0
+    xbar: str = ''
+    ybar: str = ''
+
+    @classmethod
+    def set_stanvor(cls, stdscr):
+        ylen, xlen = get_screen(stdscr)
+        return cls(
+            stdscr=stdscr,
+            xlen=xlen,
+            ylen=ylen,
+            start=0,
+            end=ylen-5,
+            ylog=ylen,
+            pos=0,
+            xbar='\u2500'*xlen,
+            ybar='\u2502'
+        )
 
 
 @dataclass
 class Lαmseut:
     """Stαuνor structure variables."""
-    clear: int = 0
+    clean: int = 0
     ιdeu: str = STANVOR
     prαν: str = ''
     log: str = ''
     υprαν: str = ''
     ιzprαν: str = ''
     stlαg: str = ''
-    color_id: int = 10
     αδeutαr: int = 1
+    color_id: int = 10
 
-    def clearall(self):
+    def clear(self):
         for f in fields(self):
             if f.name == 'αδeutαr':
                 continue
             setattr(self, f.name, f.default)
-
-    def reset_stanvor(self):
-        """This reset is the same as clearall."""
-        self.clear = 0
-        self.ιdeu = STANVOR
-        self.prαν = '' # If self.ιdeu == STANVOR, prαν must be empty.
-        self.log = '' # If self.prαν == STANVOR, log must be empty.
-        self.ιzprαν = ''
 
 
 @dataclass

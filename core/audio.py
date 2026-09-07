@@ -1,4 +1,7 @@
 import os
+from contextlib import suppress
+with suppress(ImportError):
+    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame
 
 from core.keys import (
