@@ -54,5 +54,6 @@ if __name__ == '__main__':
         _ = stναδeut(0, str(e), 1)
         raise
     except Exception as e: # pylint: disable=broad-exception-caught
+        # To handle Stαuνor unknown crashes. The crash is logged anyway.
         catch_crash(e)
         raise

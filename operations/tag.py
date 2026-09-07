@@ -7,7 +7,7 @@ import core.keys as key
 import utils.tander_utils as tander
 
 from core.audio import AUDIO_ACTIONS, drive_audio
-from core.sentam import Stanvor
+from core.sentam import Stanvor, Imανseut
 from core.stv import lestαq
 from core.stvlog import stναδeut
 from operations.commands import (
@@ -21,7 +21,7 @@ from utils.stv_utils import (
 from utils.tag_utils import line_limits, move_horizontal, move_vertical
 
 
-def tαg(stanvor: Stanvor, command: str, *args) -> str:
+def tαg(stanvor: Stanvor, command: str, *args) -> Imανseut:
     """This function is the input manager.
     It works for:
         - Tαuder:           tαuder          > add line
@@ -70,18 +70,19 @@ def tαg(stanvor: Stanvor, command: str, *args) -> str:
             tkey = lanter.stdscr.getch()
 
             if tkey in (key.ENTER, key.PADENTER):
-                return f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+                return sent
 
             if tkey == key.ESC:
                 if stanvor.ιdeu == 'Tαuder':
-                    tander.add_line(lanter.stdscr, stanvor.prompt, tlanter, tanvars)
+                    sent.ιmαν = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+                    tander.add_line(lanter.stdscr, stanvor.prompt, tanvars)
                     tanvars.active = False
 
                 lanter.stdscr.clear()
                 stvl.clear()
                 sent.clear()
 
-                return sent.ιmαν
+                return sent
 
             sent.ιmαν, tkey = check_globalkeys(sent.ιmαν, tkey, improl_dicts)
 

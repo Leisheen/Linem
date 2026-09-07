@@ -102,11 +102,12 @@ def logαt(command: str) -> tuple[str, str]:
 
 def set_logat(stanvor: Stanvor) -> None:
     """First menu in Logαt"""
-    prompt = stanvor.prompt
-    prompt.stvl.ιdeu = 'Logαt'
-    prompt.stvl.prαν = '│ Q │ X │ R │ K ❯ '
+    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl.ιdeu = 'Logαt'
+    stvl.prαν = '│ Q │ X │ R │ K ❯ '
 
-    logat_type = tαg(stanvor, 'Logαt')
+    sent = tαg(stanvor, 'Logαt')
+    logat_type = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
-    prompt.sent.ιmαν, prompt.stvl.stlαg = logαt(logat_type)
-    prompt.sent.uostιmαν = prompt.sent.αdιmαν = prompt.sent.ιmαν
+    sent.ιmαν, stvl.stlαg = logαt(logat_type)
+    sent.uostιmαν = sent.αdιmαν = sent.ιmαν
