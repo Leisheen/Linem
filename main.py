@@ -10,15 +10,14 @@ import os
 import os.path
 import sys
 from contextlib import suppress
-from typing import Callable
 with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 
 # Locals
 from core import sentam
-from core.stv import log, set_invash
+from core.stv import set_invash
 from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
-from operations.operator import logrenam, run_interface
+from operations.operator import run_interface
 from utils.stv_utils import COLORS
 
 
@@ -45,33 +44,7 @@ def main(stdscr: curses.window) -> None:
     for pair_id, fg, bg in COLORS:
         curses.init_pair(pair_id, fg, bg)
 
-
-    def app_manager(command: Callable, *args) -> None:
-        """App launcher module.
-        1. Clear the screen.
-        2. Print an app stamp in Stνlαt.
-        3. Launch the app.
-        4. Clear sent and srch.flist.
-        5. Print the list of files at the end if needed.
-        """
-
-        lanter.stdscr.clear()
-
-        comname = command.__name__
-        if command in logrenam.values() and comname not in ('ιuνor', '<lambda>'):
-            comname = comname.translate(str.maketrans({
-                'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'
-                })).replace('_manager', '').replace('cn', 'cu')
-            stνlαt(sentam.STANVOR, f'<{comname.upper()}>', 0)
-
-        command(*args)
-
-        srch.flist = []
-        prompt.sent.clear()
-
-        if logαm.stat:
-            log(stanvor)
-
+    # Here were all the code before
 
     lαmlιuem(sentam.STANVOR, lanter.xlen)
     stνlαt(sentam.STANVOR, '<|-LINEMAG-|>', 0)
@@ -86,7 +59,7 @@ def main(stdscr: curses.window) -> None:
     curses.curs_set(False)
     sys.stdout.write('\033[?25l')
 
-    run_interface(stanvor, app_manager)
+    run_interface(stanvor)
 
 
 if __name__ == '__main__':

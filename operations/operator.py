@@ -17,7 +17,7 @@ from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.sentam import STANVOR, Stanvor
 from core.stv import stvrefresh, lestαq, log, ιmtαu, logreu_select
-from core.stvlog import set_ashentar_mode, stναδeut
+from core.stvlog import set_ashentar_mode, stνlαt, stναδeut
 
 from logren.angestaq import αugestαq as angestaq
 from logren.calc import calculator
@@ -118,7 +118,34 @@ def open_file(command):
     os.startfile(f'"{command}"')
 
 
-def process_enter(stanvor: Stanvor, operations: dict, app_manager: Callable) -> None:
+def app_manager(command: Callable, stanvor: Stanvor) -> None:
+    """App launcher module.
+    1. Clear the screen.
+    2. Print an app stamp in Stνlαt.
+    3. Launch the app.
+    4. Clear sent and srch.flist.
+    5. Print the list of files at the end if needed.
+    """
+
+    stanvor.lanter.stdscr.clear()
+
+    comname = command.__name__
+    if command in logrenam.values() and comname not in ('ιuνor', '<lambda>'):
+        comname = comname.translate(str.maketrans({
+            'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'
+            })).replace('_manager', '').replace('cn', 'cu')
+        stνlαt(STANVOR, f'<{comname.upper()}>', 0)
+
+    command(stanvor)
+
+    stanvor.srch.flist = []
+    stanvor.prompt.sent.clear()
+
+    if stanvor.logαm.stat:
+        log(stanvor)
+
+
+def process_enter(stanvor: Stanvor, operations: dict) -> None:
     """Process input when the Enter key is pressed."""
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
@@ -179,7 +206,7 @@ def process_enter(stanvor: Stanvor, operations: dict, app_manager: Callable) -> 
     stanvor.logαm.nlog = 0
 
 
-def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
+def process_input(stanvor: Stanvor) -> None:
     """Process user input and handle various commands and key presses."""
     sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
     vsent, fileinfo = stanvor.vsent, stanvor.fileinfo
@@ -244,7 +271,7 @@ def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
         elif code in logrenam: # None
             app_manager(logrenam[code], stanvor)
         elif code in (key.ENTER, key.PADENTER): # None
-            process_enter(stanvor, operations, app_manager)
+            process_enter(stanvor, operations)
 
         elif code in (*sutils.PAD, *sutils.LOGPAD): # nlog
             sutils.loc_numkey(code, sent, stanvor.logαm)
@@ -268,7 +295,7 @@ def process_input(stanvor: Stanvor, app_manager: Callable) -> None:
         stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), STANVOR)
 
 
-def run_interface(stanvor: Stanvor, app_manager: Callable) -> None:
+def run_interface(stanvor: Stanvor) -> None:
     while True:
         stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
 
@@ -282,4 +309,4 @@ def run_interface(stanvor: Stanvor, app_manager: Callable) -> None:
         sutils.play_alarm(stanvor.alarm, stvl)
         lestαq(stanvor)
         sutils.lαmνerseut(stanvor.lanter, stanvor.vsent)
-        process_input(stanvor, app_manager)
+        process_input(stanvor)
