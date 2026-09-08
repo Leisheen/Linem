@@ -61,7 +61,7 @@ web_links = { # For euναrt and νermαt
     (key.UPPER_D, key.LOWER_D): ('Dyeναstαq', 'https://calendar.google.com/calendar/'),
     (key.UPPER_Q, key.LOWER_Q): ('Qαmpαr', 'https://www.google.com/maps'),
 }
-web_channels = { # For activities
+web_channels = { # For operator
     key.ALT_R: 'E', key.ALT_P: 'P', key.ALT_M: 'M', key.ALT_L: 'L'
 }
 

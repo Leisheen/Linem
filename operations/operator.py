@@ -153,7 +153,6 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
 
     # Clear fields
     sent.clear()
-    stvl.log
     #if not stvl.prαν:
     #    stvl.set_stanvor()
     stanvor.lanter.stdscr.clrtoeol()
@@ -205,6 +204,7 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
         msg, stnum = sutils.manage_command(command, operations, stanvor)
         stvlog.stνlαt(STANVOR, msg, stnum)
 
+    stvl.log = '❯ ' if stvl.prαν else ''
     stanvor.logαm.nlog = 0
 
 
