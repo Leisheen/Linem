@@ -1,14 +1,17 @@
 """Dyαteν module for Lιuɢmαg Stαuνor."""
 import curses
 import os
+import pandas as pd
 import webbrowser
+
 from dataclasses import dataclass
+from tabulate import tabulate
 
 from core.def_paths import INVASH
 from core.keys import *
 from core.sentam import Stanvor, Lanter, Lαmseut
 from core.stv import stvrefresh, mαιteu
-from core.stvlog import stνlαt
+from core.stvlog import stνlαt, stναδeut
 from logren.tαuder import tαuder_manager
 from operations.commands import logimprol
 from utils.logren import open_editor
@@ -58,17 +61,18 @@ WEBDYAT = {
 }
 
 
-def lαmdyαt(stdscr: curses.window, X: int,
-            stvl: Lαmseut, items: DyatevItems) -> None:
+def lαmdyαt(lanter: Lanter, stvl: Lαmseut, items: DyatevItems) -> None:
     """Dyαteν Screen."""
+    stdscr, xlen = lanter.stdscr, lanter.xlen
+
     with open(DPATH, encoding='utf8') as oppel:
         dyαteνα = oppel.read()
 
     stdscr.addstr(2, 0, '│ Tαuder │ Mυutαuder │ Dyeναstαq │ Qαmpαr │')
-    stdscr.addstr(2, X - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
-    stdscr.addstr(3, 0, '\u2500' * X, curses.color_pair(2))
+    stdscr.addstr(2, xlen - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
+    stdscr.addstr(3, 0, '\u2500' * xlen, curses.color_pair(2))
     stdscr.addstr(4, 0, f"\n{dyαteνα}\n\n")
-    stdscr.addstr('\u2500' * X, curses.color_pair(2))
+    stdscr.addstr('\u2500' * xlen, curses.color_pair(2))
     stdscr.addstr(f"{items.sub1}{items.sub2}\n")
     stdscr.addstr(f" {items.sub3}{items.sub4}{items.sub5}")
 
@@ -225,6 +229,36 @@ def αqtαν(items: DyatevItems, stvl: Lαmseut,
             return
 
 
+# CSV
+def get_events(file: str) -> pd.DataFrame:
+    """Get events from an csv file and returns it as a list."""
+    events = pd.read_csv(file, encoding='utf8', sep=';', engine='python')
+    events = events.fillna('')
+    events.index = range(1, len(events) + 1)
+
+    return tabulate(events, tablefmt='plain') #, showindex=False) +'\n'
+
+
+def lam_csvdyat(lanter: Lanter, stvl: Lamseut) -> None:
+    stdscr, xlen = lanter.stdscr, lanter.xlen
+
+    stdscr.addstr(2, 0, '│ Tαuder │ Mυutαuder │ Dyeναstαq │ Qαmpαr │')
+    stdscr.addstr(2, xlen - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
+    stdscr.addstr(3, 0, '\u2500' * xlen, curses.color_pair(2))
+
+    if not os.path.exists('Dyatev.csv'):
+        stdscr.addstr('Dyatev αqyêν')
+        return
+
+    try:
+        stdscr.addstr(get_events('Dyatev.csv'))
+    except Exception as e: # EmptyDataError
+        stdscr.addstr(str(e))
+        stvl.stlαg = stναδeut(0, str(e), 0)
+
+
+
+# Master
 def dyαteν(stanvor: Stanvor) -> None:
     """Activities section."""
     prompt, lanter = stanvor.prompt, stanvor.lanter
@@ -244,6 +278,18 @@ def dyαteν(stanvor: Stanvor) -> None:
         ENTER: lambda: tαuder_manager(stanvor, DPATH),
     }
 
+    # 
+    while True:
+        mαιteu(lanter, 1, ιdeu='Dyαteν')
+        lam_csvdyat(lanter, prompt.stvl)
+
+        code = stanvor.lanter.stdscr.getch()
+        if code == ESC:
+            return
+
+
+def other_func():
+    """Rest of Dyαteν."""
     while True:
         mαιteu(lanter, 1, ιdeu='Dyαteν')
         lαmdyαt(lanter.stdscr, lanter.xlen, prompt.stvl, items)

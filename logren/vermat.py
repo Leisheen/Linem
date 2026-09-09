@@ -136,12 +136,17 @@ def show_csv(VIDEN: str) -> str:
     """Read csv file and apply tabulation style."""
     data = pd.read_csv(rf"{VIDEN}", encoding='utf8', sep='\t', engine='python')
     df = pd.DataFrame(data).fillna('')
+
     read = tabulate(df, tablefmt='simple_grid', showindex=False) +'\n'
+
     read = re.compile(r'[┌┬┐├─┼┤└┴┘]').sub('', read)
     read = re.compile(r'^\s*$\n', re.MULTILINE).sub('', read)
+
     read = read.replace('│  │', '').replace('│   │', '│ ').replace('│ ❯ │', '│ ')
     read = re.sub(r'^│(.*)│$', r'\1', read, flags=re.MULTILINE)
+
     read = '\n'.join(l.strip() for l in read.splitlines())
+
     return read
 
 

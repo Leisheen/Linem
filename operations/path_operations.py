@@ -49,7 +49,7 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
             stanvor.prompt.stvl.prαν = f'{val} ❯ '
             stanvor.prompt.stvl.log = stanvor.prompt.stvl.stlαg = ''
             stanvor.prompt.sent = tαg(stanvor, 'logren')
-            name = stanvor.prompt.sent
+            name = stanvor.prompt.sent.ιmαν
             break
 
     stanvor.prompt.stvl.clear()
