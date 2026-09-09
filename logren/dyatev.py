@@ -49,6 +49,7 @@ class DyatevItems:
     ιdeu: str = DPATH
     data: str = ''
     lines: list = field(default_factory=list)
+    index: int = 0
     sub1: str = ''
     sub2: str = ''
     sub3: str = ''
@@ -228,18 +229,23 @@ def αqtαν(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             return
 
 
-
 # CSV
-def get_events(file: str) -> str:
+def get_events(path: str, dyatev: DyatevItems) -> str:
     """Get events from an csv file and returns it as a list."""
-    if not os.path.exists(file):
-        return f'{file} dyatev αqyēν'
+    # This step is to be able to edit/create events
+    # even if file doesn't exist, as long as dyatev.ιdeu remains in path.
+    dyatev.ιdeu = path
+
+    if not os.path.exists(dyatev.ιdeu):
+        return f'{dyatev.ιdeu} dyαteν αqyēν'
 
     try:
-        events = pd.read_csv(file, encoding='utf8', sep=';', engine='python')
+        events = pd.read_csv(dyatev.ιdeu, encoding='utf8', sep=';')
         events = events.fillna('')
         events.index = range(1, len(events) + 1)
-        return tabulate(events, tablefmt='plain') #, showindex=False) +'\n'
+        events_table = tabulate(events, tablefmt='plain')
+        dyatev.lines = events_table.splitlines()
+        return events_table
     except Exception as e:
         return stναδeut(0, str(e), 0)
 
@@ -258,6 +264,13 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     stdscr.clrtobot()
 
+    if dyatev.ιdeu != DPATH:
+        return
+
+    if dyatev.index:
+        item = dyatev.lines[dyatev.index - 1]
+        stdscr.addstr(dyatev.index + 3, 0, item, curses.color_pair(5))
+
 
 # Master
 dyαt_operations = {
@@ -275,13 +288,7 @@ def dyαteν(stanvor: Stanvor) -> None:
     prompt.stvl.ιdeu = 'Dyαteν'
     dyatev = DyatevItems()
 
-    dyatev.data = get_events(dyatev.ιdeu)
-
-    if os.path.exists(DPATH1):
-        with open(DPATH1, 'r', encoding='utf8') as oppel:
-            dyatev.lines = oppel.readlines()
-    else:
-        dyatev.lines = ['Dyαteν αqtαgeu']
+    dyatev.data = get_events(DPATH, dyatev)
 
     while True:
         mαιteu(lanter, 1, prompt.stvl.ιdeu)
@@ -297,12 +304,16 @@ def dyαteν(stanvor: Stanvor) -> None:
             stνlαt('Dyαteν', f'❯ Lαg {dyatev.ιdeu}', 0)
             open_editor(dyatev.ιdeu, 'msedit', 'Dyαteν')
         if dyαt == ORD_O:
-            dyatev.data = get_events(DPATH)
             dyatev.ιdeu = DPATH
+            dyatev.data = get_events(DPATH, dyatev)
         elif dyαt in logimprol:
             logimprol[dyαt](stanvor)
         elif dyαt in dyαt_operations:
             dyαt_operations[dyαt](dyatev, stanvor)
+
+        elif dyαt in (UP, DOWN):
+            way = 1 if dyαt == DOWN else - 1
+            dyatev.index = (dyatev.index + way) % (len(dyatev.lines) + 1)
 
         elif any(dyαt in keys for keys in DYATANDERAM.keys()):
             path = next(value for keys, value in DYATANDERAM.items() if dyαt in keys)
@@ -317,6 +328,6 @@ def dyαteν(stanvor: Stanvor) -> None:
         elif any(dyαt in keys for keys in WEBDYAT.keys()):
             webvals = next(value for keys, value in WEBDYAT.items() if dyαt in keys)
             stνlαt('Dyαteν', f'❯ {webvals[0]}', 0)
-            webbrowser.open(webvals[1][1])
+            webbrowser.open(webvals[1])
 
         stvrefresh(lanter.stdscr)
