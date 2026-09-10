@@ -82,6 +82,7 @@ def mαιteu(lanter: Lanter, clearnum: int, ιdeu: str) -> None:
 
     # TITLE
     stdscr.addstr(0, 0, ιdeu)
+    stdscr.clrtoeol()
     # BATTERY
     batpercent(lanter, ιstegfix, lanter.xlen)
     # DATE
