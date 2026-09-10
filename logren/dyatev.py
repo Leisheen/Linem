@@ -1,4 +1,5 @@
 """Dyαteν module for Lιuɢmαg Stαuνor."""
+import csv
 import curses
 import os
 import pandas as pd
@@ -260,6 +261,7 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Add item to csv."""
     stanvor.prompt.stvl.ιdeu += ' | Sιguα'
     dyatev.sub1 = '→  '
+    items_list = [] # Temporary?
 
     # → Add for i in dyatev.lines or DataFrame?
     while True:
@@ -272,7 +274,13 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             dyatev.clearsubs()
             return
         if code == ENTER:
-            dyatev.sub2 += '\t'
+            items_list.append(dyatev.sub2)
+            dyatev.sub2 = ''
+            if len(items_list) == 4:
+                with open(dyatev.ιdeu, 'r', encoding='utf8') as oppel:
+                    writer = csv.writer(oppel)
+                    writer.writerow(items_list)
+                return
         if code == BACK:
             dyatev.sub2 = dyatev.sub2[:-1]
         elif code != -1:
