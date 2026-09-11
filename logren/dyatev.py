@@ -132,6 +132,12 @@ def reset_dyatev(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     dyatev.data = get_events(DPATH, dyatev)
 
 
+def select_item(dyαt: int, dyatev: DyatevItems) -> int:
+    """Select item by tabs or up/down arrows."""
+    way = 1 if dyαt in (TAB, DOWN) else - 1
+    return (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
+
+
 # SIGNA
 def add_item(items_list: list, dyatev: DyatevItems) -> None:
     """Add item to event."""
@@ -170,16 +176,17 @@ def sιguα_menu(section: str, stamp: str, dyatev: DyatevItems,
 
         sιgnum = lanter.stdscr.getch()
         if sιgnum == ESC:
-            dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = ''
+            dyatev.clearsubs()
             return
 
         if sιgnum == ENTER:
             dyαt_sιguα(section, stamp, dyatev.line, DPATH1, DPATH2)
-            dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = dyatev.line = ''
+            dyatev.clearsubs()
+            dyatev.line = ''
             return
 
         if sιgnum == ORD_O:
-            dyatev.sub2 = dyatev.sub3 = ''
+            dyatev.clearsubs()
         elif sιgnum == BACK:
             dyatev.line = dyatev.line[:-1]
         elif sιgnum != WAIT:
@@ -211,7 +218,7 @@ def dyαt_sιguα_module(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
             αq = lanter.stdscr.getch()
             if αq == ENTER:
-                dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = ''
+                dyatev.clearsubs()
                 break
 
 
@@ -288,19 +295,19 @@ def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             reset_dyatev(dyatev, stanvor)
             break
         if dyαt == ORD_O:
-            dyatev.sub2 = dyatev.sub3 = ''
+            dyatev.clearsubs()
         elif dyαt == ENTER:
             change_item(dyatev, stanvor)
 
         elif dyαt in (SHF_TAB, UP, TAB, DOWN):
-            way = 1 if dyαt in (TAB, DOWN) else - 1
-            dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
+            dyatev.index = select_item(dyαt, dyatev)
 
         elif dyαt == BACK or dyαt != WAIT:
             dyatev.line = dyatev.line[:-1] if dyαt == BACK else f'{dyatev.line}{chr(dyαt)}'
             with open(DPATH1, encoding='utf8') as oppel:
                 dyatev.prompt_lines = oppel.readlines()
                 dyatev.sub3 = dyatev.prompt_lines[int(dyatev.line)-1]
+
     stνlαt('Dyαteν', '❯ Verqom', 0)
 
 
@@ -345,8 +352,7 @@ def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         if code == ORD_O:
             dyatev.index = 0
         elif code in (SHF_TAB, UP, TAB, DOWN):
-            way = 1 if code in (TAB, DOWN) else - 1
-            dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
+            dyatev.index = select_item(code, dyatev)
 
 
 # Master
@@ -393,9 +399,7 @@ def dyαteν(stanvor: Stanvor) -> None:
             reset_dyatev(dyatev, stanvor)
 
         elif dyαt in (SHF_TAB, UP, TAB, DOWN):
-            way = 1 if dyαt in (TAB, DOWN) else - 1
-            dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
-
+            dyatev.index = select_item(dyαt, dyatev)
         elif any(dyαt in keys for keys in DYATANDERAM.keys()):
             path = next(value for keys, value in DYATANDERAM.items() if dyαt in keys)
 
