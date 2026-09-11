@@ -51,10 +51,10 @@ class DyatevItems:
     data: str = ''
     lines: list = field(default_factory=list)
     index: int = 0
-    sub1: str = ''
-    sub2: str = ''
-    sub3: str = ''
-    sub4: str = ''
+    sub1: str = '' # pointer for item just in Signa
+    sub2: str = '' # Shows new item content in Signa
+    sub3: str = '' # pointer for user in Signa
+    sub4: str = '' # Shows user input
     sub5: str = ''
     line: str = ''
 
@@ -79,8 +79,10 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     stdscr.addstr(dyatev.data)
 
-    stdscr.addstr(f"\n{dyatev.sub1}{dyatev.sub2}\n")
-    stdscr.addstr(f" {dyatev.sub3}{dyatev.sub4}{dyatev.sub5}")
+    if dyatev.sub1:
+        stdscr.addstr(f"\n{lanter.xbar}")
+    stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}\n")
+    stdscr.addstr(f"{dyatev.sub3}{dyatev.sub4}{dyatev.sub5}")
 
     stdscr.clrtobot()
 
@@ -213,15 +215,22 @@ def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         lαmdyαt(lanter, stvl, dyatev)
 
         number = lanter.stdscr.getch()
-        if number in (ENTER, ESC):
-            if number == ENTER and numero <= len(dyatev.lines):
-                del dyatev.lines[numero-1]
-                with open(DPATH1, 'w', encoding='utf8') as oppel:
-                    oppel.writelines(dyatev.lines)
-                stνlαt('Dyαteν', f'❯ Iuαq │ {dyatev.sub3}', 0)
-            lanter.stdscr.move(0, 0)
-            dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = ''
-            break
+        if number == ESC:
+            reset_dyatev(dyatev, stanvor)
+            return
+
+        if number == ENTER:
+            if numero <= len(dyatev.lines):
+                deteled_item = dyatev.lines[numero-1]
+                stνlαt('Dyαteν', f'❯ Iuαq │ {str(deteled_item)}', 0)
+                del deteled_item
+
+                open(dyatev.ιdeu, 'w', encoding='utf8').close()
+                for event in dyatev.lines:
+                    add_event(event, dyatev)
+            reset_dyatev(dyatev, stanvor)
+            return
+
         if number == ORD_O:
             dyatev.sub1, dyatev.sub2, dyatev.sub3 = ': ', '', ''
         elif number != WAIT:
@@ -256,12 +265,37 @@ def αqtαν(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             return
 
 
-# New functions
+
+# -- NEW FUNCTIONS --
+
+# RESET
+def reset_dyatev(dyatev: DyatevItems, stanvor: Stanvor) -> None:
+    """Reset Dyαteν variables."""
+    stanvor.prompt.stvl.ιdeu = 'Dyαteν'
+    dyatev.clearsubs()
+    dyatev.data = get_events(DPATH, dyatev)
+
+
+# SIGNA
+def add_item(items_list: list, dyatev: DyatevItems) -> None:
+    """Add item to event."""
+    items_list.append(dyatev.sub2)
+    dyatev.sub2 = ''
+
+
+def add_event(event: list, dyatev: DyatevItems) -> None:
+    """Add event to csv."""
+    with open(dyatev.ιdeu, 'a', encoding='utf8') as oppel:
+        writer = csv.writer(oppel, delimiter=';')
+        writer.writerow(event)
+
+
 def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Add item to csv."""
     stanvor.prompt.stvl.ιdeu += ' | Sιguα'
     dyatev.sub1 = '→  '
-    items_list = [] # Temporary?
+    dyatev.sub3 = ':  '
+    items_list = []
 
     # → Add for i in dyatev.lines or DataFrame?
     while True:
@@ -270,21 +304,25 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         code = stanvor.lanter.stdscr.getch()
 
         if code == ESC:
-            stanvor.prompt.stvl.ιdeu = 'Dyαteν'
-            dyatev.clearsubs()
+            reset_dyatev(dyatev, stanvor)
             return
         if code == ENTER:
-            items_list.append(dyatev.sub2)
-            dyatev.sub2 = ''
-            if len(items_list) == 4:
-                with open(dyatev.ιdeu, 'r', encoding='utf8') as oppel:
-                    writer = csv.writer(oppel)
-                    writer.writerow(items_list)
-                return
+            items_list.append(dyatev.sub4)
+            dyatev.sub2 = '  '.join(items_list)
+            dyatev.sub4 = ''
+
+            if len(items_list) < 4:
+                continue # To skip adding '\n' in last elif
+
+            add_event(items_list, dyatev)
+
+            reset_dyatev(dyatev, stanvor)
+            return
+
         if code == BACK:
-            dyatev.sub2 = dyatev.sub2[:-1]
+            dyatev.sub4 = dyatev.sub4[:-1]
         elif code != -1:
-            dyatev.sub2 += chr(code)
+            dyatev.sub4 += chr(code)
 
 
 # CSV
@@ -325,10 +363,9 @@ dyαt_operations = {
 def dyαteν(stanvor: Stanvor) -> None:
     """Activities section."""
     stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
-    stvl.ιdeu = 'Dyαteν'
     dyatev = DyatevItems()
 
-    dyatev.data = get_events(DPATH, dyatev)
+    reset_dyatev(dyatev, stanvor)
 
     while True:
         stvl.clean = 1
