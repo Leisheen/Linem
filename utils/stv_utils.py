@@ -560,6 +560,7 @@ def tαuder_lαmνerseut(lanter: sentam.Lanter, vsent: sentam.Vseut,
         prompt_len = get_lengths(lash_versent, lash_uversent,
                                  versent_head, uversent_head, egen_len)[2]
 
+
     xpos = max(invort_len, lanter.xlen - prompt_len - 1)
     lanter.stdscr.move(lanter.ylen-1, xpos)
 
