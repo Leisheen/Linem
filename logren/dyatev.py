@@ -250,6 +250,30 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             dyatev.sub4 += chr(code)
 
 
+def change_item(dyatev: Dyatev, stanvor: Stanvor) -> None:
+    """Change item."""
+    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
+    dyatev.sub4 = '→ '
+
+    while True:
+        stvl.ιdeu = 'Dyαteν'
+        lαmdyαt(lanter, stvl, dyatev)
+        lanter.stdscr.addstr(2, 9, ' Verqōm ', curses.color_pair(5))
+
+        eudαμl = lanter.stdscr.getch()
+        if eudαμl == ESC:
+            reset_dyatev(dyatev, stanvor)
+            break
+        if eudαμl == ENTER:
+            dyatev.prompt_lines[dyatev.line - 1] = dyatev.sub5 + '\n'
+            reset_dyatev(dyatev, stanvor)
+            break
+        if eudαμl == BACK:
+            dyatev.sub5 = dyatev.sub5[:-1]
+        elif eudαμl != -1:
+            dyatev.sub5 += chr(eudαμl)
+
+
 # VERQOM
 def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
@@ -261,36 +285,23 @@ def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
         dyαt = lanter.stdscr.getch()
         if dyαt == ESC:
-            dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = ''
+            reset_dyatev(dyatev, stanvor)
             break
         if dyαt == ORD_O:
             dyatev.sub2 = dyatev.sub3 = ''
         elif dyαt == ENTER:
-            dyatev.sub4 = '→ '
+            change_item(dyatev, stanvor)
 
-            while True:
-                stvl.ιdeu = 'Dyαteν'
-                lαmdyαt(lanter, stvl, dyatev)
-                lanter.stdscr.addstr(2, 9, ' Verqōm ', curses.color_pair(5))
+        elif dyαt in (SHF_TAB, UP, TAB, DOWN):
+            way = 1 if dyαt in (TAB, DOWN) else - 1
+            dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
 
-                eudαμl = lanter.stdscr.getch()
-                if eudαμl == ESC:
-                    dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = dyatev.sub4 = dyatev.sub5 = ''
-                    break
-                if eudαμl == ENTER:
-                    dyatev.prompt_lines[dyatev.line - 1] = dyatev.sub5 + '\n'
-                    dyatev.sub1 = dyatev.sub2 = dyatev.sub3 = dyatev.sub4 = dyatev.sub5 = ''
-                    break
-                if eudαμl == ESC:
-                    dyatev.sub5 = dyatev.sub5[:-1]
-                elif eudαμl != -1:
-                    dyatev.sub5 += chr(eudαμl)
         elif dyαt == BACK or dyαt != WAIT:
             dyatev.line = dyatev.line[:-1] if dyαt == BACK else f'{dyatev.line}{chr(dyαt)}'
             with open(DPATH1, encoding='utf8') as oppel:
                 dyatev.prompt_lines = oppel.readlines()
                 dyatev.sub3 = dyatev.prompt_lines[int(dyatev.line)-1]
-        stνlαt('Dyαteν', '❯ Verqom', 0)
+    stνlαt('Dyαteν', '❯ Verqom', 0)
 
 
 # INAQ
@@ -312,10 +323,10 @@ def delete_event(dyatev: DyatevItems) -> None:
 
 def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
+    stvl.ιdeu = 'Dyαteν │ Iuαq'
     dyatev.color = 11
 
     while True:
-        stvl.ιdeu = 'Dyαteν │ Iuαq'
         lαmdyαt(lanter, stvl, dyatev)
 
         code = lanter.stdscr.getch()
@@ -338,36 +349,16 @@ def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
 
 
-def αqtαν(dyatev: DyatevItems, stanvor: Stanvor) -> None:
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
-
-    dyatev.sub1 = 'Seνdαl uα Dyαteν αqtαν ?'
-
-    while True:
-        lαmdyαt(lanter, stvl, dyatev)
-        lanter.stdscr.addstr(0, 7, '│ Aqtαν')
-
-        number = lanter.stdscr.getch()
-        if number == ENTER:
-            with open(DPATH1, 'w', encoding='utf8') as oppel:
-                oppel.truncate(0)
-
-        if number in (ENTER, ESC):
-            dyatev.sub1 = ''
-            mαιteu(lanter, 0, ιdeu='Dyαteν')
-            return
-
-
 # Master
 dyαt_operations = {
-    DEL: lambda dyatev, stanvor: ιuαq(dyatev, stanvor),
-    BACK: lambda dyatev, stanvor: ιuαq(dyatev, stanvor),
-    MINUS: lambda dyatev, stanvor: ιuαq(dyatev, stanvor),
-    COMMA: lambda dyatev, stanvor: νerqom(dyatev, stanvor),
-    PADPLUS: lambda dyatev, stanvor: sιguα(dyatev, stanvor),
-    UNDERSCORE: lambda dyatev, stanvor: αqtαν(dyatev, stanvor),
-    POINT: lambda dyatev, stanvor: dyαt_sιguα_module(dyatev, stanvor),
-    ENTER: lambda dyatev, stanvor: tαuder_manager(stanvor, dyatev.ιdeu)
+    DEL: ιuαq,
+    MINUS: ιuαq,
+    BACK: νerqom,
+    COMMA: νerqom,
+    ENTER: sιguα,
+    PADPLUS: sιguα,
+    POINT: dyαt_sιguα_module,
+    PADENTER: lambda dyatev, stanvor: tαuder_manager(stanvor, dyatev.ιdeu)
                     #if dyatev.ιdeu != DPATH else None,
 }
 
@@ -399,6 +390,7 @@ def dyαteν(stanvor: Stanvor) -> None:
             logimprol[dyαt](stanvor)
         elif dyαt in dyαt_operations:
             dyαt_operations[dyαt](dyatev, stanvor)
+            reset_dyatev(dyatev, stanvor)
 
         elif dyαt in (SHF_TAB, UP, TAB, DOWN):
             way = 1 if dyαt in (TAB, DOWN) else - 1
