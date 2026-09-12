@@ -209,4 +209,7 @@ SUP             = 547       # ord('ȣ') / curses.KEY_SUP
 SDOWN           = 547       # ord('Ȥ') / curses.KEY_SDOWN
 
 MAC_GREEKU      = 8191      # ord('ῡ')
-VERTICAL_SEP    = 9474      # ord('│')
+
+# SEPARATORS
+HSEP            = 9472      # ord('─') / '\u2500' / curses.HORIZONTAL_SEP ?
+VSEP            = 9474      # ord('│') / '\u2505' / curses.VERTICAL_SEP ?

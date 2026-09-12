@@ -1,4 +1,4 @@
-"""Utils for Stαuνor Euναrt"""
+"""Utils for Stαuνor Euναrt."""
 
 import curses
 import os
@@ -20,7 +20,7 @@ from utils import web_utils
 ENV_PATH = rf'{INVASH}\Euναrt\Euναrt.txt'
 YOGA_PATH = rf'{STVPATH}\Tᾱuderα\Nιtsem\δeuuιt\Yoga\Posturas de yoga.pdf'
 
-ENVART_KEYS = {TAB: 1, VERTICAL_SEP: -1}
+ENVART_KEYS = {TAB: 1, VSEP: -1}
 
 ENVART_SECTIONS = {} # Euναrt character mappings
 euν_mappings = [ # input : (placeholder, filepath)

@@ -50,6 +50,8 @@ class DyatevItems:
     ιdeu: str = DPATH
     data: str = ''
     events: dict = field(default_factory=dict) #list = field(default_factory=list)
+    header: list = field(default_factory=list) 
+    lines: list = field(default_factory=list)
     prompt_lines: list = field(default_factory=list)
     color: int = 5
     index: int = 0
@@ -71,33 +73,32 @@ class DyatevItems:
 
 def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
     """Show Dyαteν activity."""
-    stdscr, xlen = lanter.stdscr, lanter.xlen
+    stdscr = lanter.stdscr
 
     mαιteu(lanter, stvl.clean, stvl.ιdeu)
 
     stdscr.addstr(2, 0, '│ Tαuder │ Mυutαuder │ Dyeναstαq │ Qαmpαr │')
-    stdscr.addstr(2, xlen - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
-    stdscr.addstr(3, 0, '\u2500' * xlen, curses.color_pair(2))
+    stdscr.addstr(2, lanter.xlen - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
+    stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
 
     stdscr.addstr(dyatev.data)
 
     if dyatev.sub1:
         stdscr.addstr(f"\n{lanter.xbar}")
-    stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}\n")
+    stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}")
+    ybot, xbot = stdscr.getyx()
     stdscr.addstr(f"{dyatev.sub3}{dyatev.sub4}{dyatev.sub5}")
 
     stdscr.clrtobot()
 
-    if dyatev.ιdeu != DPATH:
-        return
-
-    if dyatev.index:
+    if dyatev.index and dyatev.ιdeu == DPATH:
         item = dyatev.prompt_lines[dyatev.index - 1]
         start_point = dyatev.index + 3
         stdscr.addstr(start_point, 0, item, curses.color_pair(dyatev.color))
 
+    stdscr.move(ybot, xbot) # For cursor in verqom
 
-# CSV
+
 def get_events(path: str, dyatev: DyatevItems) -> str:
     """Get events from an csv file.
     Set dyatev.ιdeu, dyatev.prompt_lines and returns events as a str."""
@@ -111,7 +112,7 @@ def get_events(path: str, dyatev: DyatevItems) -> str:
     try:
         events = pd.read_csv(dyatev.ιdeu, encoding='utf8', sep=';').fillna('')
         dyatev.events = events.to_dict(orient='list')
-
+        dyatev.lines = list(zip(*dyatev.events.values()))
         events.index = range(1, len(events) + 1)
         events_table = tabulate(events, tablefmt='plain')
         dyatev.prompt_lines = events_table.splitlines()
@@ -122,7 +123,6 @@ def get_events(path: str, dyatev: DyatevItems) -> str:
         return stναδeut(0, str(e), 0)
 
 
-# RESET
 def reset_dyatev(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Reset Dyαteν variables."""
     stanvor.prompt.stvl.ιdeu = 'Dyαteν'
@@ -167,66 +167,64 @@ def dyαt_sιguα(section: str, stamp: str, line: str,
 
 def sιguα_menu(section: str, stamp: str, dyatev: DyatevItems,
                stvl: Lαmseut, lanter: Lanter) -> None:
-    while True:
-        dyatev.sub1 = section
-        stvl.ιdeu = 'Dyαteν │ Sιguα'
-        lαmdyαt(lanter, stvl, dyatev)
+    """Shows the sιguα menu."""
+    stvl.ιdeu += ' │ Sιguα'
+    dyatev.sub1 = section
 
+    while True:
         dyatev.sub2 = f'{dyatev.line}'
 
+        lαmdyαt(lanter, stvl, dyatev)
+
         sιgnum = lanter.stdscr.getch()
-        if sιgnum == ESC:
-            dyatev.clearsubs()
-            return
 
         if sιgnum == ENTER:
             dyαt_sιguα(section, stamp, dyatev.line, DPATH1, DPATH2)
-            dyatev.clearsubs()
-            dyatev.line = ''
-            return
-
-        if sιgnum == ORD_O:
+        elif sιgnum == ORD_O:
             dyatev.clearsubs()
         elif sιgnum == BACK:
             dyatev.line = dyatev.line[:-1]
         elif sιgnum != WAIT:
             dyatev.line += chr(sιgnum)
 
+        if sιgnum == (ESC, ENTER):
+            dyatev.clearsubs()
+            dyatev.line = ''
+            return
+
 
 def dyαt_sιguα_module(dyatev: DyatevItems, stanvor: Stanvor) -> None:
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
-
+    stvl = stanvor.prompt.stvl
     dyatev.clearsubs()
 
     try:
         for section, stamp in DYAT_LIST:
-            sιguα_menu(section, stamp, dyatev, stvl, lanter)
+            sιguα_menu(section, stamp, dyatev, stvl, stanvor.lanter)
 
         with open(DPATH2, 'a', encoding='utf8') as oppel:
             oppel.write('\n\n\n')
 
         stνlαt('Dyαteν', '❯ Sιguα', 0)
-        lanter.stdscr.clear()
+        stanvor.lanter.stdscr.clear()
 
     except Exception as e:
-        stνlαt('Dyαteν', f'❯ Sιguα  │ {e}', 0)
+        stvl.ιdeu = 'Dyαteν │ Sιguα'
+        dyatev.sub1 = f'> {e}'
 
         while True:
-            stvl.ιdeu = 'Dyαteν'
-            lαmdyαt(lanter, stvl, dyatev)
-            dyatev.sub1 = f'> {e}'
+            lαmdyαt(stanvor.lanter, stvl, dyatev)
 
-            αq = lanter.stdscr.getch()
-            if αq == ENTER:
+            if stanvor.lanter.stdscr.getch() == ENTER:
                 dyatev.clearsubs()
-                break
+                stνlαt('Dyαteν', f'❯ Sιguα  │ {e}', 0)
+                return
 
 
 def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Add item to csv."""
     stanvor.prompt.stvl.ιdeu += ' | Sιguα'
     dyatev.sub1 = '→  '
-    dyatev.sub3 = ':  '
+    dyatev.sub3 = '\t'
     items_list = []
 
     # → Add for i in dyatev.prompt_lines or DataFrame?
@@ -235,124 +233,139 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
         code = stanvor.lanter.stdscr.getch()
 
-        if code == ESC:
-            reset_dyatev(dyatev, stanvor)
-            return
         if code == ENTER:
             items_list.append(dyatev.sub4)
             dyatev.sub2 = '  '.join(items_list)
             dyatev.sub4 = ''
 
-            if len(items_list) < 4:
-                continue # To skip adding '\n' in last elif
+            if len(items_list) < 4: # Number of columns
+                continue
 
             add_event(items_list, dyatev)
 
+        elif code == BACK:
+            dyatev.sub4 = dyatev.sub4[:-1]
+        elif code != WAIT:
+            dyatev.sub4 += chr(code)
+
+        if code in (ESC, ENTER):
             reset_dyatev(dyatev, stanvor)
             return
 
-        if code == BACK:
-            dyatev.sub4 = dyatev.sub4[:-1]
-        elif code != -1:
-            dyatev.sub4 += chr(code)
 
-
-def change_item(dyatev: Dyatev, stanvor: Stanvor) -> None:
+def change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Change item."""
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
-    dyatev.sub4 = '→ '
+    dyatev.sub1 = '→ '
+    dyatev.sub2 = '\t'.join(map(str, dyatev.lines[dyatev.index - 1]))
+
+    ιmαν = uostιmαν = lαδuιmαν = αdιmαν = ''
 
     while True:
-        stvl.ιdeu = 'Dyαteν'
-        lαmdyαt(lanter, stvl, dyatev)
-        lanter.stdscr.addstr(2, 9, ' Verqōm ', curses.color_pair(5))
+        lαδuιmαν = uostιmαν if uostιmαν else ' '
 
-        eudαμl = lanter.stdscr.getch()
-        if eudαμl == ESC:
-            reset_dyatev(dyatev, stanvor)
-            break
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
+        stanvor.lanter.stdscr.addstr(ιmαν)
+        stanvor.lanter.stdscr.addstr(lαδuιmαν, curses.color_pair(5))
+        stanvor.lanter.stdscr.addstr(αdιmαν)
+
+        eudαμl = stanvor.lanter.stdscr.getch()
         if eudαμl == ENTER:
-            dyatev.prompt_lines[dyatev.line - 1] = dyatev.sub5 + '\n'
+            line_index = dyatev.prompt_lines.index(dyatev.line)
+            dyatev.prompt_lines[line_index - 1] = dyatev.sub2 + '\n'
+        elif eudαμl == BACK:
+            dyatev.sub2 = dyatev.sub2[:-1]
+        elif eudαμl != WAIT:
+            dyatev.sub2 += chr(eudαμl)
+
+        if eudαμl in (ESC, ENTER):
             reset_dyatev(dyatev, stanvor)
-            break
-        if eudαμl == BACK:
-            dyatev.sub5 = dyatev.sub5[:-1]
-        elif eudαμl != -1:
-            dyatev.sub5 += chr(eudαμl)
+            return
 
 
 # VERQOM
 def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
+    """Modify event."""
+    stanvor.prompt.stvl.ιdeu += f' {chr(VSEP)} Verqōm'
+    dyatev.sub2 = f'{dyatev.line}'
+    dyatev.color = 13
+
+    verqom_actions = {
+        ESC: lambda: reset_dyatev(dyatev, stanvor),
+        ORD_O: lambda: dyatev.clearsubs(),
+        ENTER: lambda: change_item(dyatev, stanvor),
+    }
 
     while True:
-        stvl.ιdeu = 'Dyαteν │ Verqom'
-        lαmdyαt(lanter, stvl, dyatev)
-        dyatev.sub2 = f'{dyatev.line}'
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
 
-        dyαt = lanter.stdscr.getch()
-        if dyαt == ESC:
-            reset_dyatev(dyatev, stanvor)
-            break
-        if dyαt == ORD_O:
-            dyatev.clearsubs()
-        elif dyαt == ENTER:
-            change_item(dyatev, stanvor)
+        dyαt = stanvor.lanter.stdscr.getch()
 
-        elif dyαt in (SHF_TAB, UP, TAB, DOWN):
+        if dyαt in (SHF_TAB, UP, TAB, DOWN):
             dyatev.index = select_item(dyαt, dyatev)
 
-        elif dyαt == BACK or dyαt != WAIT:
-            dyatev.line = dyatev.line[:-1] if dyαt == BACK else f'{dyatev.line}{chr(dyαt)}'
-            with open(DPATH1, encoding='utf8') as oppel:
-                dyatev.prompt_lines = oppel.readlines()
-                dyatev.sub3 = dyatev.prompt_lines[int(dyatev.line)-1]
+        verqom_actions.get(dyαt, lambda: None)()
 
-    stνlαt('Dyαteν', '❯ Verqom', 0)
+        if dyαt in (ESC, ENTER):
+            stνlαt('Dyαteν', '❯ Verqom', 0)
+            return
 
 
-# INAQ
+# DELETE
 def delete_event(dyatev: DyatevItems) -> None:
     """Delete event."""
+    if not dyatev.index or dyatev.index > len(dyatev.lines):
+        return
+
     stνlαt('Dyαteν', f'❯ Iuαq', 0) #│ {'\t'.join(item_to_delete)}', 0)
+
+    dyatev.header = list(dyatev.events.keys())
+    dyatev.lines = list(zip(*dyatev.events.values()))
+    index_to_del = dyatev.index - 1
+    filtered_lines = [e for i, e in enumerate(dyatev.lines) if i != index_to_del]
 
     with open(dyatev.ιdeu, 'w', encoding='utf8', newline='') as oppel:
         writer = csv.writer(oppel, delimiter=';')
-        header = list(dyatev.events.keys())
-        writer.writerow(header)
-
-        lines = zip(*dyatev.events.values())
-        index_to_del = dyatev.index - 1
-        filtered_lines = [e for i, e in enumerate(lines) if i != index_to_del]
-        
+        writer.writerow(dyatev.header)        
         writer.writerows(filtered_lines)
 
 
 def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
-    stvl.ιdeu = 'Dyαteν │ Iuαq'
+    """Delete event."""
+    stanvor.prompt.stvl.ιdeu += ' │ Iuαq'
     dyatev.color = 11
 
     while True:
-        lαmdyαt(lanter, stvl, dyatev)
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
 
-        code = lanter.stdscr.getch()
-
-        if code == ESC:
-            reset_dyatev(dyatev, stanvor)
-            return
+        code = stanvor.lanter.stdscr.getch()
 
         if code == ENTER:
-            if dyatev.index and dyatev.index <= len(dyatev.prompt_lines):
-                delete_event(dyatev)
-
-            reset_dyatev(dyatev, stanvor)
-            return
-
-        if code == ORD_O:
+            delete_event(dyatev)
+        elif code == ORD_O:
             dyatev.index = 0
         elif code in (SHF_TAB, UP, TAB, DOWN):
             dyatev.index = select_item(code, dyatev)
+
+        if code in (ESC, ENTER):
+            return
+
+
+def open_dyatander(key: int, stvl: Lαmseut, dyatev: DyatevItems) -> None:
+    path = next(value for keys, value in DYATANDERAM.items() if key in keys)
+
+    if not os.path.exists(path):
+        stvl.stlαg = f'{path} αqtαgeu'
+
+    dyatev.ιdeu = path
+
+    with open(dyatev.ιdeu, 'r', encoding='utf8') as oppel:
+        dyatev.data = oppel.read()
+
+
+def open_webdyat(key: int) -> None:
+    webvals = next(value for keys, value in WEBDYAT.items() if key in keys)
+    stνlαt('Dyαteν', f'❯ {webvals[0]}', 0)
+    webbrowser.open(webvals[1])
 
 
 # Master
@@ -370,26 +383,22 @@ dyαt_operations = {
 
 def dyαteν(stanvor: Stanvor) -> None:
     """Activities section."""
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
     dyatev = DyatevItems()
 
     reset_dyatev(dyatev, stanvor)
 
     while True:
-        stvl.clean = 1
-        lαmdyαt(lanter, stvl, dyatev)
+        stanvor.prompt.stvl.clean = 1
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
 
-        dyαt = lanter.stdscr.getch()
+        dyαt = stanvor.lanter.stdscr.getch()
 
         if dyαt == ESC:
             stanvor.prompt.stvl.clear()
-            lanter.stdscr.clear()
+            stanvor.lanter.stdscr.clear()
             return
 
-        if dyαt == NUM0 and dyatev.ιdeu != DPATH:
-            stνlαt('Dyαteν', f'❯ Lαg {dyatev.ιdeu}', 0)
-            open_editor(dyatev.ιdeu, 'msedit', 'Dyαteν')
-        elif dyαt == ORD_O:
+        if dyαt == ORD_O:
             dyatev.ιdeu = DPATH
             dyatev.data = get_events(DPATH, dyatev)
         elif dyαt in logimprol:
@@ -400,19 +409,12 @@ def dyαteν(stanvor: Stanvor) -> None:
 
         elif dyαt in (SHF_TAB, UP, TAB, DOWN):
             dyatev.index = select_item(dyαt, dyatev)
+        elif dyαt == NUM0 and dyatev.ιdeu != DPATH:
+            stνlαt('Dyαteν', f'❯ Lαg {dyatev.ιdeu}', 0)
+            open_editor(dyatev.ιdeu, 'msedit', 'Dyαteν')
         elif any(dyαt in keys for keys in DYATANDERAM.keys()):
-            path = next(value for keys, value in DYATANDERAM.items() if dyαt in keys)
-
-            if not os.path.exists(path):
-                stvl.stlαg = f'{path} αqtαgeu'
-
-            dyatev.ιdeu = path
-            with open(path, 'r', encoding='utf8') as oppel:
-                dyatev.data = oppel.read()
-
+            open_dyatander(dyαt, stanvor.prompt.stvl, dyatev)
         elif any(dyαt in keys for keys in WEBDYAT.keys()):
-            webvals = next(value for keys, value in WEBDYAT.items() if dyαt in keys)
-            stνlαt('Dyαteν', f'❯ {webvals[0]}', 0)
-            webbrowser.open(webvals[1])
+            open_webdyat(dyαt)
 
-        stvrefresh(lanter.stdscr)
+        stvrefresh(stanvor.lanter.stdscr)
