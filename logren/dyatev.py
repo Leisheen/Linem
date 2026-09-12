@@ -47,6 +47,7 @@ WEBDYAT = {
 
 @dataclass
 class DyatevItems:
+    section: str = 'Improl'
     ιdeu: str = DPATH
     data: str = ''
     events: dict = field(default_factory=dict) #list = field(default_factory=list)
@@ -61,6 +62,10 @@ class DyatevItems:
     sub4: str = '' # Shows user input
     sub5: str = ''
     line: str = ''
+    ιmαν: str = ''
+    uostιmαν: str = ''
+    αdιmαν: str = ''
+    lαδuιmαν: str = ''
 
     def clearsubs(self):
         self.sub1: str = ''
@@ -69,6 +74,12 @@ class DyatevItems:
         self.sub4: str = ''
         self.sub5: str = ''
         #self.line: str = ''
+
+    def clearprompt(self):
+        self.ιmαν: str = ''
+        self.uostιmαν: str = ''
+        self.αdιmαν: str = ''
+        self.lαδuιmαν: str = ''
 
 
 def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
@@ -86,7 +97,8 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
     if dyatev.sub1:
         stdscr.addstr(f"\n{lanter.xbar}")
     stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}")
-    ybot, xbot = stdscr.getyx()
+    if dyatev.section == 'Verqom':
+        ybot, xbot = stdscr.getyx()
     stdscr.addstr(f"{dyatev.sub3}{dyatev.sub4}{dyatev.sub5}")
 
     stdscr.clrtobot()
@@ -96,7 +108,12 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
         start_point = dyatev.index + 3
         stdscr.addstr(start_point, 0, item, curses.color_pair(dyatev.color))
 
-    stdscr.move(ybot, xbot) # For cursor in verqom
+    if dyatev.section == 'Verqom':
+        stdscr.move(ybot, xbot) # For cursor in verqom
+
+    stdscr.addstr(dyatev.ιmαν)
+    stdscr.addstr(dyatev.lαδuιmαν, curses.color_pair(5))
+    stdscr.addstr(dyatev.αdιmαν)
 
 
 def get_events(path: str, dyatev: DyatevItems) -> str:
@@ -111,8 +128,11 @@ def get_events(path: str, dyatev: DyatevItems) -> str:
 
     try:
         events = pd.read_csv(dyatev.ιdeu, encoding='utf8', sep=';').fillna('')
+
         dyatev.events = events.to_dict(orient='list')
+        dyatev.header = list(dyatev.events.keys())
         dyatev.lines = list(zip(*dyatev.events.values()))
+
         events.index = range(1, len(events) + 1)
         events_table = tabulate(events, tablefmt='plain')
         dyatev.prompt_lines = events_table.splitlines()
@@ -123,12 +143,22 @@ def get_events(path: str, dyatev: DyatevItems) -> str:
         return stναδeut(0, str(e), 0)
 
 
+def save_events(dyatev: DyatevItems) -> None:
+    """Save all the events."""
+    with open(dyatev.ιdeu, 'w', encoding='utf8', newline='') as oppel:
+        writer = csv.writer(oppel, delimiter=';')
+        writer.writerow(dyatev.header)        
+        writer.writerows(dyatev.lines)
+
+
 def reset_dyatev(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Reset Dyαteν variables."""
     stanvor.prompt.stvl.ιdeu = 'Dyαteν'
+    dyatev.section = 'Improl'
     dyatev.color = 5
     dyatev.index = 0
     dyatev.clearsubs()
+    dyatev.clearprompt()
     dyatev.data = get_events(DPATH, dyatev)
 
 
@@ -222,13 +252,15 @@ def dyαt_sιguα_module(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
 def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Add item to csv."""
+    dyatev.section = 'Sιguα'
     stanvor.prompt.stvl.ιdeu += ' | Sιguα'
     dyatev.sub1 = '→  '
-    dyatev.sub3 = '\t'
+    dyatev.sub3 = '  '
     items_list = []
 
     # → Add for i in dyatev.prompt_lines or DataFrame?
     while True:
+        dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
         lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
 
         code = stanvor.lanter.stdscr.getch()
@@ -245,6 +277,8 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
         elif code == BACK:
             dyatev.sub4 = dyatev.sub4[:-1]
+        elif code in (LEFT, RIGHT):
+            pass
         elif code != WAIT:
             dyatev.sub4 += chr(code)
 
@@ -253,25 +287,23 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             return
 
 
+# VERQOM
 def change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Change item."""
     dyatev.sub1 = '→ '
     dyatev.sub2 = '\t'.join(map(str, dyatev.lines[dyatev.index - 1]))
 
-    ιmαν = uostιmαν = lαδuιmαν = αdιmαν = ''
-
     while True:
-        lαδuιmαν = uostιmαν if uostιmαν else ' '
+        dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
 
         lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
-        stanvor.lanter.stdscr.addstr(ιmαν)
-        stanvor.lanter.stdscr.addstr(lαδuιmαν, curses.color_pair(5))
-        stanvor.lanter.stdscr.addstr(αdιmαν)
 
         eudαμl = stanvor.lanter.stdscr.getch()
         if eudαμl == ENTER:
-            line_index = dyatev.prompt_lines.index(dyatev.line)
-            dyatev.prompt_lines[line_index - 1] = dyatev.sub2 + '\n'
+            stνlαt('Dyatev', str(dyatev.header), 0)
+            dyatev.lines[dyatev.index - 1] = dyatev.sub2.split('\t')
+            save_events(dyatev)
+
         elif eudαμl == BACK:
             dyatev.sub2 = dyatev.sub2[:-1]
         elif eudαμl != WAIT:
@@ -282,9 +314,9 @@ def change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             return
 
 
-# VERQOM
 def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Modify event."""
+    dyatev.section = 'Verqom'
     stanvor.prompt.stvl.ιdeu += f' {chr(VSEP)} Verqōm'
     dyatev.sub2 = f'{dyatev.line}'
     dyatev.color = 13
@@ -318,19 +350,17 @@ def delete_event(dyatev: DyatevItems) -> None:
 
     stνlαt('Dyαteν', f'❯ Iuαq', 0) #│ {'\t'.join(item_to_delete)}', 0)
 
+    index_to_del = dyatev.index - 1
     dyatev.header = list(dyatev.events.keys())
     dyatev.lines = list(zip(*dyatev.events.values()))
-    index_to_del = dyatev.index - 1
-    filtered_lines = [e for i, e in enumerate(dyatev.lines) if i != index_to_del]
+    dyatev.lines = [e for i, e in enumerate(dyatev.lines) if i != index_to_del]
 
-    with open(dyatev.ιdeu, 'w', encoding='utf8', newline='') as oppel:
-        writer = csv.writer(oppel, delimiter=';')
-        writer.writerow(dyatev.header)        
-        writer.writerows(filtered_lines)
+    save_events(dyatev)
 
 
 def ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Delete event."""
+    dyatev.section = 'Iuαq'
     stanvor.prompt.stvl.ιdeu += ' │ Iuαq'
     dyatev.color = 11
 
