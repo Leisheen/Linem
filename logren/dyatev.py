@@ -372,7 +372,7 @@ def select_move(dyatev: DyatevItems, stanvor: Stanvor) -> bool:
         if code == ENTER:
             return True
 
-        if code in (SHF_TAB, UP, TAB, DOWN):
+        elif code in (SHF_TAB, UP, TAB, DOWN):
             dyatev.index = select_item(code, dyatev)
 
 
@@ -405,11 +405,28 @@ def νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             save_events(dyatev)
             return
 
-        elif code == BACK:
+        if code == BACK:
             dyatev.ιmαν = dyatev.ιmαν[:-1]
 
+        elif code in (DOWN, UP):
+            way = 1 if code == DOWN else - 1
+            
+            start_index = int(dyatev.ιmαν) - 1 if dyatev.ιmαν else 0
+            final_index = (start_index + way) % len(dyatev.lines)
+            dyatev.ιmαν = str(final_index + 1)
+            dyatev.uostιmαν = dyatev.αdιmαν = ''
+
         elif code != WAIT and chr(code).isdigit():
-            dyatev.ιmαν += chr(code)
+            start_point = dyatev.ιmαν
+
+            if len(dyatev.lines) >= 10:
+                ref_number = int(start_point + chr(code))
+            else:
+                target = int(chr(code))
+                ref_number = target if target else int(start_point)
+
+            if ref_number <= len(dyatev.lines):
+                dyatev.ιmαν = str(ref_number)
 
 
 # DELETE

@@ -265,7 +265,6 @@ def process_input(stanvor: Stanvor) -> None:
         elif any(code in keys for keys in sutils.MOVE_FIXES): # None
             sutils.jump_inline(code, sent)
 
-
         elif code in logimprol: # None
             logimprol[code](stanvor)
         elif code in stv_process: # None
