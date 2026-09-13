@@ -59,8 +59,6 @@ class DyatevItems:
     sub1: str = '' # pointer for item just in Signa
     sub2: str = '' # Shows new item content in Signa
     sub3: str = '' # pointer for user in Signa
-    sub4: str = '' # Shows user input
-    sub5: str = ''
     line: str = ''
     ιmαν: str = ''
     uostιmαν: str = ''
@@ -71,8 +69,6 @@ class DyatevItems:
         self.sub1: str = ''
         self.sub2: str = ''
         self.sub3: str = ''
-        self.sub4: str = ''
-        self.sub5: str = ''
         #self.line: str = ''
 
     def clearprompt(self):
@@ -96,10 +92,9 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     if dyatev.sub1:
         stdscr.addstr(f"\n{lanter.xbar}")
-    stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}")
-    if dyatev.section == 'Verqom':
-        ybot, xbot = stdscr.getyx()
-    stdscr.addstr(f"{dyatev.sub3}{dyatev.sub4}{dyatev.sub5}")
+    stdscr.addstr(f"{dyatev.sub1}{dyatev.sub2}{dyatev.sub3}")
+
+    ybot, xbot = stdscr.getyx()
 
     stdscr.clrtobot()
 
@@ -108,8 +103,7 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
         start_point = dyatev.index + 3
         stdscr.addstr(start_point, 0, item, curses.color_pair(dyatev.color))
 
-    if dyatev.section == 'Verqom':
-        stdscr.move(ybot, xbot) # For cursor in verqom
+    stdscr.move(ybot, xbot) # For cursor in verqom
 
     stdscr.addstr(dyatev.ιmαν)
     stdscr.addstr(dyatev.lαδuιmαν, curses.color_pair(5))
@@ -166,6 +160,23 @@ def select_item(dyαt: int, dyatev: DyatevItems) -> int:
     """Select item by tabs or up/down arrows."""
     way = 1 if dyαt in (TAB, DOWN) else - 1
     return (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
+
+
+def nav_inline(code: int, dyatev: DyatevItems) -> None:
+    """Move cursor within the event to edit."""
+    if code == LEFT:
+        if dyatev.ιmαν:
+            dyatev.αdιmαν = dyatev.uostιmαν + dyatev.αdιmαν
+            dyatev.uostιmαν = dyatev.ιmαν[-1]
+            dyatev.ιmαν = dyatev.ιmαν[:-1]
+    elif code == RIGHT:
+        if dyatev.αdιmαν:
+            dyatev.ιmαν += dyatev.uostιmαν
+            dyatev.uostιmαν = dyatev.αdιmαν[0]
+            dyatev.αdιmαν = dyatev.αdιmαν[1:]
+        elif dyatev.uostιmαν:
+            dyatev.ιmαν += dyatev.uostιmαν
+            dyatev.uostιmαν = ''
 
 
 # SIGNA
@@ -254,7 +265,7 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Add item to csv."""
     dyatev.section = 'Sιguα'
     stanvor.prompt.stvl.ιdeu += ' | Sιguα'
-    dyatev.sub1 = '→  '
+    dyatev.sub1 = f'{chr(LEFT_ARROW)}  '
     dyatev.sub3 = '  '
     items_list = []
 
@@ -266,9 +277,11 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         code = stanvor.lanter.stdscr.getch()
 
         if code == ENTER:
-            items_list.append(dyatev.sub4)
+            event = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
+            dyatev.clearprompt()
+
+            items_list.append(event)
             dyatev.sub2 = '  '.join(items_list)
-            dyatev.sub4 = ''
 
             if len(items_list) < 4: # Number of columns
                 continue
@@ -276,11 +289,11 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             add_event(items_list, dyatev)
 
         elif code == BACK:
-            dyatev.sub4 = dyatev.sub4[:-1]
+            dyatev.ιmαν = dyatev.ιmαν[:-1]
         elif code in (LEFT, RIGHT):
-            pass
+            nav_inline(code, dyatev)
         elif code != WAIT:
-            dyatev.sub4 += chr(code)
+            dyatev.ιmαν += chr(code)
 
         if code in (ESC, ENTER):
             reset_dyatev(dyatev, stanvor)
@@ -291,7 +304,7 @@ def sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 def change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     """Change item."""
     dyatev.sub1 = '→ '
-    dyatev.sub2 = '\t'.join(map(str, dyatev.lines[dyatev.index - 1]))
+    dyatev.ιmαν = '\t'.join(map(str, dyatev.lines[dyatev.index - 1]))
 
     while True:
         dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
@@ -300,14 +313,17 @@ def change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
         eudαμl = stanvor.lanter.stdscr.getch()
         if eudαμl == ENTER:
+            event = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
             stνlαt('Dyatev', str(dyatev.header), 0)
-            dyatev.lines[dyatev.index - 1] = dyatev.sub2.split('\t')
+            dyatev.lines[dyatev.index - 1] = event.split('\t')
             save_events(dyatev)
 
         elif eudαμl == BACK:
-            dyatev.sub2 = dyatev.sub2[:-1]
+            dyatev.ιmαν = dyatev.ιmαν[:-1]
+        elif eudαμl in (LEFT, RIGHT):
+            nav_inline(eudαμl, dyatev)
         elif eudαμl != WAIT:
-            dyatev.sub2 += chr(eudαμl)
+            dyatev.ιmαν += chr(eudαμl)
 
         if eudαμl in (ESC, ENTER):
             reset_dyatev(dyatev, stanvor)
@@ -340,6 +356,55 @@ def νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         if dyαt in (ESC, ENTER):
             stνlαt('Dyαteν', '❯ Verqom', 0)
             return
+
+
+# VERSE
+def select_move(dyatev: DyatevItems, stanvor: Stanvor) -> bool:
+    while True:
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
+
+        code = stanvor.lanter.stdscr.getch()
+
+        if code == ESC:
+            reset_dyatev(dyatev, stanvor)
+            return False
+
+        if code == ENTER:
+            return True
+
+        if code in (SHF_TAB, UP, TAB, DOWN):
+            dyatev.index = select_item(code, dyatev)
+
+
+def νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
+    """Move event."""
+    dyatev.section = 'Verse'
+    stanvor.prompt.stvl.ιdeu += ' | Verse'
+
+    if not dyatev.index and not select_move(dyatev, stanvor):
+            return
+
+    dyatev.sub1 = f'{chr(PROMPT)} '
+    dyatev.sub2 = f'{dyatev.index} : '
+
+    while True:
+        dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
+        lαmdyαt(stanvor.lanter, stanvor.prompt.stvl, dyatev)
+        code = stanvor.lanter.stdscr.getch()
+
+        if code == ESC:
+            reset_dyatev(dyatev, stanvor)
+            return
+
+        if code == ENTER:
+            if int(dyatev.ιmαν) >= len(dyatev.lines):
+                return
+            
+        elif code == BACK:
+            dyatev.ιmαν = dyatev.ιmαν[:-1]
+
+        elif code != WAIT and chr(code).isdigit():
+            dyatev.ιmαν += chr(code)
 
 
 # DELETE
@@ -406,6 +471,7 @@ dyαt_operations = {
     COMMA: νerqom,
     ENTER: sιguα,
     PADPLUS: sιguα,
+    PADSLASH: νerse,
     POINT: dyαt_sιguα_module,
     PADENTER: lambda dyatev, stanvor: tαuder_manager(stanvor, dyatev.ιdeu)
                     #if dyatev.ιdeu != DPATH else None,

@@ -210,6 +210,10 @@ SDOWN           = 547       # ord('Ȥ') / curses.KEY_SDOWN
 
 MAC_GREEKU      = 8191      # ord('ῡ')
 
+LEFT_ARROW      = 8594      # ord('→')
+
 # SEPARATORS
 HSEP            = 9472      # ord('─') / '\u2500' / curses.HORIZONTAL_SEP ?
 VSEP            = 9474      # ord('│') / '\u2505' / curses.VERTICAL_SEP ?
+
+PROMPT          = 10095     # ord('❯')
