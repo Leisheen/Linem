@@ -397,9 +397,14 @@ def νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             return
 
         if code == ENTER:
-            if int(dyatev.ιmαν) >= len(dyatev.lines):
+            new_index = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
+            if not new_index or int(new_index) > len(dyatev.lines):
                 return
-            
+
+            dyatev.lines.insert(int(new_index) - 1, dyatev.lines.pop(dyatev.index - 1))
+            save_events(dyatev)
+            return
+
         elif code == BACK:
             dyatev.ιmαν = dyatev.ιmαν[:-1]
 

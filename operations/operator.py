@@ -17,7 +17,9 @@ import utils.sys_utils as sinfo
 from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.sentam import STANVOR, Stanvor
-from core.stv import stvrefresh, lestαq, log, ιmtαu, logreu_select, set_invash
+from core.stv import (
+    stvrefresh, lestαq, log, ιmtαu, logreu_select, set_invash, log
+)
 from core.stvlog import set_ashentar_mode, stνlαt, stναδeut
 
 from logren.angestaq import αugestαq as angestaq
@@ -268,6 +270,8 @@ def process_input(stanvor: Stanvor) -> None:
             logimprol[code](stanvor)
         elif code in stv_process: # None
             stv_process[code](stanvor)
+            if stanvor.logαm.stat:
+                log(stanvor)
         elif code in aud.AUDIO_PROCESS: # None
             aud.AUDIO_PROCESS[code](stanvor.audio.file, stanvor)
         elif code in logrenam: # None
