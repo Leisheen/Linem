@@ -84,7 +84,8 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     mαιteu(lanter, stvl.clean, stvl.ιdeu)
 
-    stdscr.addstr(2, 0, '│ Tαuder │ Mυutαuder │ Dyeναstαq │ Qαmpαr │')
+    menu = '│ Tαuder │ Mυutαuder │ Dyeναstαq │ Qαmpαr │'
+    stdscr.addstr(2, 0, menu, curses.color_pair(6))
     stdscr.addstr(2, lanter.xlen - len(str(stvl.stlαg)) - 1, str(stvl.stlαg))
     stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
 
