@@ -8,7 +8,7 @@ STANVOR = 'Stαuνor'
 
 # Must reorder colors to make sense
 COLORS = ( # Foreground | Background
-    (1,  curses.COLOR_BLUE,    curses.COLOR_BLACK),
+    (1,  curses.COLOR_BLUE,    curses.COLOR_BLACK), # xbar, log
     (2,  curses.COLOR_CYAN,    curses.COLOR_BLACK),
     (3,  curses.COLOR_GREEN,   curses.COLOR_BLACK),
     (4,  curses.COLOR_RED,     curses.COLOR_BLACK),
@@ -22,6 +22,7 @@ COLORS = ( # Foreground | Background
     (12, curses.COLOR_BLACK,   curses.COLOR_WHITE),
     (13, curses.COLOR_BLUE,    curses.COLOR_CYAN),
     (14, curses.COLOR_BLACK,   curses.COLOR_BLUE), # Doesn't work
+    (15, curses.COLOR_WHITE,   curses.COLOR_CYAN), # Doesn't work
 )
 
 def get_screen(stdscr):
