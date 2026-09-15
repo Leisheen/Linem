@@ -58,11 +58,13 @@ ORDERNUMLIST = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 def set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
     mαιteu(lanter, 1, 'Euναrt')
 
-    lanter.stdscr.addstr(2, 0, 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |')
+    menu = 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |'
+
+    lanter.stdscr.addstr(2, 0, f'{menu:<{lanter.xlen}}', curses.color_pair(13))
     lanter.stdscr.clrtoeol()
     lanter.stdscr.addstr(2, lanter.xlen - len(str(stlαg)) - 1, str(stlαg))
     lanter.stdscr.addstr(2, grid, euναrt, curses.color_pair(5))
-    lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
+    #lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
 
 
 def euναrtαm(key: int, envart: Envart) -> None:

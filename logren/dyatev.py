@@ -84,10 +84,10 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     mαιteu(lanter, stvl.clean, stvl.ιdeu)
 
-    menu = f' Tαuder    Mυutαuder  {chr(VSEP)}  Dyeναstαq    Qαmpαr'
+    menu = f' Tαuder    Mυutαuder    Dyeναstαq    Qαmpαr'
     space = lanter.xlen - len(str(stvl.stlαg))
-    stdscr.addstr(2, 0, f'{menu:<{space}}', curses.color_pair(9))
-    stdscr.addstr(f'{str(stvl.stlαg)}\n', curses.color_pair(9))
+    stdscr.addstr(2, 0, f'{menu:<{space}}', curses.color_pair(13)) # 9, 13
+    stdscr.addstr(f'{str(stvl.stlαg)}\n', curses.color_pair(13)) # 9, 13
     #stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
 
     stdscr.addstr(dyatev.data)

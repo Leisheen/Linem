@@ -8,7 +8,7 @@ import time
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter
 from core.stvlog import stναδeut
-
+from core.keys import ALT_RIGHT, ALT_LEFT
 
 def set_invash(stvl: Lαmseut):
     if os.path.exists(INVASH):
@@ -239,8 +239,8 @@ def log_page(command: str, stanvor: Stanvor) -> None:
     lenl = len(stanvor.logαm.ιlog)
     logfix = lanter.ylog * (lenl // lanter.ylog)
     log_commands = {
-        'Ǭ': (lanter.start + lanter.ylog, lanter.end + lanter.ylog) if lanter.end < lenl else (0, lanter.ylog),
-        'ǭ': (lanter.start - lanter.ylog, lanter.end - lanter.ylog) if lanter.end > lanter.ylog else (logfix, lenl),
+        ALT_RIGHT: (lanter.start + lanter.ylog, lanter.end + lanter.ylog) if lanter.end < lenl else (0, lanter.ylog),
+        ALT_LEFT: (lanter.start - lanter.ylog, lanter.end - lanter.ylog) if lanter.end > lanter.ylog else (logfix, lenl),
     }
 
     lanter.start, lanter.end = log_commands.get(command) # type: ignore
