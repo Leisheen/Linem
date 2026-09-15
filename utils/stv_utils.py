@@ -20,7 +20,7 @@ from core.keys import *
 from core.stv import mαιteu, lestαq, check_battery
 
 
-MOVE_FIXES = {
+MOVE_FIXES = { # Not accurate
     (SLEFT, SRIGHT): (3, 4),
     (CTL_LEFT, CTL_RIGHT): (7, 8),
     (ALT_LEFT, ALT_RIGHT): (17, 18),

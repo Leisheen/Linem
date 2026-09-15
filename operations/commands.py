@@ -54,7 +54,7 @@ sentam_stagen = {
 
 log_vals = {
     (key.TAB, key.SHF_TAB): lambda code, stanvor: sutils.tab(chr(code), stanvor.prompt.sent, stanvor.logαm),
-    (key.ALT_LEFT,  key.ALT_RIGHT): lambda code, stanvor: log_page(chr(code), stanvor),
+    (key.PPAGE, key.NPAGE): lambda code, stanvor: log_page(chr(code), stanvor),
 }
 
 web_links = { # For euναrt and νermαt
