@@ -84,7 +84,7 @@ def lαmdyαt(lanter: Lanter, stvl: Lαmseut, dyatev: DyatevItems) -> None:
 
     mαιteu(lanter, stvl.clean, stvl.ιdeu)
 
-    menu = f' Tαuder    Mυutαuder    Dyeναstαq    Qαmpαr'
+    menu = f' Tαuder   Mυutαuder   Dyeναstαq   Qαmpαr'
     space = lanter.xlen - len(str(stvl.stlαg))
     stdscr.addstr(2, 0, f'{menu:<{space}}', curses.color_pair(13)) # 9, 13
     stdscr.addstr(f'{str(stvl.stlαg)}\n', curses.color_pair(13)) # 9, 13

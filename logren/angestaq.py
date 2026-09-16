@@ -20,7 +20,7 @@ ANGMANSLAG = r'Augest\Augest.Mαuslαg.txt'
 def lαmαugest(lanter: Lanter, paths: List, sub1: str) -> None:
     """Structure of Augest section."""
 
-    MENU = '│ Iuslag │ Isqyαu │ Mαuslαg │'
+    MENU = '  Iuslag   Isqyαu   Mαuslαg'
 
     with open(paths[0], encoding='utf8') as oppel:
         tαuder = oppel.read()
@@ -36,8 +36,8 @@ def lαmαugest(lanter: Lanter, paths: List, sub1: str) -> None:
     pad2.addstr(αugιsqyαu)
     pad2.refresh(αugestlines - 18, 0, 5, 60, 38, 150)
 
-    lanter.stdscr.addstr(2, 0, MENU)
-    lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
+    lanter.stdscr.addstr(2, 0, f'{MENU:<{lanter.xlen}}', curses.color_pair(13))
+
     lanter.stdscr.addstr(40, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
     lanter.stdscr.addstr(sub1)
 
@@ -59,7 +59,7 @@ def lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
     except Exception as e:
         _ = stναδeut(αδeutαr, str(e), 'Augestαq')
 
-    lanter.stdscr.addstr(2, 0, '│ Mαyeq │ Otaleu │ Auqopt │   ')
+    lanter.stdscr.addstr(2, 0, ' Mαyeq   Otaleu   Auqopt')
     #lanter.stdscr.addstr(2, z, f' {chn} ' if chn else '', curses.color_pair(5))
     lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
     lanter.stdscr.addstr(f'\n{tαuder}{sub1}{sub2}')

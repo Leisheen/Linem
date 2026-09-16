@@ -68,11 +68,11 @@ notes = [
 
 def lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
     """Structure for the Mυuιtsyα section."""
-    menu = '│ Iνouιm │ Tαuder │ Terιguer │ Stαuνor │ Vermαt │ Teνuα │'
+    menu = ' Iνouιm   Tαuder   Terιguer   Stαuνor   Vermαt   Teνuα'
 
-    mαιteu(lanter, 1, 'MUNITSYA')
-    lanter.stdscr.addstr(2, 0, menu)
-    lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
+    mαιteu(lanter, 1, 'Mυuιtsyα')
+    lanter.stdscr.addstr(2, 0, f'{menu:<{lanter.xlen}}', curses.color_pair(13))
+    #lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
     lanter.stdscr.addstr(f"{subs.sub1}{subs.sub2}\n{subs.sub3}")
 
 
@@ -166,8 +166,9 @@ def convert_youtube_to_mp3(url: str, format: str) -> str:
     return stlαgreu(msg, 0, STANVOR)
 
 
-def get_youtube_url(lanter: Lanter, vsent: Vseut):
+def get_youtube_url(stanvor: Stanvor, vsent: Vseut):
     """Prompt user for YouTube URL."""
+    lanter = stanvor.lanter
     url = ''
 
     while True:
@@ -188,25 +189,27 @@ def get_youtube_url(lanter: Lanter, vsent: Vseut):
         elif key == ALT_PADSTOP:
             url += pyperclip.paste()
         elif key in logimprol:
-            logimprol[key]()
+            logimprol[key](stanvor)
         elif key != WAIT:
             url += chr(key)
 
 
-def get_youtube(lanter: Lanter, vsent: Vseut,
+def get_youtube(stanvor: Stanvor, vsent: Vseut,
                 subs: MυuιtsyαLanter) -> None:
     """Get videos from Youtube."""
-    url = get_youtube_url(lanter, vsent)
+    url = get_youtube_url(stanvor, vsent)
 
     if url:
         msg = convert_youtube_to_mp3(url, 'Audio')
         subs.sub1 = f'{msg}'
 
-    lanter.stdscr.clear()
+    stanvor.lanter.stdscr.clear()
 
 
-def keyboard(lanter: Lanter):
+def keyboard(stanvor: Stanvor):
     """Mυuιtsyα Keyboard Sound Module."""
+    lanter = stanvor.lanter
+
     while True:
         mαιteu(lanter, 0, ιdeu='Keyboard')
         lanter.stdscr.addstr(2, 0, '│ Iuslag │ Isqyαu │ Mαuslαg │')
@@ -228,7 +231,7 @@ def keyboard(lanter: Lanter):
             lanter.stdscr.clear()
             break
         if key in logimprol:
-            logimprol[key]()
+            logimprol[key](stanvor)
         elif key in range(NUM1, NUM8): # 1 to 8... Seguro?
             note_index = int(chr(key))
             #note = notes[note_index]
@@ -336,9 +339,9 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
         LOWER_T: lambda: tαuder_manager(stanvor, 'Mυuιtsyα'),
         NUM3: lambda: terιguer(stanvor),
         NUM4: lambda: subprocess.Popen(ABPATH),
-        NUM5: lambda: keyboard(lanter),
+        NUM5: lambda: keyboard(stanvor),
         NUM6: lambda: mυutαuder(subs), # Tαuder
-        NUM7: lambda: get_youtube(lanter, vsent, subs),
+        NUM7: lambda: get_youtube(stanvor, vsent, subs),
         PLUS: lambda: munit_signa(subs, lanter), # Num(+) Sιguα
     }
 
@@ -355,7 +358,7 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
             lanter.stdscr.clear()
 
         elif mυuιt in logimprol:
-            logimprol[mυuιt]()
+            logimprol[mυuιt](stanvor)
         elif mυuιt in munit_actions:
             munit_actions[mυuιt]()
 
