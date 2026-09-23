@@ -89,7 +89,7 @@ ext_programs = {
     '.Dataset': lambda: os.startfile(DATA_PATH),
     '.Iuslαg': lambda: os.startfile(VSCODE_PATH),
     '.Dαuqαδ': lambda: webbrowser.open_new(GDRIVE_PATH),
-    '.Dyeναst': lambda: webbrowser.open(GCAL_PATH),
+    '.Dyeν': lambda: webbrowser.open(GCAL_PATH),
     '.Stαuνor': lambda: webbrowser.open_new(NOTION_PATH),
     '.Mυsdeν': lambda: os.startfile(MUSDEV_PATH),
 }

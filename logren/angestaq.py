@@ -19,8 +19,7 @@ ANGMANSLAG = r'Augest\Augest.Mαuslαg.txt'
 # Interface
 def lαmαugest(lanter: Lanter, paths: List, sub1: str) -> None:
     """Structure of Augest section."""
-
-    MENU = '  Iuslag   Isqyαu   Mαuslαg'
+    MENU = ' Iuslαg   Isqyαu   Mαuslαg'
 
     with open(paths[0], encoding='utf8') as oppel:
         tαuder = oppel.read()

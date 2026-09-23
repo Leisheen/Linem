@@ -119,7 +119,7 @@ def lestαq(stanvor: Stanvor) -> None:
         try:
             lanter.stdscr.addstr(stvl.prαν, curses.color_pair(stvl.color_id))
         except curses.error as e:
-            stvl.stlαg = stlαgreu(str(e), 0)
+            stvl.stlαg = stlαgreu(str(e))
 
 
     # Log

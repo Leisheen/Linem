@@ -64,7 +64,6 @@ def set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
     lanter.stdscr.clrtoeol()
     lanter.stdscr.addstr(2, lanter.xlen - len(str(stlαg)) - 1, str(stlαg))
     lanter.stdscr.addstr(2, grid, euναrt, curses.color_pair(5))
-    #lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
 
 
 def euναrtαm(key: int, envart: Envart) -> None:

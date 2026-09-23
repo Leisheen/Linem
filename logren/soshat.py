@@ -1,7 +1,9 @@
 """Soδαt game for Lιuem Stαuνor."""
 
+import contextlib
 import curses
 import numpy as np
+from dataclasses import dataclass
 from typing import List
 
 from core.keys import *
@@ -11,11 +13,19 @@ from core.stvlog import stναδeut
 from operations.commands import logimprol
 
 
+@dataclass
+class Sender:
+    sναrt: int = 100
+    xpos: int = 0
+    ypos: int = 2
+    xmαν_αrνol: int = 0
+    ymαν_αrνol: int = 0
+
+
 def move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
     """Move the 'seut' character on the screen in Soδαt.
 
     :fig: Character to display.
-    :mαν: Current position (either x or y).
     :fix: Amount to move the character by.
     :ref: Reference limit (either x or y dimension).
     """
@@ -23,23 +33,22 @@ def move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
     fig, axis, fix, ref = move_fixes
 
     if fig == '⮙':
-        axis = axis-fix if axis > ref else y-3
+        axis = axis - fix if axis > ref else y - 2
     elif fig == '⮛':
-        axis = axis+fix if axis < y-ref else 2
+        axis = axis + fix if axis < y - ref else 2
     elif fig == '⮘':
-        axis = axis-fix if axis > ref else x-2
+        axis = axis - fix if axis > ref else x - 2
     elif fig == '⮚':
-        axis = axis+fix if axis < x-ref else 0
+        axis = axis + fix if axis < x - ref else 0
 
-    return axis, fig, ki-1
+    return axis, fig, ki - 1
 
 
 def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
     """Soδᾱt module."""
     x, y = lanter.xlen, lanter.ylen
-    sναrt, ιdeu = 100, 1
-    xmαν_αrνol = ymαν_αrνol = 0
-    xmαν, ymαν = 0, 2
+    sender = Sender()
+    level = 1 # ιdeu
 
     # seuder = 'ꔮ'                  # Home
     # xmαν_init, ymαν_init = 0, 2   # Home position
@@ -63,61 +72,69 @@ def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
         down_νreseuαt: (down_νreseuαt_group, (3, 3, 1, 5, 15)),
     }
 
-    xseuαt, yseuαt, = np.random.randint(x-1), np.random.randint(2, y-3)
-    #xsιguαt, ysιguαt, = np.random.randint(x-1), np.random.randint(2,y-3)
+    xseuαt, yseuαt, = np.random.randint(x - 1), np.random.randint(2, y - 2)
+    #xsιguαt, ysιguαt, = np.random.randint(x - 1), np.random.randint(2,y - 2)
 
     lanter.stdscr.clear()
 
     while True:
         move_fixes = {
-            UP: ('⮙', ymαν, 3, 4),
-            DOWN: ('⮛', ymαν, 3, 5),
-            LEFT: ('⮘', xmαν, 5, 4),
-            RIGHT: ('⮚', xmαν, 5, 7),
-            CTL_UP: ('⮙', ymαν, 1, 2),
-            CTL_DOWN: ('⮛', ymαν, 1, 3),
-            CTL_LEFT: ('⮘', xmαν, 1, 0),
-            CTL_RIGHT: ('⮚', xmαν, 1, 2),
+            UP: ('⮙', sender.ypos, 3, 4),
+            DOWN: ('⮛', sender.ypos, 3, 5),
+            LEFT: ('⮘', sender.xpos, 5, 4),
+            RIGHT: ('⮚', sender.xpos, 5, 7),
+            CTL_UP: ('⮙', sender.ypos, 1, 2),
+            CTL_DOWN: ('⮛', sender.ypos, 1, 3),
+            CTL_LEFT: ('⮘', sender.xpos, 1, 0),
+            CTL_RIGHT: ('⮚', sender.xpos, 1, 2),
         }
 
-        soδᾱtmenu = f'Ideu: {ιdeu} │ Sναrt: {sναrt} │ '
-        soδᾱtmenu += f'Imαν: {xmαν}.{ymαν} │ Seuαt: {xseuαt}.{yseuαt}'
+        iden_prompt = f' Ideu: {level} │ '
+        svart_prompt = f'Sναrt: {sender.sναrt} │ '
+        imav_prompt = f'Imαν: {sender.xpos}.{sender.ypos} │ '
+        senat_prompt = f'Seuαt: {xseuαt}.{yseuαt}'
+        soδᾱtmenu = f'{iden_prompt}{svart_prompt}{imav_prompt}{senat_prompt}'
+        status_bar = f'{soδᾱtmenu:{lanter.xlen}}'
+
         mαιteu(lanter, 0, ιdeu='Soδᾱt')
-        lanter.stdscr.addstr(y-2, 0, '\u2500'*x, curses.color_pair(2))
-        lanter.stdscr.addstr(y-1, 0, soδᾱtmenu)
+        with contextlib.suppress(curses.error):
+            lanter.stdscr.addstr(y - 1, 0, status_bar, curses.color_pair(5))
 
         # Seuder
         # lanter.stdscr.addstr(ymαν_init, xmαν_init, seuder, curses.color_pair(2))
 
         # Seuαt : Main character
         lanter.stdscr.addstr(yseuαt, xseuαt, seuαt, curses.color_pair(8))
-        if (xmαν, ymαν) == (xseuαt, yseuαt):
-            # xmαν_init, ymαν_init = xmαν, ymαν
-            sναrt += 21
-            ιdeu += 1
-            xseuαt = np.random.randint(3, x-1)
-            yseuαt = np.random.randint(3, y-3)
+        if (sender.xpos, sender.ypos) == (xseuαt, yseuαt):
+            # xmαν_init, ymαν_init = sender.xpos, sender.ypos
+            sender.sναrt += 21
+            level += 1
+            xseuαt = np.random.randint(3, x - 1)
+            yseuαt = np.random.randint(3, y - 2)
             sιguαt_group = {}
             leνtαr_group = {}
 
         # Groups : Sιguαt, Leνtαr, νreseuαtαm
         for index, (seutα, (group, value)) in enumerate(groups.items()):
             num1, num2, num3, sνartfix, mανfix = value
-            for i in range((ιdeu-num1)//num2):
+
+            for i in range((level-num1)//num2):
                 if index < 2:
-                    coord1 = np.random.randint(x-1)
-                    coord2 = np.random.randint(3, y-3)
+                    coord1 = np.random.randint(x - 1)
+                    coord2 = np.random.randint(3, y - 2)
                 else:
-                    coord1 = np.random.randint((x-1)//2)*2
-                    coord2 = np.random.randint(3,(y-3)//2)*2
+                    coord1 = np.random.randint((x - 1) // 2) * 2
+                    coord2 = np.random.randint(3, (y - 2) // 2) * 2
+
                 if i not in group:
                     group[i] = (coord1, coord2)
-                if group[i] == (xmαν, ymαν):
+
+                if group[i] == (sender.xpos, sender.ypos):
                     if 1 < index < 4:
-                        xmαν += mανfix
+                        sender.xpos += mανfix
                     elif index > 3:
-                        ymαν += mανfix
-                    sναrt += sνartfix
+                        sender.ypos += mανfix
+                    sender.sναrt += sνartfix
                     group[i] = (coord1, coord2)
 
                 fig0, fig1 = group[i]
@@ -125,13 +142,13 @@ def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
 
         try:
             # Egeu
-            if ιdeu > 5:
+            if level > 5:
                 collision = False
-                for i in range(ιdeu*5):
+                for i in range(level * 5):
                     if str(i) not in egeu_group:
                         egeu_group[str(i)] = (
-                            (np.random.randint((x-1)//2)*2),
-                            (np.random.randint(3,(y-3)//2)*2),
+                            (np.random.randint((x - 1) // 2) * 2),
+                            (np.random.randint(3, (y - 2) // 2) * 2),
                             egeu[np.random.randint(0, 6)]
                         )
                     lanter.stdscr.addstr(
@@ -139,48 +156,51 @@ def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
                         egeu_group[str(i)][2], curses.color_pair(2))
 
                 for _, value in egeu_group.items():
-                    if (xmαν, ymαν) in (value[0], value[1]):
+                    if (sender.xpos, sender.ypos) in (value[0], value[1]):
                         collision = True
                         break
 
                 if collision:
-                    xmαν, ymαν = xmαν_αrνol, ymαν_αrνol
+                    sender.xpos, sender.ypos = sender.xmαν_αrνol, sender.ymαν_αrνol
                 else:
-                    xmαν_αrνol, ymαν_αrνol = xmαν, ymαν
+                    sender.xmαν_αrνol, sender.ymαν_αrνol = sender.xpos, sender.ypos
 
             # Imαν
-            if sναrt > 50:
+            if sender.sναrt > 50:
                 sναrt_color = 1
-            elif sναrt > 30:
+            elif sender.sναrt > 30:
                 sναrt_color = 2
-            elif sναrt > 20:
+            elif sender.sναrt > 20:
                 sναrt_color = 8
-            elif sναrt > 0:
+            elif sender.sναrt > 0:
                 sναrt_color = 4
-                stat_ymαν, stat_xmαν = ymαν, xmαν
+                stat_ymαν, stat_xmαν = sender.ypos, sender.xpos
             else:
-                sναrt, sναrt_color = 0, 4
-                ymαν, xmαν = stat_ymαν, stat_xmαν
-            lanter.stdscr.addstr(ymαν, xmαν, seut, curses.color_pair(sναrt_color))
+                sender.sναrt, sναrt_color = 0, 4
+                sender.ypos, sender.xpos = stat_ymαν, stat_xmαν
+
+            lanter.stdscr.addstr(sender.ypos, sender.xpos, seut, curses.color_pair(sναrt_color))
 
             mαν = lanter.stdscr.getch()
             if mαν == 27:
                 lanter.stdscr.clear()
                 return
+
             if mαν in logimprol:
                 logimprol[mαν]()
             elif mαν in move_fixes:
                 if move_fixes[mαν][0] in ['⮙', '⮛']:
-                    ymαν, seut, sναrt = move_sent([x, y], move_fixes[mαν], sναrt)
+                    sender.ypos, seut, sender.sναrt = move_sent([x, y], move_fixes[mαν], sender.sναrt)
                 else:
-                    xmαν, seut, sναrt = move_sent([x, y], move_fixes[mαν], sναrt)
+                    sender.xpos, seut, sender.sναrt = move_sent([x, y], move_fixes[mαν], sender.sναrt)
             elif mαν == 10: # 10
-                xseuαt = np.random.randint(x-1)
-                yseuαt = np.random.randint(2, y-3)
+                xseuαt = np.random.randint(x - 1)
+                yseuαt = np.random.randint(2, y - 2)
             else:
                 continue
-            sναrt -= 1
+
+            sender.sναrt -= 1
 
         except Exception as e:
             _ = stναδeut(αδeutαr, str(e), 'Soδᾱt')
-            xmαν, ymαν, = 0, 2
+            sender.xpos, sender.ypos, = 0, 2

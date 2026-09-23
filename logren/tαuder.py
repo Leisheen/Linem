@@ -96,7 +96,7 @@ def tαuder_manager(stanvor: Stanvor, *args) -> None:
     elif os.path.isfile(tander_name):
         if os.path.splitext(tander_name)[1] == '.gdoc':
             msg = 'Gdoc ōppelαm mα Tαuder ιlαg αqtᾱμlινeu'
-            stvl.stlαg = stlαgreu(msg, 0)
+            stvl.stlαg = stlαgreu(msg)
             return
 
         try:

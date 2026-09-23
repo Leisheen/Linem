@@ -254,7 +254,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
         }
 
         if sent.ιmαν in WEBPAGES:
-            stvl.stlαg = stlαgreu(f'Eutel {WEBPAGES[sent.ιmαν]}', 0)
+            stvl.stlαg = stlαgreu(f'Eutel {WEBPAGES[sent.ιmαν]}')
             webbrowser.open(WEBPAGES[sent.ιmαν])
             sent.ιmαν = ''
 

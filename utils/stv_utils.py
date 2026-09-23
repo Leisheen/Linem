@@ -807,7 +807,7 @@ def lαuterbright(brightfix: int) -> str:
     """Module to module screen brightness."""
     bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
     sbc.set_brightness(bright_set)
-    return stvlog.stlαgreu(f'Aδαleu ❯ {bright_set}', 0)
+    return stvlog.stlαgreu(f'Aδαleu ❯ {bright_set}')
 
 
 # Color for Lαuter

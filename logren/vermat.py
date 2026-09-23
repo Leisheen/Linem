@@ -198,7 +198,7 @@ def select_item(key: int, driver: ItemManager,
         stanvor.prompt.sent.ιmαν = lines[driver.numero - 1].rstrip('\n')
         driver.item = read_lines[driver.numero - 1]
     except FileNotFoundError:
-        stanvor.prompt.stvl.stlαg = stlαgreu('Toreg αqμerzeu', 0)
+        stanvor.prompt.stvl.stlαg = stlαgreu('Toreg αqμerzeu')
     except IndexError:
         pass
 
@@ -208,7 +208,7 @@ def select_toreg(driver, vermat, stvl, stdscr) -> None:
     driver.vlx, vermat.νlαιu, vermat.νιdeu = TOREG_SELECTOR[driver.tselect]
 
     if not os.path.exists(vermat.νιdeu):
-        stvl.stlαg = stlαgreu('Toreg αqμerzeu', 0)
+        stvl.stlαg = stlαgreu('Toreg αqμerzeu')
         return
 
     if driver.tselect != 7:
@@ -746,7 +746,7 @@ def νermαt(stanvor: Stanvor) -> None:
     vermat.νbar = ' ' + '   '.join(toregαm)
 
     if not os.path.isfile(vermat.νιdeu):
-        prompt.stvl.stlαg = stlαgreu('Vermαt αqyēν', 0)
+        prompt.stvl.stlαg = stlαgreu('Vermαt αqyēν')
         return
 
     # Iδαt
