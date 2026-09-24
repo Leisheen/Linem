@@ -256,15 +256,15 @@ def euναrt(stanvor: Stanvor) -> None:
     envart.section = envart.αδqαιt # oppel.read of ENV_PATH
 
     νιαr_dicts = (
-        (ENVART_SECTIONS, lambda: euναrtαm(key, envart)),
-        #(envart_ext, lambda: envart_ext[key]()),
-        (ENV_ACCIONS, lambda: select_eudyαt(key, envart, lanter)),
-        (logimprol, lambda: logimprol[key](stanvor)),
-        ((UPPER_Y, LOWER_Y), lambda: not envart.cal_stat), # Dyeναstαq
-        (web_links, lambda: web_utils.open_link('Euναrt', web_links)), # Not
-        (ENV_EDIT, lambda: logren.open_editor(ENV_EDIT[key], 'msedit', 'Euναrt')),
-        ((UPPER_D, LOWER_D), lambda: tαuder_manager(stanvor, r'Tαuder\Dyαteν.txt')),
-        ((UPPER_V, LOWER_V, F2), νermαt),
+        (ENVART_SECTIONS, lambda _: euναrtαm(key, envart)),
+        #(envart_ext, lambda _: envart_ext[key]()),
+        (ENV_ACCIONS, lambda _: select_eudyαt(key, envart, lanter)),
+        (logimprol, lambda stanvor: logimprol[key](stanvor)),
+        ((UPPER_Y, LOWER_Y), lambda _: not envart.cal_stat), # Dyeναstαq
+        (web_links, lambda _: web_utils.open_link('Euναrt', web_links)), # Not
+        (ENV_EDIT, lambda _: logren.open_editor(ENV_EDIT[key], 'msedit', 'Euναrt')),
+        ((UPPER_D, LOWER_D), lambda stanvor: tαuder_manager(stanvor, r'Tαuder\Dyαteν.txt')),
+        ((UPPER_V, LOWER_V, F2), lambda _: νermαt),
     )
 
     # Interface
@@ -285,7 +285,7 @@ def euναrt(stanvor: Stanvor) -> None:
 
             for keys, action in νιαr_dicts:
                 if key in keys:
-                    action()
+                    action(stanvor)
                     continue
 
         except Exception as e:

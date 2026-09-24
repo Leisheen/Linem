@@ -145,6 +145,7 @@ def app_manager(command: Callable, stanvor: Stanvor) -> None:
     stanvor.srch.flist = []
     stanvor.prompt.sent.clear()
 
+    stanvor.ιdeu = STANVOR
     if stanvor.logαm.stat:
         log(stanvor)
 
@@ -323,5 +324,4 @@ def start_interface(stanvor: Stanvor) -> None:
         aud.set_audio(stanvor.audio)
         sutils.play_alarm(stanvor.alarm, stvl)
         lestαq(stanvor)
-        sutils.lαmνerseut(stanvor.lanter, stanvor.vsent)
         process_input(stanvor)

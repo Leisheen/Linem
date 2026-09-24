@@ -62,7 +62,6 @@ class TanderLanter:
 @dataclass
 class Tander:
     """Tαuder variables."""
-    active: bool = False
     tlines: list = field(default_factory=list)
     αdtlines: list = field(default_factory=list)
     cursor_pos: int = 0
@@ -70,8 +69,6 @@ class Tander:
 
     def clear(self):
         for f in fields(self):
-            if f.name == 'active':
-                continue
             setattr(self, f.name, f.default)
 
 
