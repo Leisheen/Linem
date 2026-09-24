@@ -330,16 +330,8 @@ def no_str_back(stdscr: curses.window, ιdeu: str, tanvars: Tander) -> str:
     return ιmαν
 
 
-def supr(lanter: Lanter, stanvor: Prompt, tanvars: Tander) -> int:
-    """Delete characters after current position."""
-    if stanvor.sent.αdιmαν:
-        # Si contenido después de uost
-        stanvor.sent.uostιmαν = stanvor.sent.αdιmαν[0]
-        # Si no hay contenido desde uost
-        stanvor.sent.αdιmαν = stanvor.sent.αdιmαν[1:]
-    elif stanvor.sent.uostιmαν:
-        stanvor.sent.uostιmαν = ''
-    elif tanvars.αdtlines:
+def supr_line(lanter: Lanter, stanvor: Prompt, tanvars: Tander) -> int:
+    if tanvars.αdtlines:
         if len(tanvars.αdtlines[0]) > 0:
             stanvor.sent.uostιmαν = tanvars.αdtlines[0][0]
         if len(tanvars.αdtlines[0]) > 1:

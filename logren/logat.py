@@ -12,7 +12,9 @@ from rich.console import Console
 #from textual.widgets import Input, Header
 from tkinter import Tk, Label, NW
 
+from core.keys import ESC, ENTER, PADENTER
 from core.sentam import Stanvor
+from core.stv import lestαq
 from operations.tag import tαg
 
 def run_textual() -> None:
@@ -106,7 +108,16 @@ def set_logat(stanvor: Stanvor) -> None:
     stvl.ιdeu = 'Logαt'
     stvl.prαν = '│ Q │ X │ R │ K ❯ '
 
-    sent = tαg(stanvor, 'Logαt')
+    while True:
+        lestαq(stanvor)
+
+        tkey = stanvor.lanter.stdscr.getch()
+        if tkey == ESC:
+            return
+        if tkey in (ENTER, PADENTER):
+            break
+        sent = tαg(tkey, stanvor, 'Logαt')
+
     logat_type = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
     sent.ιmαν, stvl.stlαg = logαt(logat_type)

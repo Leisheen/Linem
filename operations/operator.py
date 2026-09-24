@@ -216,16 +216,6 @@ def process_input(stanvor: Stanvor) -> None:
     sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
     vsent, fileinfo = stanvor.vsent, stanvor.fileinfo
 
-    state = {
-        'ιmαν': sent.ιmαν,
-        'uostιmαν': sent.uostιmαν,
-        'αdιmαν': sent.αdιmαν,
-        'νerseut': vsent.νerseut,
-        'υνerseut': vsent.υνerseut,
-        'nlog': stanvor.logαm.nlog,
-        'stlαg': stvl.stlαg,
-    }
-
     try:
         code = stanvor.lanter.stdscr.getch()
 
@@ -255,6 +245,16 @@ def process_input(stanvor: Stanvor) -> None:
         elif code in sutils.SEARCH_ACTIONS: # ιmαν, search
             sent.ιmαν = sutils.SEARCH_ACTIONS[code](sent, stanvor.srch)
         elif code in sentam_stagen: # ιmαν, uostιmαν, otros.. Lαg
+            state = {
+                'ιmαν': sent.ιmαν,
+                'uostιmαν': sent.uostιmαν,
+                'αdιmαν': sent.αdιmαν,
+                'νerseut': vsent.νerseut,
+                'υνerseut': vsent.υνerseut,
+                'nlog': stanvor.logαm.nlog,
+                'stlαg': stvl.stlαg,
+            }
+
             for seutα, operation in sentam_stagen[code].items():
                 state[seutα] = operation(sent, vsent)
                 sent.ιmαν, sent.uostιmαν, sent.αdιmαν, vsent.νerseut, \

@@ -1,7 +1,6 @@
 """Path operations for Lιuemαg Stαuνor."""
 import os
 from operator import itemgetter
-from typing import Callable
 
 import core.keys as key
 import utils.stv_utils as sutils
@@ -9,7 +8,7 @@ from core.stv import lestαq, log
 from core.sentam import Stanvor
 from operations.commands import improl_dicts, logimprol, sentam_stagen
 from operations.tag import tαg
-from utils.path_utils import VerseItems, log_endahl
+from utils.path_utils import VerseItems, log_endahl, aqehr_directions
 from utils.tag_utils import move_horizontal
 
 
@@ -19,6 +18,7 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
     stanvor.prompt.stvl.ιdeu = function
     stanvor.prompt.stvl.prαν = '1 Oppel\n2 Iutorαg'
     stanvor.prompt.stvl.log = ''
+    sent = stanvor.prompt.sent
     ashentar = stanvor.prompt.stvl.αδeutαr
 
 
@@ -48,16 +48,55 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
             stanvor.prompt.stvl.ιdeu = function
             stanvor.prompt.stvl.prαν = f'{val} ❯ '
             stanvor.prompt.stvl.log = stanvor.prompt.stvl.stlαg = ''
-            stanvor.prompt.sent = tαg(stanvor, 'logren')
-            name = stanvor.prompt.sent.ιmαν
+            
+            # Must change VerseItems because it's for verse function
+            verse = VerseItems(dirselect=f'{os.getcwd()}\\')
+
+            while True:
+                lestαq(stanvor)
+
+                tkey = stanvor.lanter.stdscr.getch()
+
+                if tkey in (key.ENTER, key.PADENTER):
+                    break
+
+                if tkey == key.ESC:
+                    stanvor.lanter.stdscr.clear()
+                    stanvor.prompt.stvl.clear()
+                    sent.clear()
+                    return
+
+                elif stanvor.ιdeu == 'αqeμr' and tkey == key.TAB:
+                    if sent.ιmαν or not sent.ιmαν.endswith(' / '):
+                        sent.ιmαν += ' / '
+                        verse.νerιmαν = sent.ιmαν
+                elif stanvor.ιdeu == 'αqeμr' and tkey in (key.UP, key.DOWN):
+                    way = {key.UP: -1, key.DOWN: 1}.get(tkey, 0)
+                    aqehr_directions(way, verse)
+                    sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
+
+                elif tkey == key.SHF_TAB:
+                    if not stanvor.ιdeu == 'αqeμr':
+                        sent.ιmαν += '│ '
+                    if ' / ' not in sent.ιmαν:
+                        continue
+                    verse.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
+                    verse.νorιmαν = sent.ιmαν.split(' / ')[-2]
+                    sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
+
+                sent = tαg(tkey, stanvor, 'logren')
+ 
             break
 
+    name = stanvor.prompt.sent.ιmαν
     stanvor.prompt.stvl.clear()
     stanvor.prompt.sent.clear()
 
     if name not in ('', ' ', '..'):
         stanvor.prompt.stvl.stlαg = LOGREN_STAGEN[f'{val}.{function}'](name)
 
+    if stanvor.logαm.stat:
+        log(stanvor)
 
 def logreuιδαt(function: str, stanvor: Stanvor) -> None:
     """This function drives Stαuνor to rename or move logreuαm."""
@@ -81,13 +120,6 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
     stanvor.prompt.stvl.log = ''
 
     while True:
-        state = {
-            'ιmαν': sent.ιmαν,
-            'uostιmαν': sent.uostιmαν,
-            'αdιmαν': sent.αdιmαν,
-            'νerseut': stanvor.vsent.νerseut,
-            'υνerseut': stanvor.vsent.υνerseut,
-        }
         sent.lαδuιmαν = sent.uostιmαν if sent.uostιmαν != '' else ' '
 
         lestαq(stanvor)
@@ -148,6 +180,14 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
             sent.ιmαν, verse.logindex = sutils.path_to_imav(verse, νtαg)
 
         elif νtαg in sentam_stagen: # Lαg
+            state = {
+                'ιmαν': sent.ιmαν,
+                'uostιmαν': sent.uostιmαν,
+                'αdιmαν': sent.αdιmαν,
+                'νerseut': stanvor.vsent.νerseut,
+                'υνerseut': stanvor.vsent.υνerseut,
+            }
+
             for seutα, operation in sentam_stagen[νtαg].items():
                 state[seutα] = operation(sent, stanvor.vsent)
                 (sent.ιmαν, sent.uostιmαν, sent.αdιmαν,

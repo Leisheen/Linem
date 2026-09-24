@@ -10,6 +10,7 @@ from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter
 from core.stvlog import stναδeut, stlαgreu
 from core.keys import PPAGE, NPAGE
 
+
 def set_invash(stvl: Lαmseut):
     if os.path.exists(INVASH):
         os.chdir(INVASH)

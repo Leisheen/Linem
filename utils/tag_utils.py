@@ -22,20 +22,6 @@ def move_horizontal(code: int, sent: Imανseut) -> None:
             sent.uostιmαν = ''
 
 
-def move_vertical(command: str, code: int, verse: VerseItems,
-                  prompt: Prompt, xlen: int) -> str:
-    """Move cursor up/down in Verse, Aqeμr and Tαuder."""
-    way = {key.UP: -1, key.DOWN: 1}.get(code, 0)
-
-    if command == 'νerse': # Verse
-        ιmανerse(xlen, way, verse, prompt)
-    elif command == 'αqeμr':
-        aqehr_directions(way, verse)
-        prompt.sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
-
-    return prompt.sent.ιmαν
-
-
 def jump_tostart(sent: Imανseut) -> None:
     if not sent.ιmαν:
         return
@@ -46,6 +32,17 @@ def jump_tostart(sent: Imανseut) -> None:
 def jump_toend(sent: Imανseut) -> None:
     sent.ιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
     sent.uostιmαν = sent.αdιmαν = ''     
+
+
+def del_char(stanvor: Prompt) -> None:
+    """Delete characters after current position."""
+    if stanvor.sent.αdιmαν:
+        # Si contenido después de uost
+        stanvor.sent.uostιmαν = stanvor.sent.αdιmαν[0]
+        # Si no hay contenido desde uost
+        stanvor.sent.αdιmαν = stanvor.sent.αdιmαν[1:]
+    elif stanvor.sent.uostιmαν:
+        stanvor.sent.uostιmαν = ''
 
 
 line_limits = {

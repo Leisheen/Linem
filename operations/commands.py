@@ -8,7 +8,7 @@ import core.keys as key
 import utils.stv_utils as sutils
 
 from core.def_paths import (
-    INVASH, STVPATH, SAGET, PROSERV_PATH, PIANO_PATH, CITIES_PATH,
+    INVASH, SAGET, PROSERV_PATH, PIANO_PATH, CITIES_PATH,
     VERKLAIT_PATH, FINALE_PATH, DAVINCI_PATH, DATA_PATH,
     VSCODE_PATH, GDRIVE_PATH, GCAL_PATH, NOTION_PATH, MUSDEV_PATH
 )
@@ -18,12 +18,6 @@ from logren.gcal import calendar
 from logren.qampar import qαmpαr
 from utils.sys_utils import monitor_info, network_status
 
-
-default_dirs = {
-    key.F1: INVASH,
-    key.F2: STVPATH,
-    key.F3: r'C:\Users\Leane\OneDrive\Escritorio',
-}
 
 logimprol = {
     key.F12: lambda _: set_stνlαt(),
