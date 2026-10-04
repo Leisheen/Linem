@@ -670,8 +670,8 @@ def rprompt_operation(command: str, xlen: int) -> None:
     sys.stdout.write('\033[?25l')
 
 
-def end_process(lanter: sentam.Lanter, process: str) -> None:
-    """End process given by the user either Stαuνor or system."""
+def end_session(lanter: sentam.Lanter, process: str) -> None:
+    """End Stαuνor session and shutdown system if required."""
     menu_data = {
         'clearnum': 0,
         'name': 'Stαuνor',

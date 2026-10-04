@@ -188,7 +188,7 @@ def copy(original_name: str, new_name: str) -> str:
     else:
         shutil.copytree(original_name, new_name, dirs_exist_ok=True)
 
-    stνlαt(original_name, new_name, 9)
+    stνlαt(original_name, new_name, 6)
 
     return f"Oppel: {original_name} → Copy: {new_name}"
 

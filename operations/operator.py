@@ -47,14 +47,14 @@ from logren.logat import set_logat
 from logren.stv_programs import print_color, install_module
 
 
-operations = {
+media_drivers = {
     dfp.IMG_EXT: lambda command, _: open_pyside(command),
     dfp.VIDEO_EXT: lambda command, _: open_video(command),
     dfp.AUDIO_EXT: lambda file, stanvor: drive_audio(file, 'play', stanvor),
     dfp.TEXT_EXT: lambda file, stanvor: tαuder_manager(stanvor, file),
 }
 
-stv_process = {
+stv_operations = {
     key.ESC: lambda stanvor: sutils.reset(stanvor),
     key.CTL_PADENTER: lambda _: sutils.eudαμl_stαuνor(),
     key.SHF_PADENTER: lambda _: sutils.restart_stanvor(),
@@ -62,8 +62,8 @@ stv_process = {
     key.UP: lambda stanvor: logreu_select('up', stanvor),
     key.DOWN: lambda stanvor: logreu_select('down', stanvor),
     key.CTL_PADSLASH: lambda stanvor: sutils.set_search(stanvor.prompt.sent, stanvor.srch),
-    key.SHF_F12: lambda stanvor: sutils.end_process(stanvor.lanter, 'Systɢm δoνt'),
-    key.CTL_PADSTOP: lambda stanvor: sutils.end_process(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
+    key.SHF_F12: lambda stanvor: sutils.end_session(stanvor.lanter, 'Systɢm δoνt'),
+    key.CTL_PADSTOP: lambda stanvor: sutils.end_session(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
     key.PADSTAR: lambda stanvor: logreuιδαt('Lαιue', stanvor),
     key.PADSLASH: lambda stanvor: logreuιδαt('Verse', stanvor),
     key.SHF_PADPLUS: lambda stanvor: logreuιδαt('Copy', stanvor),
@@ -71,7 +71,7 @@ stv_process = {
     key.PADMINUS: lambda stanvor: logreutαg('Aqeμr', stanvor),
 }
 
-int_programs = {
+int_logrenam = {
     '.chr': lambda stanvor: eval_char(stanvor.lanter),
     '.logαt': lambda stanvor: set_logat(stanvor),
     '.sιeν': lambda stanvor: ιsιeν(stanvor),
@@ -189,8 +189,8 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
         stvl.αδeutαr, stvl.stlαg = stvlog.set_αδeutαr(command)
     elif command in ('.stlam', 'DOS'):
         sutils.rprompt_operation(command, stanvor.lanter.xlen)
-    elif command in int_programs:
-        app_manager(int_programs[command], stanvor)
+    elif command in int_logrenam:
+        app_manager(int_logrenam[command], stanvor)
     elif command in ('.locals', '.globals'):
         all_values = {'.locals': locals(), '.globals': globals()}
         stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
@@ -269,14 +269,14 @@ def process_input(stanvor: Stanvor) -> None:
             sutils.jump_inline(code, sent)
         elif code in logimprol: # None
             logimprol[code](stanvor)
-        elif code in stv_process: # None
-            stv_process[code](stanvor)
+        elif code in stv_operations: # None
+            stv_operations[code](stanvor)
         elif code in aud.AUDIO_PROCESS: # None
             aud.AUDIO_PROCESS[code](stanvor.audio.file, stanvor)
         elif code in logrenam: # None
             app_manager(logrenam[code], stanvor)
         elif code in (key.ENTER, key.PADENTER): # None
-            process_enter(stanvor, operations)
+            process_enter(stanvor, media_drivers)
 
         elif code in (*sutils.PAD, *sutils.LOGPAD): # nlog
             sutils.loc_numkey(code, sent, stanvor.logαm)
