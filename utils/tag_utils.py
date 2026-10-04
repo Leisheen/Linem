@@ -1,8 +1,6 @@
 """Exclusive tαg functions."""
 from core import keys as key
 from core.sentam import Prompt, Imανseut
-from utils.stv_utils import ιmανerse
-from utils.path_utils import VerseItems, aqehr_directions
 
 
 def move_horizontal(code: int, sent: Imανseut) -> None:
@@ -34,15 +32,15 @@ def jump_toend(sent: Imανseut) -> None:
     sent.uostιmαν = sent.αdιmαν = ''     
 
 
-def del_char(stanvor: Prompt) -> None:
+def del_char(prompt: Prompt) -> None:
     """Delete characters after current position."""
-    if stanvor.sent.αdιmαν:
+    if prompt.sent.αdιmαν:
         # Si contenido después de uost
-        stanvor.sent.uostιmαν = stanvor.sent.αdιmαν[0]
+        prompt.sent.uostιmαν = prompt.sent.αdιmαν[0]
         # Si no hay contenido desde uost
-        stanvor.sent.αdιmαν = stanvor.sent.αdιmαν[1:]
-    elif stanvor.sent.uostιmαν:
-        stanvor.sent.uostιmαν = ''
+        prompt.sent.αdιmαν = prompt.sent.αdιmαν[1:]
+    elif prompt.sent.uostιmαν:
+        prompt.sent.uostιmαν = ''
 
 
 line_limits = {

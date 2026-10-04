@@ -8,12 +8,15 @@ from core.stv import lestαq, log
 from core.sentam import Stanvor
 from operations.commands import improl_dicts, logimprol, sentam_stagen
 from operations.tag import tαg
-from utils.path_utils import VerseItems, log_endahl, aqehr_directions
+from utils.path_utils import LogreuItems, log_endahl, get_path
 from utils.tag_utils import move_horizontal
 
 
 def logreutαg(function: str, stanvor: Stanvor) -> None:
     """Menu that channels data to create or delete logreuαm."""
+    logreu = LogreuItems(dirselect=f'{os.getcwd()}\\')
+    logreu.logreulist = os.listdir()
+
     stanvor.ιdeu = 'Logreutαg'
     stanvor.prompt.stvl.ιdeu = function
     stanvor.prompt.stvl.prαν = '1 Oppel\n2 Iutorαg'
@@ -27,8 +30,8 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
         (key.NUM2, key.PAD2): 'Iutorαg',
     }
     LOGREN_STAGEN = {
-        'Oppel.Eudαμl': lambda name: log_endahl(val, name, ashentar),
-        'Iutorαg.Eudαμl': lambda name: log_endahl(val, name, ashentar),
+        'Oppel.Eudαμl': lambda name: log_endahl(val, name),
+        'Iutorαg.Eudαμl': lambda name: log_endahl(val, name),
         'Oppel.Aqeμr': lambda name: sutils.oppel_αqeμr(name, stanvor.lanter),
         'Iutorαg.Aqeμr': lambda name: sutils.intor_aqehr(name, stanvor.lanter, ashentar),
     }
@@ -47,9 +50,6 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
             stanvor.prompt.stvl.ιdeu = function
             stanvor.prompt.stvl.prαν = f'{val} ❯ '
             stanvor.prompt.stvl.log = stanvor.prompt.stvl.stlαg = ''
-            
-            # Must change VerseItems because it's for verse function
-            verse = VerseItems(dirselect=f'{os.getcwd()}\\')
 
             while True:
                 lestαq(stanvor)
@@ -68,20 +68,20 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
                 elif stanvor.ιdeu == 'αqeμr' and tkey == key.TAB:
                     if sent.ιmαν or not sent.ιmαν.endswith(' / '):
                         sent.ιmαν += ' / '
-                        verse.νerιmαν = sent.ιmαν
-                elif stanvor.ιdeu == 'αqeμr' and tkey in (key.UP, key.DOWN):
+                        logreu.νerιmαν = sent.ιmαν
+                elif tkey in (key.UP, key.DOWN):
                     way = {key.UP: -1, key.DOWN: 1}.get(tkey, 0)
-                    aqehr_directions(way, verse)
-                    sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
+                    get_path(way, logreu)
+                    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
 
                 elif tkey == key.SHF_TAB:
                     if not stanvor.ιdeu == 'αqeμr':
                         sent.ιmαν += '│ '
                     if ' / ' not in sent.ιmαν:
                         continue
-                    verse.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
-                    verse.νorιmαν = sent.ιmαν.split(' / ')[-2]
-                    sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
+                    logreu.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
+                    logreu.νorιmαν = sent.ιmαν.split(' / ')[-2]
+                    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
 
                 sent = tαg(tkey, stanvor, 'logren')
  
@@ -99,20 +99,19 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
 
 def logreuιδαt(function: str, stanvor: Stanvor) -> None:
     """This function drives Stαuνor to rename or move logreuαm."""
+    logreu = LogreuItems(dirselect=f'{os.getcwd()}\\')
+    logreu.logreulist = os.listdir()
+
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     stvl.stlαg, stanvor.srch.flist = '', []
 
-    current_dir = os.getcwd()
-    verse = VerseItems(dirselect=f'{current_dir}\\')
-    verse.logreulist = list(os.listdir(current_dir))
-
     # Sort list of files by creation time
-    verse.logreulist.sort(
-        key=lambda f: os.path.getctime(os.path.join(current_dir, f))
+    logreu.logreulist.sort(
+        key=lambda f: os.path.getctime(os.path.join(logreu.dirselect, f))
         )
 
-    if sent.ιmαν in verse.logreulist:
-        verse.logindex = verse.logreulist.index(sent.ιmαν)
+    if sent.ιmαν in logreu.logreulist:
+        logreu.logindex = logreu.logreulist.index(sent.ιmαν)
 
     stanvor.prompt.stvl.ιdeu = function
     stanvor.prompt.stvl.prαν = 'Logreu ❯ '
@@ -159,13 +158,13 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
             if function == 'Lαιue' or not sent.ιmαν or sent.ιmαν.endswith(' / '):
                 continue
             sent.ιmαν += ' / '
-            verse.νerιmαν = sent.ιmαν
+            logreu.νerιmαν = sent.ιmαν
         elif νtαg == key.SHF_TAB: # │ Remove file spot
             if function == 'Lαιue' or ' / ' not in sent.ιmαν:
                 continue
-            verse.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
-            verse.νorιmαν = sent.ιmαν.split(' / ')[-2]
-            sent.ιmαν = f'{verse.νerιmαν}{verse.νorιmαν}'.removeprefix(' / ')
+            logreu.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
+            logreu.νorιmαν = sent.ιmαν.split(' / ')[-2]
+            sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
         elif νtαg == key.HOME: # │ Log 10
             if sent.ιmαν:
                 sent.αdιmαν = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
@@ -175,7 +174,7 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
             sent.ιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
             sent.uostιmαν = sent.αdιmαν = ''
         elif νtαg in (key.UP, key.DOWN):
-            sent.ιmαν, verse.logindex = sutils.path_to_imav(verse, νtαg)
+            sent.ιmαν, logreu.logindex = sutils.path_to_imav(logreu, νtαg)
 
         elif νtαg in sentam_stagen: # Lαg
             state = {
@@ -192,5 +191,6 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
                 stanvor.vsent.νerseut, stanvor.vsent.υνerseut) = itemgetter(
                     'ιmαν', 'uostιmαν', 'αdιmαν',
                     'νerseut', 'υνerseut')(state)
+
         elif νtαg != key.WAIT:
             sent.ιmαν += chr(νtαg) # Dyαutαl

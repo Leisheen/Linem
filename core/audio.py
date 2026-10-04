@@ -83,12 +83,12 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
 
 
     actions = {
-        'play': play,
-        'stop': stop,
-        'pause': pause,
+        'play':       play,
+        'stop':       stop,
+        'pause':      pause,
         'audio_mode': switch_mode,
-        'forward': lambda: move('forward'),
-        'rewind': lambda: move('rewind'),
+        'forward':    lambda: move('forward'),
+        'rewind':     lambda: move('rewind'),
     }
 
     stat = actions.get(function, lambda: None)()
@@ -98,9 +98,9 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
 
 
 AUDIO_PROCESS = {
-    LESS: lambda file, stanvor: drive_audio(file, 'stop', stanvor),
-    GREATER: lambda file, stanvor: drive_audio(file, 'pause', stanvor),
-    SHF_F2: lambda file, stanvor: drive_audio(file, 'rewind', stanvor),
-    SHF_F3: lambda file, stanvor: drive_audio(file, 'forward', stanvor),
+    LESS:     lambda file, stanvor: drive_audio(file, 'stop', stanvor),
+    GREATER:  lambda file, stanvor: drive_audio(file, 'pause', stanvor),
+    SHF_F2:   lambda file, stanvor: drive_audio(file, 'rewind', stanvor),
+    SHF_F3:   lambda file, stanvor: drive_audio(file, 'forward', stanvor),
     QUESTION: lambda file, stanvor: drive_audio(file, 'audio_mode', stanvor),
 }

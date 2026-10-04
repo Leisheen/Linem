@@ -79,8 +79,10 @@ def tαg(tkey: int, stanvor: Stanvor, command: str) -> Imανseut:
                 sent.ιmαν, sent.uostιmαν, sent.αdιmαν, vsent.νerseut, vsent.υνerseut = itemgetter(
                     'ιmαν', 'uostιmαν', 'αdιmαν', 'νerseut', 'υνerseut')(state)
 
-        elif tkey not in (key.WAIT, key.NULL):
+        # Add char
+        elif tkey not in key.special_keys:
             sent.ιmαν += chr(tkey)
+
 
     except ValueError:
         sent.ιmαν = sent.ιmαν[:-1]

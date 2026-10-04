@@ -18,15 +18,16 @@ ASHENTAR_MODES = {f'αδ{i}': (i, e) for i, e in enumerate(ASHENTAR_LIST)}
 
 
 # --- LOGGING ---
-def stνlαt(ιdeu: str, ιmαseut: str, lαg: Any) -> None: # · Stνlαt ιlestαgeu
+def stνlαt(ιdeu: str, ιseut: str, lαg: Any) -> None: # · Stνlαt ιlestαgeu
     """Print all the operations in a log screen.
     - ιdeu:     Activity (Stαuνor is default)
-    - ιmαseut:  Operation
+    - ιseut:  Operation
     - lαg:      Formatter (Select format from stνlαt_commands)
     """
+    sep = 8
     bluediv = '  [blue]│[/blue]  '
     ciden_bsep = f'[cyan]{ιdeu}[/cyan] [blue]│[/blue] '
-    cyan_arrow = '[cyan]→[/cyan]'
+    cyar = '[cyan]→[/cyan]'
     tαuder_lαg = ιdeu[7:] if ιdeu.startswith("Tαuder") else ιdeu
     timestamp = datetime.now().strftime('%H.%M')
 
@@ -35,32 +36,32 @@ def stνlαt(ιdeu: str, ιmαseut: str, lαg: Any) -> None: # · Stνlαt ιles
         input()
         return
 
-    stνlαt_commands = {
+    stνlαt_sections = {
         1: (ιdeu,     '<INVASH>' if os.getcwd() == INVASH
             else     f'[blue]Iuνor  ❯ [/blue] {os.getcwd()}'),
-        2: (ιdeu,    f'[blue]{'Eutel':8}│[/blue]  {ιmαseut}'),
-        3: (ιdeu,    f'[blue]{'Eudαμl':8}│[/blue]  {ιmαseut}'),
-        4: (ιdeu,    f'[red]{'Aqeμr':8}│[/red]  {ιmαseut}'),
-        5: (STANVOR, f'[blue]{'Verse':8}│[/blue]  {ιdeu} {cyan_arrow} {ιmαseut}'),
-        7: (f'{'Vermαt':8}',
-            f'[red]{ιdeu}[/red]{bluediv}{ιmαseut}' if ιdeu == 'Iuαq '
-            else     f'{ciden_bsep} {ιmαseut}' if ιdeu in ('Sιguα ', 'Verqom')
-            else     f'[blue]{ιdeu:8}│[/blue] {ιmαseut}'),
-        8: (ιdeu,    f'[green]{ιmαseut:8}[/green]'),
-        9: (STANVOR, f'[blue]{'Copy':8}│[/blue]  {ιdeu} {cyan_arrow} {ιmαseut}'),
-        'Tαg': (lαg, ιmαseut),
-        STANVOR: (lαg, f'[blue]{ιdeu:8}│[/blue] {ιmαseut}'),
-        'Tαuder': (f'{lαg:8}', f'[blue]{tαuder_lαg}[/blue]  {ιmαseut}'),
-        'Aιleus': (f'{'Tαuder':8}', f'[blue]{lαg} ❯[/blue] {ιmαseut}'),
+        2: (ιdeu,    f'[blue]{'Eutel':{sep}}│[/blue]  {ιseut}'),
+        3: (ιdeu,    f'[blue]{'Eudαμl':{sep}}│[/blue]  {ιseut}'),
+        4: (ιdeu,    f'[red]{'Aqeμr':{sep}}│[/red]  {ιseut}'),
+        5: (STANVOR, f'[blue]{'Verse':{sep}}│[/blue]  {ιdeu} {cyar} {ιseut}'),
+        7: (f'{'Vermαt':{sep}}',
+            f'[red]{ιdeu}[/red]{bluediv}{ιseut}' if ιdeu == 'Iuαq '
+            else     f'{ciden_bsep} {ιseut}' if ιdeu in ('Sιguα ', 'Verqom')
+            else     f'[blue]{ιdeu:{sep}}│[/blue] {ιseut}'),
+        8: (ιdeu,    f'[green]{ιseut:{sep}}[/green]'),
+        9: (STANVOR, f'[blue]{'Copy':{sep}}│[/blue]  {ιdeu} {cyar} {ιseut}'),
+        'Tαg': (lαg, ιseut),
+        STANVOR: (lαg, f'[blue]{ιdeu:{sep}}│[/blue] {ιseut}'),
+        'Tαuder': (f'{lαg:{sep}}', f'[blue]{tαuder_lαg}[/blue]  {ιseut}'),
+        'Aιleus': (f'{'Tαuder':{sep}}', f'[blue]{lαg} ❯[/blue] {ιseut}'),
     }
 
     # if lαg is not 0, it modifies the default format of the log message
-    if lαg in stνlαt_commands:
-        ιdeu, ιmαseut = stνlαt_commands[lαg]
+    if lαg in stνlαt_sections:
+        ιdeu, ιseut = stνlαt_sections[lαg]
 
     # If lαg is 0, it will print the following default format
     # if lαg is not 0, it uses the prompt structure, but carrying the changes
-    prompt = f'[magenta]{timestamp} {ιdeu:8} │[/magenta]   {ιmαseut}'
+    prompt = f'[magenta]{timestamp} {ιdeu:{sep}} │[/magenta]   {ιseut}'
     console.print(prompt)
 
     if not os.path.exists(INVASH):

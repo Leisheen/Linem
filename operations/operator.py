@@ -207,6 +207,7 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
     else:
         msg, stnum = sutils.manage_command(command, operations, stanvor)
         stvlog.stνlαt(STANVOR, msg, stnum)
+        stanvor.ιdeu = STANVOR
 
     stvl.log = '❯ ' if stvl.prαν else ''
     stanvor.logαm.nlog = 0

@@ -217,3 +217,8 @@ HSEP            = 9472      # ord('─') / '\u2500' / curses.HORIZONTAL_SEP ?
 VSEP            = 9474      # ord('│') / '\u2505' / curses.VERTICAL_SEP ?
 
 PROMPT          = 10095     # ord('❯')
+
+specials_ref = ('ALT', 'CTL', 'SHF', 'F', 'PAD')
+special_keys = [WAIT, NULL, TAB, ENTER, ESC, BACK, DEL,
+                    ALT_DEL, LEFT, RIGHT, UP, DOWN, HOME, END]
+special_keys += [y for x, y in vars().items() if x.startswith(specials_ref)]
