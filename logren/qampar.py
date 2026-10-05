@@ -34,4 +34,4 @@ def qαmpαr(lanter: Lanter) -> None:
             webbrowser.open(mαuslαg)
         elif qαmpαr == curses.KEY_F12: # F12            Stνlαt |
             set_stνlαt()
-            stνlαt(STANVOR, f'{os.getcwd()}', 'ιuνor')
+            stνlαt(STANVOR, f'{os.getcwd()}', 'Iuνor')

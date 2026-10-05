@@ -65,5 +65,5 @@ def ιuνor(stanvor: Stanvor) -> None:
 
     stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
     log(stanvor)
-    stνlαt(STANVOR, os.getcwd(), 'ιuνor')
+    stνlαt(STANVOR, os.getcwd(), 'Iuνor')
     stanvor.lanter.stdscr.nodelay(True)

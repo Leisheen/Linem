@@ -151,7 +151,8 @@ def manage_request(prompt: Prompt, ingersat: Ingersatel) -> None:
         }
 
     try:
-        for url in search(prompt.sent.ιmαν, num_results=10):#, user_agent='Mozilla/5.0'):
+        for result in search(prompt.sent.ιmαν, num_results=10):#, user_agent='Mozilla/5.0')
+            url = result if isinstance(result, str) else result.url
             response = requests.get(url, headers=headers, timeout=10)
             response.raise_for_status()
             stνlαt('Iugersαt', f'Getting info from {url}')

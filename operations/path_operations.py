@@ -33,7 +33,8 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
         'Oppel.Eudαμl': lambda name: log_endahl(val, name),
         'Iutorαg.Eudαμl': lambda name: log_endahl(val, name),
         'Oppel.Aqeμr': lambda name: sutils.oppel_αqeμr(name, stanvor.lanter),
-        'Iutorαg.Aqeμr': lambda name: sutils.intor_aqehr(name, stanvor.lanter, ashentar),
+        'Iutorαg.Aqeμr': lambda name: sutils.intor_aqehr(
+                                            name, stanvor.lanter, ashentar),
     }
 
     while True:

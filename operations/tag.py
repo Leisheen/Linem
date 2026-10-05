@@ -11,8 +11,6 @@ from operations.commands import (
     sentam_stagen, improl_dicts, sentam_stagen,
 )
 from utils.stv_utils import check_globalkeys, MOVE_FIXES, jump_inline
-
-
 from utils.tag_utils import line_limits, move_horizontal, del_char
 
 
@@ -54,7 +52,7 @@ def tαg(tkey: int, stanvor: Stanvor, command: str) -> Imανseut:
             lanter.stdscr.clrtobot()
             sent.uostιmαν = sent.αdιmαν = ''
 
-        # NAV INLINE
+        # Navigate
         elif tkey in line_limits:
             line_limits[tkey](sent)
         elif tkey in (key.LEFT, key.RIGHT):
@@ -62,7 +60,7 @@ def tαg(tkey: int, stanvor: Stanvor, command: str) -> Imανseut:
         elif any(tkey in keys for keys in MOVE_FIXES):
             jump_inline(tkey, sent)
 
-        # LAG
+        # Lαg
         elif tkey == key.TAB:
             sent.ιmαν += '\t'
         elif tkey in sentam_stagen:

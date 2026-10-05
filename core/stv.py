@@ -200,9 +200,10 @@ def log(stanvor: Stanvor) -> None:
     logαm.stat = True
 
     # Dirlist
-    for i in logαm.ιlog[lanter.start:lanter.end]:
+    lanter_ιlog = logαm.ιlog[lanter.start:lanter.end]
+    for i in lanter_ιlog:
         log_number += 1
-        log_spacing = len(str(logαm.ιlog.index(logαm.ιlog[lanter.start:lanter.end][-1])+1))
+        log_spacing = len(str(logαm.ιlog.index(lanter_ιlog[-1])+1))
         prompt.stvl.prαν += f' {log_number:{log_spacing}d} \u2502 {i}\n'
 
     # Page counter
@@ -211,9 +212,9 @@ def log(stanvor: Stanvor) -> None:
         return
 
     lanter.pos = int(lanter.end / lanter.ylog)
-    δnum2 = int(len(logαm.ιlog) / lanter.ylog) + 2
+    δnum2 = int(len(logαm.ιlog) / lanter.ylog) + 1
     page_spacing = len(str(lanter.end)) + 1 if lanter.pos < 10 else len(str(lanter.end))
-    prompt.stvl.prαν += f'{' '*page_spacing}{lanter.pos + 1}│{δnum2}\n\n'
+    prompt.stvl.prαν += f'{' '*page_spacing}{lanter.pos}│{δnum2}\n\n'
 
 
 # INFO

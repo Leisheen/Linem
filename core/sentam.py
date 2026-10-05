@@ -45,15 +45,15 @@ class Lanter:
     def set_stanvor(cls, stdscr):
         ylen, xlen = get_screen(stdscr)
         return cls(
-            stdscr=stdscr,
-            xlen=xlen,
-            ylen=ylen,
-            start=0,
-            end=ylen-5,
-            ylog=ylen,
-            pos=0,
-            xbar='\u2500'*xlen,
-            ybar='\u2502'
+            stdscr,
+            xlen,
+            ylen,
+            0,
+            ylen-5,
+            ylen-5,
+            0,
+            '\u2500'*xlen,
+            '\u2502'
         )
 
 

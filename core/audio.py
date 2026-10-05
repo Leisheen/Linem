@@ -11,6 +11,9 @@ from core.sentam import STANVOR, Stanvor, Audio
 from core.stvlog import stνlαt
 
 
+master = pygame.mixer
+music = master.music
+
 AUDIO_ACTIONS = {
     ALT_F1: 'stop',
     ALT_F2: 'pause',
@@ -19,40 +22,41 @@ AUDIO_ACTIONS = {
 } 
 
 
+
 def set_audio(audio: Audio):
     """Set audio variables for Stαuνor and play audio file."""
     if not audio.on:
         return
 
-    audio.pos = pygame.mixer.music.get_pos() / 1000
+    audio.pos = music.get_pos() / 1000
 
     prmthead = f'{audio.name} ❯  {str(int(audio.pos))}'
     audio_mins = f'{int(audio.length)//60}:{int(audio.length)%60}'
     audio.prompt = f'{prmthead} : {audio.length}s ({audio_mins})'
 
     if audio.pos == -0.001:
-        pygame.mixer.music.play()
+        music.play()
         audio.prompt = ''
 
 
 def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
     """Module to play an audio file."""
     audio, stvl = stanvor.audio, stanvor.prompt.stvl
-    pygame.mixer.init()
+    master.init()
 
     def play() -> str:
-        pygame.mixer.music.load(file)
-        pygame.mixer.music.play()
+        music.load(file)
+        music.play()
 
         audio.start()
         audio.name = file
         audio.file = os.path.abspath(audio.name)
-        audio.length = str(int(pygame.mixer.Sound(audio.file).get_length()))
+        audio.length = str(int(master.Sound(audio.file).get_length()))
 
         return ''
 
     def stop() -> str:
-        pygame.mixer.music.stop()
+        music.stop()
         stvl.υprαν = ''
         file = audio.name
         audio.clear()
@@ -62,10 +66,10 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
         audio.paused = not audio.paused
 
         if audio.paused:
-            pygame.mixer.music.pause()
+            music.pause()
             return 'paused'
 
-        pygame.mixer.music.unpause()
+        music.unpause()
         return 'unpaused'
 
     def switch_mode() -> None:
@@ -73,13 +77,13 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
         stvl.υprαν = '' if audio.on else stvl.υprαν
 
     def move(direction: str) -> None:
-        current_pos = pygame.mixer.music.get_pos() / 1000
+        current_pos = music.get_pos() / 1000
         directions = {
             'forward': lambda: min(current_pos + 50, float(audio.length)),
             'rewind':  lambda: max(0, current_pos - 50),
         }
         audio.pos = directions.get(direction, lambda: current_pos)()
-        pygame.mixer.music.set_pos(audio.pos)
+        music.set_pos(audio.pos)
 
 
     actions = {
@@ -98,8 +102,8 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
 
 
 AUDIO_PROCESS = {
-    LESS:     lambda file, stanvor: drive_audio(file, 'stop', stanvor),
-    GREATER:  lambda file, stanvor: drive_audio(file, 'pause', stanvor),
+    GREATER:  lambda file, stanvor: drive_audio(file, 'stop', stanvor),
+    LESS:     lambda file, stanvor: drive_audio(file, 'pause', stanvor),
     SHF_F2:   lambda file, stanvor: drive_audio(file, 'rewind', stanvor),
     SHF_F3:   lambda file, stanvor: drive_audio(file, 'forward', stanvor),
     QUESTION: lambda file, stanvor: drive_audio(file, 'audio_mode', stanvor),

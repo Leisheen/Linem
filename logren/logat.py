@@ -4,7 +4,7 @@ import sys
 
 from PySide6.QtCore import Qt
 #from PySide6.QtGui import QPixmap, QKeySequence, QShortcut
-from PySide6.QtWidgets import QApplication, QGraphicsView, QGraphicsScene, QWidget
+from PySide6.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget
 from rich.layout import Layout
 from rich.console import Console
 #from textual.app import App
@@ -79,13 +79,11 @@ def run_pyside() -> None:
     label.setStyleSheet(
         "font-size: 20px; color: white; background-color: black;"
         )
-    label.setAlignment(Qt.AlignLeft)
+    label.setAlignment(Qt.AlignmentFlag.AlignLeft)
     layout.addWidget(label)
     window.setLayout(layout)
     # Ste window frameless (No title bar)
-    flags = Qt.WindowFlags(
-        Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-        )
+    flags = Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
     window.setWindowFlags(flags)
 
     # Run app

@@ -37,7 +37,7 @@ def main(stdscr: curses.window) -> None:
     # Here were all the code before
 
     lαmlιuem(sentam.STANVOR, lanter.xlen)
-    stνlαt(sentam.STANVOR, '<|-LINEMAG-|>', 0)
+    stνlαt(sentam.STANVOR, '<|-LINEMAG-|>')
 
     lanter.stdscr.nodelay(True)
     curses.curs_set(False)

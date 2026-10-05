@@ -187,7 +187,7 @@ def oppel_αqeμr(name: str, lanter: Lanter) -> str:
 
     for i in loglist:
         msg, counter = path.process_delete_path(i, counter)
-        stνlαt(STANVOR, msg, 'αqeμr')
+        stνlαt(STANVOR, msg, 'Aqeμr')
     
     return stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
 
@@ -648,7 +648,7 @@ def set_search(sent: Imανseut, srch: Search) -> None:
 def eudαμl_stαuνor() -> None:
     """Open a new Lιuem Stαuνor instance."""
     os.startfile(r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem\main.py')
-    stνlαt(STANVOR, 'Lιuem Stαuνor', 'eudαμl')
+    stνlαt(STANVOR, 'Lιuem Stαuνor', 'Eudαμl')
 
 
 def restart_stanvor() -> None:
@@ -669,7 +669,7 @@ def rprompt_operation(command: str, xlen: int) -> None:
         #os.system('powershell -NoLogo')
 
     lαmlιuem(STANVOR, xlen)
-    stνlαt(STANVOR, f'{os.getcwd()}', 'ιuνor')
+    stνlαt(STANVOR, f'{os.getcwd()}', 'Iuνor')
     sys.stdout.write('\033[?25l')
 
 
