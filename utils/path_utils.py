@@ -97,7 +97,7 @@ def verse_filter(path: str, logreu_name: str) -> list:
         for logreu in path.split(' / '):
             if not os.path.exists(logreu):
                 stlag = f'Logreu [cyan]{logreu}[/cyan] [red]αqμerzeu[/red]'
-                stνlαt(STANVOR, stlag, 0)
+                stνlαt(STANVOR, stlag)
                 continue
             files_list.append(logreu)
 
@@ -188,7 +188,7 @@ def copy(original_name: str, new_name: str) -> str:
     else:
         shutil.copytree(original_name, new_name, dirs_exist_ok=True)
 
-    stνlαt(original_name, new_name, 6)
+    stνlαt(original_name, new_name, 'copy')
 
     return f"Oppel: {original_name} → Copy: {new_name}"
 

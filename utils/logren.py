@@ -23,17 +23,17 @@ def open_editor(file: str, editor: str, lag: str) -> None:
     curses.curs_set(0)
 
     if lag:
-        stνlαt(lag, '❯ Lαg', 0)
+        stνlαt(lag, '❯ Lαg')
 
 
 # Explorer
 def open_saget(SAGET):
     """Open Sαget."""
     if not os.path.exists(SAGET):
-        stνlαt(STANVOR, '❯ Sαget αqμerzeu', 0)
- 
+        stνlαt(STANVOR, '❯ Sαget αqμerzeu')
+
     subprocess.Popen(SAGET)
-    stνlαt(STANVOR, '❯ Sαget', 0)
+    stνlαt(STANVOR, '❯ Sαget')
 
 
 # Pdf for open_pyside()

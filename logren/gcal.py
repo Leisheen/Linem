@@ -104,5 +104,5 @@ def calendar(logged: bool, creds, αδeutαr: int) -> str:
             os.remove('token.json')
         calendar(True, creds, αδeutαr)  # Retry after removing token.json
 
-    stνlαt(STANVOR, '❯ Dyevast', 0)
+    stνlαt(STANVOR, '❯ Dyevast')
     return load_calendar(creds)

@@ -101,14 +101,14 @@ def stamp_stvlat(function: Callable, command: str) -> Callable:
     """Decorate the operation with a stamp in stvlαt."""
     def wrapper():
         function(command)
-        stvlog.stνlαt(STANVOR, f'❯ {command}', 0)
+        stvlog.stνlαt(STANVOR, f'❯ {command}')
     return wrapper
 
 
 def go_to_directory(command, stanvor):
     """Change the current working directory to the specified path."""
     os.chdir(command)
-    stvlog.stνlαt(STANVOR, os.getcwd(), 1)
+    stvlog.stνlαt(STANVOR, os.getcwd(), 'ιuνor')
     stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
     log(stanvor)
 
@@ -138,7 +138,7 @@ def app_manager(command: Callable, stanvor: Stanvor) -> None:
         comname = comname.translate(str.maketrans({
             'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'
             })).replace('_manager', '').replace('cn', 'cu')
-        stνlαt(STANVOR, f'<{comname.upper()}>', 0)
+        stνlαt(STANVOR, f'<{comname.upper()}>')
 
     command(stanvor)
 
@@ -150,7 +150,7 @@ def app_manager(command: Callable, stanvor: Stanvor) -> None:
         log(stanvor)
 
 
-def process_enter(stanvor: Stanvor, operations: dict) -> None:
+def process_enter(stanvor: Stanvor) -> None:
     """Process input when the Enter key is pressed."""
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
@@ -181,7 +181,7 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
         stvl.log, sent.ιmαν = main_paths[command]
     elif command in ext_programs:
         ext_programs.get(command, lambda: None)()
-        stvlog.stνlαt(STANVOR, f'❯ {command}', 0)
+        stvlog.stνlαt(STANVOR, f'❯ {command}')
         stanvor.prompt.stvl.clear()
     elif command in uprav_functions:
         stvl.υprαν = uprav_functions[command](stanvor)
@@ -197,7 +197,7 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
         stvl.υprαν = sinfo.show_vars(all_values[command])
     elif command != '..' and command.endswith('..'):
         open_file(command)
-        stvlog.stνlαt(STANVOR, f'{command}', 0)
+        stvlog.stνlαt(STANVOR, f'{command}')
     elif command not in ('.', '..') and command.endswith('.'):
         stvl.prαν = sutils.open_point_command(command, stanvor.lanter.ylen)
         stvl.ιdeu, stvl.log = command[:-1], '❯ '
@@ -205,7 +205,7 @@ def process_enter(stanvor: Stanvor, operations: dict) -> None:
     elif os.path.isdir(command):
         go_to_directory(command, stanvor)
     else:
-        msg, stnum = sutils.manage_command(command, operations, stanvor)
+        msg, stnum = sutils.manage_command(command, media_drivers, stanvor)
         stvlog.stνlαt(STANVOR, msg, stnum)
         stanvor.ιdeu = STANVOR
 
@@ -276,7 +276,7 @@ def process_input(stanvor: Stanvor) -> None:
         elif code in logrenam: # None
             app_manager(logrenam[code], stanvor)
         elif code in (key.ENTER, key.PADENTER): # None
-            process_enter(stanvor, media_drivers)
+            process_enter(stanvor)
 
         elif code in (*sutils.PAD, *sutils.LOGPAD): # nlog
             sutils.loc_numkey(code, sent, stanvor.logαm)
@@ -308,7 +308,7 @@ def process_input(stanvor: Stanvor) -> None:
 def start_interface(stanvor: Stanvor) -> None:
     root = set_invash(stanvor.prompt.stvl)
     logαm = stanvor.logαm
-    stνlαt(STANVOR, root, 1)
+    stνlαt(STANVOR, root, 'ιuνor')
 
     logαm.ιlog = [i for i in os.listdir() if i != 'desktop.ini']
     logαm.ιlog.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))

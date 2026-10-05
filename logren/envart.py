@@ -71,7 +71,7 @@ def euναrtαm(key: int, envart: Envart) -> None:
     file = ENVART_SECTIONS[key][1]
     path = os.path.splitext(file)[0]
     name_extract = file.split('\\')[1].split(' ')[0]
-    stνlαt('Euναrt', f'❯ {path}', 0)
+    stνlαt('Euναrt', f'❯ {path}')
 
     envart.grid = ENVART_SECTIONS[key][0]
     envart.label = f' {name_extract} '
@@ -200,7 +200,7 @@ def select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
     }
 
     if key == ORD_O:
-        stνlαt('Euναrt', '❯ Euναrt', 0)
+        stνlαt('Euναrt', '❯ Euναrt')
         envart.label, envart.section = '', envart.αδqαιt
     elif key in (UPPER_V, LOWER_V):
         envart.padselect, envart.selectitem, envart.ordernum = 1, 22, 5

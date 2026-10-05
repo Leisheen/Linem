@@ -10,8 +10,11 @@ import sys # for end_process, rprompt_operation
 import webbrowser # for search_select
 from typing import List, Dict, Callable # for simple_menu, askaq, search_select, manage_command
 
-import core.sentam as sentam
-import core.stvlog as stvlog
+from core.sentam import (
+    STANVOR, Stanvor, Lanter, Imανseut, Logreuαm,
+    Lαmseut, Vseut, Prompt, Search
+)
+from core.stvlog import stνlαt, stναδeut, stlαgreu, lαmlιuem, set_log
 import utils.path_utils as path # for oppel_αqeμr, νerse
 import utils.sys_utils as sinfo
 
@@ -84,7 +87,7 @@ def print_timervals(active: bool, timer_values: dict) -> None:
 
     for key, value in timer_values.items():
         spacing = ' ' * (11 - len(key))
-        stvlog.stνlαt(sentam.STANVOR, f'{key}:{spacing}{value:.5f}s', 0)
+        stνlαt(STANVOR, f'{key}:{spacing}{value:.5f}s')
 
 
 def play_alarm(alarm, stvl):
@@ -110,7 +113,7 @@ def izvart_info() -> str:
 
 
 # System
-def show_sys_info(lanter: sentam.Lanter) -> str:
+def show_sys_info(lanter: Lanter) -> str:
     """Retrieve system information."""
     while True:
         mαιteu(lanter, 0, 'System')
@@ -120,7 +123,7 @@ def show_sys_info(lanter: sentam.Lanter) -> str:
             return ''
 
 
-def simple_menu(lanter: sentam.Lanter, data: dict) -> bool:
+def simple_menu(lanter: Lanter, data: dict) -> bool:
     """Simple mαιteu menu."""
     while True:
         mαιteu(lanter, data['clearnum'], data['name'])
@@ -134,7 +137,7 @@ def simple_menu(lanter: sentam.Lanter, data: dict) -> bool:
             return True
 
 
-def anza_file(stanvor: sentam.Stanvor) -> str:
+def anza_file(stanvor: Stanvor) -> str:
     """Open a text file given by the user. """
     stanvor.prompt.stvl.prαν = 'Oppel ❯ '
     sent = stanvor.prompt.sent
@@ -154,7 +157,7 @@ def anza_file(stanvor: sentam.Stanvor) -> str:
             sent.ιmαν += chr(αuzα)
 
 
-def ask_aqehr(ιmαν: str, loglist: List, lanter: sentam.Lanter) -> list:
+def ask_aqehr(ιmαν: str, loglist: List, lanter: Lanter) -> list:
     """Menu to confirm current logreuαlist filtering in Oppel Aqeμr."""
     while True:                # Ask to delete
         logrenam_prompt = ''
@@ -172,7 +175,7 @@ def ask_aqehr(ιmαν: str, loglist: List, lanter: sentam.Lanter) -> list:
             return loglist
 
 
-def oppel_αqeμr(name: str, lanter: sentam.Lanter) -> str:
+def oppel_αqeμr(name: str, lanter: Lanter) -> str:
     """Delete files and directories."""
     if name in ('', ' '):
         return ''
@@ -184,13 +187,13 @@ def oppel_αqeμr(name: str, lanter: sentam.Lanter) -> str:
 
     for i in loglist:
         msg, counter = path.process_delete_path(i, counter)
-        stvlog.stνlαt(sentam.STANVOR, msg, 4)
+        stνlαt(STANVOR, msg, 'αqeμr')
     
-    return stvlog.stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
+    return stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
 
 
 # -- PROMPT --
-def reset(stanvor: sentam.Stanvor) -> None:
+def reset(stanvor: Stanvor) -> None:
     """Reset Stαuνor variables."""
     stanvor.prompt.sent.clear()
     stanvor.prompt.stvl.clear()
@@ -199,7 +202,7 @@ def reset(stanvor: sentam.Stanvor) -> None:
     stanvor.logαm.nlog = 0
 
 
-def add_key(sent: sentam.Imανseut, key: int, logαm: sentam.Logreuαm, nlog: int) -> None:
+def add_key(sent: Imανseut, key: int, logαm: Logreuαm, nlog: int) -> None:
     """Add a key to the Stαuνor prompt."""
     sent.ιmαν += MUSSELAITH[key] if key in MUSSELAITH else chr(key)
     sent.ιmαν = sent.ιmαν.lstrip()
@@ -210,7 +213,7 @@ def add_key(sent: sentam.Imανseut, key: int, logαm: sentam.Logreuαm, nlog: i
         logαm.nlog = nlog
 
 
-def move_left(sent: sentam.Imανseut, num1: int, num2: int) -> None:
+def move_left(sent: Imανseut, num1: int, num2: int) -> None:
     """Move cursor to the left inside tαg function."""
     if len(sent.ιmαν) > num1:
         sent.αdιmαν = sent.ιmαν[-num1:] + sent.uostιmαν + sent.αdιmαν
@@ -222,7 +225,7 @@ def move_left(sent: sentam.Imανseut, num1: int, num2: int) -> None:
         sent.ιmαν = ''
 
 
-def move_right(sent: sentam.Imανseut, limit: int, step: int) -> None:
+def move_right(sent: Imανseut, limit: int, step: int) -> None:
     """Move cursor to the right inside tαg function."""
     if len(sent.αdιmαν) > limit:
         sent.ιmαν += sent.uostιmαν + sent.αdιmαν[:limit]
@@ -233,7 +236,7 @@ def move_right(sent: sentam.Imανseut, limit: int, step: int) -> None:
         sent.uostιmαν = sent.αdιmαν = ''
 
 
-def jump_inline(key: int, sent: sentam.Imανseut) -> None:
+def jump_inline(key: int, sent: Imανseut) -> None:
     """Jump horizontally in the Stαuνor prompt."""
     keys = next(keys for keys in MOVE_FIXES if key in keys)
     func = move_left if key == keys[0] else move_right
@@ -245,7 +248,7 @@ def del_char(αdιmαν: str) -> tuple[str, str]:
     return (αdιmαν[0], αdιmαν[1:]) if αdιmαν else ('', αdιmαν)
 
 
-def loc_numkey(key: int, sent: sentam.Imανseut, logαm: sentam.Logreuαm) -> None:
+def loc_numkey(key: int, sent: Imανseut, logαm: Logreuαm) -> None:
     """Jump to a specific index based on a numkey."""
     if key in PAD:
         logαm.nlog = min(len(logαm.ιlog)-1, PAD[key][1])
@@ -270,7 +273,7 @@ def path_to_imav(logreu: path.LogreuItems, command: int) -> tuple[str, int]:
     return f'{logreu.νerιmαν}{νorιmαν}'.removeprefix(' / '), logreu.logindex
 
 
-def tab(key: str, sent: sentam.Imανseut, logαm: sentam.Logreuαm) -> None:
+def tab(key: str, sent: Imανseut, logαm: Logreuαm) -> None:
     """Return a filename from the current directory and its index."""
     logαm.nlog = min(logαm.nlog, len(logαm.ιlog) - 1)
 
@@ -292,7 +295,7 @@ def open_point_command(path: str, y: int) -> str:
     if not os.path.isfile(path):
         return ''
 
-    stvlog.stνlαt(sentam.STANVOR, path, 0)
+    stνlαt(STANVOR, path)
 
     lines = []
     with open(f"{path}", "r", encoding='utf-8', errors='ignore') as file:
@@ -306,7 +309,7 @@ def open_point_command(path: str, y: int) -> str:
     return ''.join(lines).replace('\x00', '') + '\n'
 
 
-def intor_aqehr(ιmαν: str, lanter: sentam.Lanter, αδeutαr: int) -> str:
+def intor_aqehr(ιmαν: str, lanter: Lanter, αδeutαr: int) -> str:
     """Delete directory."""
     # List of dirs in ' / ' command
     logreuαlist = list(ιmαν.split(' / '))
@@ -349,28 +352,28 @@ def intor_aqehr(ιmαν: str, lanter: sentam.Lanter, αδeutαr: int) -> str:
     # Delete directories in logreuαlist if they exist
     for i in logreuαlist:
         if not os.path.exists(i):
-            return stvlog.stlαgreu(f'Iutorαg {i} αqμerzeu', 4)
+            return stlαgreu(f'Iutorαg {i} αqμerzeu', 4)
         if os.path.isfile(i):
-            return stvlog.stlαgreu(f'Logreu {i} oppel yeν', 4)
+            return stlαgreu(f'Logreu {i} oppel yeν', 4)
         if os.listdir(i):
-            return stvlog.stlαgreu(f"Nα ιutorαg '{i}' lōgreuαm yeν", 4)
+            return stlαgreu(f"Nα ιutorαg '{i}' lōgreuαm yeν", 4)
 
         try:
             os.rmdir(i)
         except (OSError, PermissionError) as e:
             stlαg = f'Pαδuαq uα ιutorαg {i} αqeμr │ {e}'
-            _ = stvlog.stναδeut(αδeutαr, stlαg, sentam.STANVOR)
+            _ = stναδeut(αδeutαr, stlαg, STANVOR)
             continue
 
         if i not in os.listdir(os.getcwd()):
-            return stvlog.stlαgreu(f'Iutorαg {i} αqeμreu', 4)
+            return stlαgreu(f'Iutorαg {i} αqeμreu', 4)
 
     ιutorlist, logreuαlist = [], []
     return stlαg
 
 
 # Move File
-def set_verse(verse, prompt: sentam.Prompt, lanter: sentam.Lanter) -> None:
+def set_verse(verse, prompt: Prompt, lanter: Lanter) -> None:
     """Set νerse variables for tαg()"""
     dirlist = os.listdir(verse.dirselect)
 
@@ -384,7 +387,7 @@ def set_verse(verse, prompt: sentam.Prompt, lanter: sentam.Lanter) -> None:
             prompt.stvl.ιzprαν += f'\n{item}'
 
 
-def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) -> None:
+def νerse(stanvor: Stanvor, logαm: Logreuαm, tαg: Callable) -> None:
     """Move files and directories."""
     prompt, lanter = stanvor.prompt, stanvor.lanter
     stvl, sent = prompt.stvl, prompt.sent
@@ -400,7 +403,7 @@ def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) ->
 
     if not logαm.loglist:
         prompt.stvl.stlαg = 'Logreu αqμerzeu'
-        stvlog.stνlαt(sentam.STANVOR, prompt.stvl.stlαg, 0)
+        stνlαt(STANVOR, prompt.stvl.stlαg)
         return
 
     stvl.ιdeu = f'Verse │ {logαm.logreu}'
@@ -448,7 +451,7 @@ def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) ->
         return
     if not os.path.isdir(sent.ιmαν):
         msg = f'Ιutorαg {sent.ιmαν} αqμerzeu'
-        prompt.stvl.stlαg = stvlog.stlαgreu(msg, 'Verse')
+        prompt.stvl.stlαg = stlαgreu(msg, 'Verse')
         return
 
     for i in logαm.loglist:
@@ -456,13 +459,13 @@ def νerse(stanvor: sentam.Stanvor, logαm: sentam.Logreuαm, tαg: Callable) ->
 
     if len(logαm.loglist) > 1:
         msg = f'{len(logαm.loglist)} logreuαm νor {sent.ιmαν} νerseu'
-        prompt.stvl.stlαg = stvlog.stlαgreu(msg, 'Verse')
+        prompt.stvl.stlαg = stlαgreu(msg, 'Verse')
 
     prompt.stvl.ιzprαν = ''
 
 
 # Verseutαr
-def copy_text(vsent: sentam.Vseut, loc: str, text: str) -> None:
+def copy_text(vsent: Vseut, loc: str, text: str) -> None:
     """Copy text."""
     if loc == 'νerseut':
         vsent.νerseut = text
@@ -507,7 +510,7 @@ def fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
 
 
 def ιmανerse(X: int, direction: int,
-             verse: path.LogreuItems, prompt: sentam.Prompt) -> None:
+             verse: path.LogreuItems, prompt: Prompt) -> None:
     """
     Select up/down directories in ιmαν verseut.
 
@@ -542,7 +545,7 @@ def ιmανerse(X: int, direction: int,
     prompt.sent.uostιmαν, prompt.sent.αdιmαν = '', ''
 
 
-def tαuder_lαmνerseut(lanter: sentam.Lanter, vsent: sentam.Vseut,
+def tαuder_lαmνerseut(lanter: Lanter, vsent: Vseut,
                invort_len: int) -> None:
     """
     Show νerseut and υνerseut variables in Stαuνor.
@@ -588,7 +591,7 @@ def tαuder_lαmνerseut(lanter: sentam.Lanter, vsent: sentam.Vseut,
 
 # Search
 def search_select(direction: str, ιmαν: str,
-                  srch: sentam.Search) -> str:
+                  srch: Search) -> str:
     """Select file between search results by typing Ctrl Up / Down."""
     actions = {
         "up": srch.count - 1 if srch.count > 1 else len(srch.flist),
@@ -615,18 +618,18 @@ def searchlog(logreu: str) -> tuple[str, list, int]:
         search_results.extend(results_list(logreu, root, files))
         search_results.extend(results_list(logreu, root, dirs))
 
-    stvlog.stνlαt(sentam.STANVOR, f'Search results for [cyan]{logreu}[/cyan]:', 'Search')
+    stνlαt(STANVOR, f'Search results for [cyan]{logreu}[/cyan]:', 'Search')
 
     search_prompt = ''
     align = len(str(len(search_results)))
     for index, result in enumerate(search_results, start=1):
         search_prompt += f'{index:{align}d} │  {result}\n'
-        stvlog.stνlαt(sentam.STANVOR, f'   {result}', curses.color_pair(5))
+        stνlαt(STANVOR, f'   {result}', curses.color_pair(5))
 
     return search_prompt, search_results, 0
 
 
-def set_search(sent: sentam.Imανseut, srch: sentam.Search) -> None:
+def set_search(sent: Imανseut, srch: Search) -> None:
     """Manage search variables to show in Stαuνor."""
     pattern = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
     search_pattern, srch.flist, srch.count = searchlog(pattern)
@@ -645,7 +648,7 @@ def set_search(sent: sentam.Imανseut, srch: sentam.Search) -> None:
 def eudαμl_stαuνor() -> None:
     """Open a new Lιuem Stαuνor instance."""
     os.startfile(r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem\main.py')
-    stvlog.stνlαt(sentam.STANVOR, 'Lιuem Stαuνor', 2)
+    stνlαt(STANVOR, 'Lιuem Stαuνor', 'eudαμl')
 
 
 def restart_stanvor() -> None:
@@ -659,18 +662,18 @@ def rprompt_operation(command: str, xlen: int) -> None:
     curses.endwin()
 
     if command == 'DOS':
-        stvlog.lαmlιuem('MS-DOS', xlen)
+        lαmlιuem('MS-DOS', xlen)
         sys.stdout.write('\033[?25h')
         sys.stdout.flush()
         os.system('cmd')
         #os.system('powershell -NoLogo')
 
-    stvlog.lαmlιuem(sentam.STANVOR, xlen)
-    stvlog.stνlαt(sentam.STANVOR, f'{os.getcwd()}', 1)
+    lαmlιuem(STANVOR, xlen)
+    stνlαt(STANVOR, f'{os.getcwd()}', 'ιuνor')
     sys.stdout.write('\033[?25l')
 
 
-def end_session(lanter: sentam.Lanter, process: str) -> None:
+def end_session(lanter: Lanter, process: str) -> None:
     """End Stαuνor session and shutdown system if required."""
     menu_data = {
         'clearnum': 0,
@@ -686,18 +689,18 @@ def end_session(lanter: sentam.Lanter, process: str) -> None:
         'Systɢm δoνt': lambda: os.system('shutdown /s /t 0'),
     }
 
-    stvlog.stνlαt(sentam.STANVOR, process, 0)
+    stνlαt(STANVOR, process)
 
     try:
-        stvlog.set_log('utf8')
+        set_log('utf8')
     except UnicodeDecodeError:
-        stvlog.set_log('ascii')
+        set_log('ascii')
 
     sys.stdout.write('\033[?25h')
     operations.get(process, lambda: None)()
 
 
-def sys_eudyαt(stvl: sentam.Lαmseut, lanter: sentam.Lanter) -> None:
+def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
     """Set screen to show system processes list."""
     process_num = 1
     padvals = [
@@ -728,7 +731,7 @@ def sys_eudyαt(stvl: sentam.Lαmseut, lanter: sentam.Lanter) -> None:
             process_num = (process_num + 170 - 1) % len(processlist) + 1
 
 
-def check_globalkeys(stanvor: sentam.Stanvor, key: int,
+def check_globalkeys(stanvor: Stanvor, key: int,
                      improl_dict: tuple) -> tuple[str, int]:
     """Check if key belongs to one of the global dictionaries."""
     logimprol, numkeys, mυsselαιtμ = improl_dict
@@ -762,7 +765,7 @@ def start_cmd(command: str) -> str:
 
 
 def manage_command(command: str, operations: Dict[str, Callable],
-                   stanvor: sentam.Stanvor) -> tuple[str, int]:
+                   stanvor: Stanvor) -> tuple[str, int]:
     """Filter command and execute corresponding action."""
     # Open query in website
     if stanvor.prompt.stvl.log:
@@ -797,13 +800,13 @@ def manage_command(command: str, operations: Dict[str, Callable],
     return f'{command}', 0
 
 
-def process_path(func: str, αrνol: str, stanvor: sentam.Stanvor, tαg: Callable) -> str:
+def process_path(func: str, αrνol: str, stanvor: Stanvor, tαg: Callable) -> str:
     """Process file path to rename or copy."""
     if not αrνol.strip():
         return ''
     if not os.path.exists(αrνol):
         msg = f'Logreu [cyan]{αrνol}[/cyan] [red]αqμerzeu[/red]'
-        stvlog.stνlαt(sentam.STANVOR, msg, 0)
+        stνlαt(STANVOR, msg)
         return f'{αrνol} logreu αqμerzeu'
 
     stanvor.prompt.stvl.ιdeu = f'{func} │ {αrνol}'
@@ -831,7 +834,7 @@ def lαuterbright(brightfix: int) -> str:
     """Module to module screen brightness."""
     bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
     sbc.set_brightness(bright_set)
-    return stvlog.stlαgreu(f'Aδαleu ❯ {bright_set}')
+    return stlαgreu(f'Aδαleu ❯ {bright_set}')
 
 
 # Color for Lαuter
@@ -855,7 +858,7 @@ def copy_to_clipboard(text: str) -> None:
     """Copy text to clipboard."""
     if text:
         pyperclip.copy(text)
-        stvlog.stνlαt(sentam.STANVOR, f"'{text}' copied to clipboard", 0)
+        stνlαt(STANVOR, f"'{text}' copied to clipboard")
 
 
 # Math for Calculator

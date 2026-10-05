@@ -9,7 +9,7 @@ def open_link(name: str, data: tuple) -> None:
     """Open a web link."""
     web, url = data[1]
     webbrowser.open(url)
-    stνlαt(name, web, 0)
+    stνlαt(name, web)
 
 
 def web_driver(lanter: Lanter) -> None:

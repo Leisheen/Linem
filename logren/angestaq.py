@@ -163,12 +163,12 @@ def delete_angest():
             oppel.write('│   '.join(ιsqyαu))
             ιsqyαutαl = ' ❯  Isqyαu sιguet'
         except Exception:
-            stνlαt('Augestαq', 'Isqyαu ιuαqtαgeu', 0)
+            stνlαt('Augestαq', 'Isqyαu ιuαqtαgeu')
 
     with open(ANGPATH, 'w', encoding='utf8') as oppel:
         oppel.truncate(0)
 
-    stνlαt('Augestαq', f'Augestαq αqtανeu {ιsqyαutαl}', 0)
+    stνlαt('Augestαq', f'Augestαq αqtανeu {ιsqyαutαl}')
 
 
 def inaq_menu(lanter, sub1):

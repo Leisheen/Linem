@@ -135,7 +135,7 @@ def open_mpx() -> None:
     mpx = r"C:\Users\Leane\OneDrive\Escritorio\Logreuα\Μυuιt"
     mpx += r"\Player\Mpxplay_v167_Win32_FFmpeg\mpxplayf.exe"
     os.system(mpx)
-    stνlαt('Mυuιtsyα', '❯ Iνouιm', 0)
+    stνlαt('Mυuιtsyα', '❯ Iνouιm')
     curses.curs_set(False)
 
 
@@ -235,8 +235,8 @@ def keyboard(stanvor: Stanvor):
         elif key in range(NUM1, NUM8): # 1 to 8... Seguro?
             note_index = int(chr(key))
             #note = notes[note_index]
-            stνlαt('Keyboard', f'{note_index}', 0)
-            stνlαt('Keyboard', f'Playing: {note.name} ({note.frequency} Hz)', 0)
+            stνlαt('Keyboard', f'{note_index}')
+            stνlαt('Keyboard', f'Playing: {note.name} ({note.frequency} Hz)')
 
             if 0 <= note_index < len(notes):
 

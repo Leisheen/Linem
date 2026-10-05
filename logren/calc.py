@@ -54,7 +54,7 @@ def calculator(stanvor: Stanvor) -> None:
             try:
                 sent.ιmαν += chr(key) or cvars.operator
             except Exception as e:
-                stνlαt(STANVOR, f'Calc   │ {e}', 0)
+                stνlαt(STANVOR, f'Calc   │ {e}')
                 sent.ιmαν += sent.ιmαν[:-1]
 
     if not cvars.operator:

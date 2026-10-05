@@ -76,7 +76,7 @@ def drive_audio(file: str, function: str, stanvor: Stanvor) -> None:
         current_pos = pygame.mixer.music.get_pos() / 1000
         directions = {
             'forward': lambda: min(current_pos + 50, float(audio.length)),
-            'rewind': lambda: max(0, current_pos - 50),
+            'rewind':  lambda: max(0, current_pos - 50),
         }
         audio.pos = directions.get(direction, lambda: current_pos)()
         pygame.mixer.music.set_pos(audio.pos)
