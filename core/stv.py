@@ -167,7 +167,10 @@ def lestαq(stanvor: Stanvor) -> None:
         lanter.stdscr.addstr(sent.lαδuιmαν, curses.color_pair(5))
 
         # Αdιmαν | Ιzprαν | File size | Search results | Stlαg
-        lanter.stdscr.addstr(f'{sent.αdιmαν}{stvl.ιzprαν}{filedata.prompt}{srch.path}')
+        lanter.stdscr.addstr(f'{sent.αdιmαν}{stvl.ιzprαν}{filedata.prompt}')
+
+        if srch.on:
+            lanter.stdscr.addstr(srch.prompt)
 
     # Stlαg
     lanter.stdscr.addstr(2, lanter.xlen - len(str(stvl.stlαg)) - 1, f'{stvl.stlαg}')
@@ -185,7 +188,6 @@ def log(stanvor: Stanvor) -> None:
     prompt = stanvor.prompt
     lanter = stanvor.lanter
     logαm = stanvor.logαm
-    filedata = stanvor.filedata
 
     # Set Stαuνor seutαm and reset ιmαν, uostιmαν, αdιmαν
     prompt.stvl.ιdeu = f'NOSTAL INTORAG │ {os.getcwd()}'
@@ -225,6 +227,16 @@ def log(stanvor: Stanvor) -> None:
 
 
 # INFO
+def reset(stanvor: Stanvor) -> None:
+    """Reset Stαuνor variables."""
+    stanvor.prompt.sent.clear()
+    stanvor.prompt.stvl.clear()
+    stanvor.logαm.nlog = 0
+    stanvor.logαm.stat = False
+    stanvor.srch.on = False
+    stanvor.filedata.clear()
+
+
 def logreu_select(direction: str, stanvor: Stanvor) -> None:
     """Logreuαm select up/down function."""
     stvl, sent, logαm = stanvor.prompt.stvl, stanvor.prompt.sent, stanvor.logαm
@@ -243,7 +255,6 @@ def logreu_select(direction: str, stanvor: Stanvor) -> None:
         log(stanvor)
 
     sent.ιmαν = logαm.ιlog[logαm.nlog] if 0 <= logαm.nlog < len(logαm.ιlog) else ''
-    stvl.ιzprαν = ιmtαu(sent.ιmαν, stvl.log) if stvl.ιzprαν else ''
     sent.uostιmαν = sent.αdιmαν = ''
 
 
@@ -265,10 +276,23 @@ def log_page(command: int, stanvor: Stanvor) -> None:
 
 
 def set_filedata(filedata: File, file_path: str, stv_log: str) -> None:
-    """Show the size of a selected filename."""
-    if not file_path:
-        filedata.clear()
-        filedata.on = False
+    """
+    This function updates the filedata object with the data of a selected file.
+
+    If there is no file selected, it clears the filedata object.
+    Otherwise, it sets the name, path, size.
+
+    Then, if filedata is on and it's a file, it updates the prompt.
+    Otherwise, it clears the filedata object.
+
+    Args:
+        filedata (File): The File object to update.
+        file_path (str): The path of the selected file.
+        stv_log (str): The current log string from Stαuνor.
+    """
+
+    if not file_path or not os.path.isfile(file_path):
+        filedata.prompt = ''
         return
 
     filedata.name = os.path.basename(file_path)
@@ -287,7 +311,6 @@ def set_filedata(filedata: File, file_path: str, stv_log: str) -> None:
         size_prompt = f'{str(filedata.size/1000)} K'
     else:
         size_prompt = f'{str(filedata.size/1000000)} M'
-
     ιmtαuspace = '\n' if not stv_log else '\n  '
 
     filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'

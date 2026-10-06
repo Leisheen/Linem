@@ -155,10 +155,12 @@ class File:
 @dataclass
 class Search:
     """File search variables."""
+    on: bool = False
     top: str = ''
     path: str = ''
     count: int = 0
     flist: list = field(default_factory=list)
+    prompt: str = ''
 
 
 @dataclass

@@ -147,6 +147,7 @@ PADMINUS        = 464       # ord('ǐ')
 PADPLUS         = 465       # ord('Ǒ')
 CTL_PADSTOP     = 466
 CTL_PADSLASH    = 470
+ALT_PADSLASH    = 474       # ord('ǔ')
 ALT_PADSTOP     = 476       # ord('ǜ')
 ALT_DEL         = 478
 

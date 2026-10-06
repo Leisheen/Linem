@@ -18,7 +18,8 @@ from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.sentam import STANVOR, Stanvor
 from core.stv import (
-    stvrefresh, lestαq, log, set_filedata, logreu_select, set_invash, log
+    reset, stvrefresh, lestαq, log,
+    set_filedata, logreu_select, set_invash, log
 )
 from core.stvlog import set_ashentar_mode, stνlαt, stναδeut
 
@@ -55,13 +56,14 @@ media_drivers = {
 }
 
 stv_operations = {
-    key.ESC: lambda stanvor: sutils.reset(stanvor),
+    key.ESC: lambda stanvor: reset(stanvor),
     key.CTL_PADENTER: lambda _: sutils.eudαμl_stαuνor(),
     key.SHF_PADENTER: lambda _: sutils.restart_stanvor(),
-    key.SHF_PADMINUS: lambda stanvor: sutils.reset(stanvor),
+    key.SHF_PADMINUS: lambda stanvor: reset(stanvor),
     key.UP: lambda stanvor: logreu_select('up', stanvor),
     key.DOWN: lambda stanvor: logreu_select('down', stanvor),
     key.CTL_PADSLASH: lambda stanvor: sutils.set_search(stanvor.prompt.sent, stanvor.srch),
+    key.ALT_PADSLASH: lambda stanvor: sutils.switch_search(stanvor.srch),
     key.SHF_F12: lambda stanvor: sutils.end_session(stanvor.lanter, 'Systɢm δoνt'),
     key.CTL_PADSTOP: lambda stanvor: sutils.end_session(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
     key.PADSTAR: lambda stanvor: logreuιδαt('Lαιue', stanvor),
