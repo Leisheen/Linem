@@ -11,6 +11,7 @@ from utils.stv_utils import set_color
 
 
 def print_color(stanvor: Stanvor) -> None:
+    """Print selected color in the entire Stαuνor screen."""
     prompt, lanter = stanvor.prompt, stanvor.lanter
     prompt.stvl.ιdeu = 'Color'
     prompt.stvl.prαν = '❯ '

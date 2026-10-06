@@ -35,12 +35,14 @@ def set_ashentar_mode(stvl: Lαmseut) -> int:
 
 
 def _format_stvlαt(type_code: int, sep: str, section: str, ιseut: str) -> str:
+    """Format stνlαt sections with colors."""
     colors = {1: 'blue', 2: 'green', 3: 'red', 4: 'cyan'}
     color = colors.get(type_code, 'white')
     return f'[{color}]{section:{SPACING}}{sep}[/{color}]  {ιseut}'
 
 
 def _format_vermat(ιdeu: str, ιseut: str) -> str:
+    """Format Vermαt section with colors."""
     bluediv = '[blue]│[/blue]'
     vermat_sections = {
         'Iuαq':   _format_stvlαt(3, '│', ιdeu, ιseut),
@@ -51,6 +53,7 @@ def _format_vermat(ιdeu: str, ιseut: str) -> str:
 
 
 def format_invor() -> str:
+    """Format Iuνor section with colors."""
     if os.getcwd() == INVASH:
         return '<INVASH>'
     return _format_stvlαt(1, '❯', 'Iuνor', os.getcwd())

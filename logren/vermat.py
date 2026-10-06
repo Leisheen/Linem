@@ -9,7 +9,7 @@ from operator import itemgetter
 from tabulate import tabulate
 
 from core.keys import *
-from core.sentam import Stanvor, Lαmseut, Imανseut, Lanter, Vseut
+from core.sentam import Stanvor, Lαmseut, Imανseut, Lanter, Vseut, Driver, Vsent
 from core.stv import stvrefresh, mαιteu, lαmνerseut
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from logren.gcal import calendar
@@ -198,7 +198,7 @@ def select_item(key: int, driver: ItemManager,
         pass
 
 
-def select_toreg(driver, vermat, stvl, stdscr) -> None:
+def select_toreg(driver: Driver, vermat: Vermat, stvl: Lαmseut, stdscr: curses.window) -> None:
     """Set Toreg variables based on tselect value."""
     driver.vlx, vermat.νlαιu, vermat.νιdeu = TOREG_SELECTOR[driver.tselect]
 
@@ -213,13 +213,15 @@ def select_toreg(driver, vermat, stvl, stdscr) -> None:
         stdscr.clear()
 
 
-def select_vermat(driver, vermat, stanvor, stdscr) -> None:
+def select_vermat(driver: Driver, vermat: Vermat,
+                  stanvor: Stanvor, stdscr: curses.window) -> None:
     """Toreg and item selection."""
     select_toreg(driver, vermat, stanvor.prompt.stvl, stdscr)
     select_item(None, driver, stanvor, vermat)
 
 
-def iprompt(func, lanter, driver, vermat, sent) -> None:
+def iprompt(func: str, lanter: Lanter, driver: Driver,
+            vermat: Vermat, sent: Imανseut) -> None:
     """General prompt."""
     stdscr = lanter.stdscr
     stdscr.addstr('\u2500'*lanter.xlen, curses.color_pair(1))
@@ -579,7 +581,8 @@ def set_section(function: str, stanvor: Stanvor, lanter: Lanter,
     return item
 
 
-def sιguα(stanvor, lanter, vsent, vermat, driver) -> None:
+def sιguα(stanvor: Stanvor, lanter: Lanter, vsent: Vsent,
+          vermat: Vermat, driver: Driver) -> None:
     """Add item to Vermαt."""
     prompt = stanvor.prompt
     prompt.sent.ιmαν = ''
@@ -591,7 +594,9 @@ def sιguα(stanvor, lanter, vsent, vermat, driver) -> None:
         vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = itemvals
 
 
-def νerse(stanvor, vermat, driver, vsent, toregαm, lanter):
+def νerse(stanvor: Stanvor, vermat: Vermat, driver: Driver,
+          vsent: Vsent, toregαm: list, lanter: Lanter) -> None:
+    """Move item to another section."""
     if not driver.item: # │ Toreg selector
         return
 
@@ -670,7 +675,7 @@ def νerse(stanvor, vermat, driver, vsent, toregαm, lanter):
             position = int(chr(getposit))
 
 
-def νerqom(stanvor, vsent, vermat, lanter, driver):
+def νerqom(stanvor: Stanvor, vsent: Vseut, vermat: Vermat, lanter: Lanter, driver: Driver) -> None:
     """Modifies the line."""
     vermat.νqseut = True
 
@@ -689,8 +694,8 @@ def νerqom(stanvor, vsent, vermat, lanter, driver):
         vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = geuδ(vermat.νιdeu, driver.strnum, prompt.stvl.αδeutαr)
 
 
-def ιδαt(function, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
-         driver, lanter, toregαm) -> None:
+def ιδαt(function: str, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
+         driver: Driver, lanter: Lanter, toregαm: list) -> None:
     """Main Vermαt function handler."""
     prompt = stanvor.prompt
 

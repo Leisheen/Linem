@@ -22,7 +22,7 @@ import sys
 # Locals
 from core import sentam
 from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
-from operations.operator import operate_interface
+from operations.operator import render_interface
 
 
 def main(stdscr: curses.window) -> None:
@@ -54,7 +54,7 @@ def main(stdscr: curses.window) -> None:
     curses.curs_set(False)
     sys.stdout.write('\033[?25l')
 
-    operate_interface(stanvor)
+    render_interface(stanvor)
 
 
 if __name__ == '__main__':

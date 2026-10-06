@@ -15,6 +15,7 @@ class Prontel:
 
 
 def proutel(lanter: Lanter) -> None:
+    """Proutel program."""
     prt = Prontel()
 
     while True:

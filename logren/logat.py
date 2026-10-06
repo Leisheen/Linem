@@ -36,6 +36,7 @@ def run_textual() -> None:
 
 
 def run_rich() -> None:
+    """Run Rich layout to display 'Lιuem'."""
     curses.endwin()
     layout = Layout()
     console = Console()
@@ -59,6 +60,7 @@ def run_rich() -> None:
 
 
 def run_tkinter() -> None:
+    """Run Tkinter window to display 'Lιuem'."""
     lαuter = Tk()
     lαuter.title("Lιuem")
     lαuter.configure(bg = 'black')
@@ -70,6 +72,7 @@ def run_tkinter() -> None:
 
 
 def run_pyside() -> None:
+    """Run PySide window to display 'Lιuem'."""
     app = QApplication(sys.argv)
     window = QWidget()
     window.setWindowTitle('Lιuem')
