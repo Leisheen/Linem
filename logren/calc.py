@@ -24,6 +24,33 @@ operator_dict = {
 }
 
 
+# Math for Calculator
+def operate_nums(num1: str, num2: str, operator: str) -> str:
+    """Perform basic arithmetic operations."""
+    if not num1.isdigit() or not num2.isdigit():
+        return 'Error: Invalid input types'
+
+    result = ''
+    if operator == '+':
+        result = sum([float(num1), float(num2)])
+    elif operator == '-':
+        result = float(num1) - float(num2)
+    elif operator == '*':
+        result = float(num1) * float(num2)
+    elif operator == '/':
+        if float(num2) == 0:
+            return 'Error: Division by zero'
+        result = float(num1) / float(num2)
+    elif operator == '^':
+        result = float(num1) ** float(num2)
+    elif operator == '%':
+        result = float(num1) % float(num2)
+    else:
+        return f'Error: {operator} → Unknown operator'
+
+    return str(result)
+
+
 def calculator(stanvor: Stanvor) -> None:
     """Calculator."""
     cvars = CalculatorVars()

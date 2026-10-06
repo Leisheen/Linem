@@ -1,20 +1,19 @@
 """Simple functions for Stαuνor."""
-import os # for simple_menu, askaq, show_sys_info
-import curses # for simple_menu, askaq, show_sys_info
+import os # askaq, show_sys_info
+import curses # askaq, show_sys_info
 import datetime # for play_alarm
 import numpy as np
 import pyperclip # for copy_to_clipboard, char
 import screen_brightness_control as sbc # for lαuterbright
 import sounddevice as sd
-import sys # for end_process, rprompt_operation
 import webbrowser # for search_select
-from typing import List, Dict, Callable # for simple_menu, askaq, search_select, manage_command
+from typing import List, Dict, Callable # askaq, search_select, manage_command
 
 from core.sentam import (
     STANVOR, Stanvor, Lanter, Imανseut, Logreuαm,
     Lαmseut, Vseut, Prompt, Search
 )
-from core.stvlog import stνlαt, stναδeut, stlαgreu, lαmlιuem, set_log
+from core.stvlog import stνlαt, stναδeut, stlαgreu
 import utils.path_utils as path # for oppel_αqeμr, νerse
 import utils.sys_utils as sinfo
 
@@ -121,20 +120,6 @@ def show_sys_info(lanter: Lanter) -> str:
 
         if lanter.stdscr.getch() == ESC:
             return ''
-
-
-def _simple_menu(lanter: Lanter, data: dict) -> bool:
-    """Simple mαιteu menu."""
-    while True:
-        mαιteu(lanter, data['clearnum'], data['name'])
-        for yrow, prompt in enumerate(data['prompt'], start=2):
-            lanter.stdscr.addstr(yrow, 0, prompt)
-
-        key = lanter.stdscr.getch()
-        if key == ESC:
-            return False
-        if key == 10:
-            return True
 
 
 def anza_file(stanvor: Stanvor) -> str:
@@ -647,61 +632,6 @@ def set_search(sent: Imανseut, srch: Search) -> None:
 
 
 # Utils
-def eudαμl_stαuνor() -> None:
-    """Open a new Lιuem Stαuνor instance."""
-    os.startfile(r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem\main.py')
-    stνlαt(STANVOR, 'Lιuem Stαuνor', 'Eudαμl')
-
-
-def restart_stanvor() -> None:
-    """Restart Stαuνor."""
-    eudαμl_stαuνor()
-    sys.exit()
-
-
-def rprompt_operation(command: str, xlen: int) -> None:
-    """Set environment for regular prompt operation."""
-    curses.endwin()
-
-    if command == 'DOS':
-        lαmlιuem('MS-DOS', xlen)
-        sys.stdout.write('\033[?25h')
-        sys.stdout.flush()
-        os.system('cmd')
-        #os.system('powershell -NoLogo')
-
-    lαmlιuem(STANVOR, xlen)
-    stνlαt(STANVOR, f'{os.getcwd()}', 'Iuνor')
-    sys.stdout.write('\033[?25l')
-
-
-def end_session(lanter: Lanter, process: str) -> None:
-    """End Stαuνor session and shutdown system if required."""
-    menu_data = {
-        'clearnum': 0,
-        'name': 'Stαuνor',
-        'prompt': (f'Sɢνdɒl uɒ {process} ?',),
-    }
-
-    if not _simple_menu(lanter, menu_data):
-        return
-
-    operations = {
-        'Lιuɢm αϥtᾱν': sys.exit,
-        'Systɢm δoνt': lambda: os.system('shutdown /s /t 0'),
-    }
-
-    stνlαt(STANVOR, process)
-
-    try:
-        set_log('utf8')
-    except UnicodeDecodeError:
-        set_log('ascii')
-
-    sys.stdout.write('\033[?25h')
-    operations.get(process, lambda: None)()
-
-
 def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
     """Set screen to show system processes list."""
     process_num = 1
@@ -861,30 +791,3 @@ def copy_to_clipboard(text: str) -> None:
     if text:
         pyperclip.copy(text)
         stνlαt(STANVOR, f"'{text}' copied to clipboard")
-
-
-# Math for Calculator
-def operate_nums(num1: str, num2: str, operator: str) -> str:
-    """Perform basic arithmetic operations."""
-    if not num1.isdigit() or not num2.isdigit():
-        return 'Error: Invalid input types'
-
-    result = ''
-    if operator == '+':
-        result = sum([float(num1), float(num2)])
-    elif operator == '-':
-        result = float(num1) - float(num2)
-    elif operator == '*':
-        result = float(num1) * float(num2)
-    elif operator == '/':
-        if float(num2) == 0:
-            return 'Error: Division by zero'
-        result = float(num1) / float(num2)
-    elif operator == '^':
-        result = float(num1) ** float(num2)
-    elif operator == '%':
-        result = float(num1) % float(num2)
-    else:
-        return f'Error: {operator} → Unknown operator'
-
-    return str(result)

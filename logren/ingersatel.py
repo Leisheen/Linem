@@ -21,7 +21,7 @@ from core.sentam import Stanvor, Prompt, Imανseut, Logreuαm
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from operations.commands import logimprol, sentam_stagen
 from operations.tag import tαg
-from utils.stv_utils import eudαμl_stαuνor
+from core.session_manager import eudαμl_stαuνor
 
 index_list = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 

@@ -1,4 +1,22 @@
-"""Essentials for Lιuemαg Stαuνor."""
+"""
+Core UI Essentials and runtime helpers for Lιuemαg Stαuνor.
+
+This module contains all the essential functions
+used by the main application shell to render correctly the interface,
+the main graphics and its components, responsible for refreshing the screen,
+rendering the header and status bar, displaying time/date information,
+checking battery state, and coordinating the prompt and log output
+shown to the user, and helpers for the basic performance of the Stαuνor.
+
+The routines in this module keep the terminal display logic synchronized
+with the current application context and provide small interaction helpers
+for navigating the interface. It is intentionally focused on presentation and
+screen management rather than long-running business logic or data processing.
+
+It assumes it is executed in the same process/thread that owns the
+terminal window, and any heavier work should update application state elsewhere
+before the UI is redrawn.
+"""
 import curses
 import datetime
 import os
@@ -279,16 +297,16 @@ def set_filedata(filedata: File, file_path: str, stv_log: str) -> None:
     """
     This function updates the filedata object with the data of a selected file.
 
-    If there is no file selected, it clears the filedata object.
-    Otherwise, it sets the name, path, size.
+    If there is a file selected, it updates filedata name, path and size.
+    Otherwise, it clears the prompt.
 
-    Then, if filedata is on and it's a file, it updates the prompt.
-    Otherwise, it clears the filedata object.
+    Then, if filedata is active and the path is a file, it updates the prompt.
+    Otherwise, it clears the prompt.
 
     Args:
-        filedata (File): The File object to update.
-        file_path (str): The path of the selected file.
-        stv_log (str): The current log string from Stαuνor.
+        filedata (File): File object to update.
+        file_path (str): Path of the selected file.
+        stv_log (str): Current log string from Stαuνor.
     """
 
     if not file_path or not os.path.isfile(file_path):
@@ -301,7 +319,7 @@ def set_filedata(filedata: File, file_path: str, stv_log: str) -> None:
 
     if not filedata.on or not filedata.size:
         # filedata.size is filtered here by now to avoid directories.
-        # The idea is to improve it for directories.
+        # The idea is to improve it to work with directories as well.
         filedata.prompt = ''
         return
 
