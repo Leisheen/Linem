@@ -17,7 +17,8 @@ from core.sentam import Stanvor
 from core.stv import lestαq
 from operations.tag import tαg
 
-def run_textual() -> None:
+
+def _run_textual() -> None:
     """class Linem(Widget):
         "Widget to display 'Lιuem'."
         def render(self):
@@ -35,7 +36,7 @@ def run_textual() -> None:
     Lιuem().run()"""
 
 
-def run_rich() -> None:
+def _run_rich() -> None:
     """Run Rich layout to display 'Lιuem'."""
     curses.endwin()
     layout = Layout()
@@ -59,7 +60,7 @@ def run_rich() -> None:
     input()
 
 
-def run_tkinter() -> None:
+def _run_tkinter() -> None:
     """Run Tkinter window to display 'Lιuem'."""
     lαuter = Tk()
     lαuter.title("Lιuem")
@@ -71,7 +72,7 @@ def run_tkinter() -> None:
     etiqueta.place(anchor = NW)
 
 
-def run_pyside() -> None:
+def _run_pyside() -> None:
     """Run PySide window to display 'Lιuem'."""
     app = QApplication(sys.argv)
     window = QWidget()
@@ -94,10 +95,10 @@ def run_pyside() -> None:
     app.exec()
 
 
-def logαt(command: str) -> tuple[str, str]:
+def _logαt(command: str) -> tuple[str, str]:
     """This function manages Logαt apps."""
 
-    apps = {'x': run_textual, 'r': run_rich, 'k': run_tkinter, 'q': run_pyside}
+    apps = {'x': _run_textual, 'r': _run_rich, 'k': _run_tkinter, 'q': _run_pyside}
 
     apps.get(command.lower(), lambda: None)()
     return '', ''
@@ -121,5 +122,5 @@ def set_logat(stanvor: Stanvor) -> None:
 
     logat_type = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
-    sent.ιmαν, stvl.stlαg = logαt(logat_type)
+    sent.ιmαν, stvl.stlαg = _logαt(logat_type)
     sent.uostιmαν = sent.αdιmαν = sent.ιmαν

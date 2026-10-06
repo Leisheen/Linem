@@ -37,7 +37,7 @@ def open_saget(SAGET):
 
 
 # Pdf for open_pyside()
-def charge_pdf(file_path: str):
+def _charge_pdf(file_path: str):
     """Charge PDF files and convert first page to image for open_pyside().
     from PIL import Image
     from PIL.ImageQt import ImageQt
@@ -52,7 +52,7 @@ def charge_pdf(file_path: str):
 
 
 # Image for open_pyside()
-def charge_image(file_path: str):
+def _charge_image(file_path: str):
     """Charge image files for open_pyside()."""
     # Create graphics view and scene
     view = QGraphicsView()
@@ -79,16 +79,16 @@ def open_pyside(file_path: str) -> None:
     app = QApplication.instance() or QApplication([])
 
     if os.path.splitext(file_path)[1].lower() in ['.pdf']:
-        pdf_file = charge_pdf(file_path)
-        file = charge_image(pdf_file)
+        pdf_file = _charge_pdf(file_path)
+        file = _charge_image(pdf_file)
     else:
-        file = charge_image(file_path)
+        file = _charge_image(file_path)
 
-    flags = Qt.WindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+    flags = Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
     file.setWindowFlags(flags)
 
     # Add Escape shortcut
-    close_shortcut = QShortcut(QKeySequence(Qt.Key_Escape), file)
+    close_shortcut = QShortcut(QKeySequence(Qt.Key.Key_Escape), file)
     close_shortcut.activated.connect(file.close)
 
     # Show the window

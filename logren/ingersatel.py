@@ -70,7 +70,7 @@ class Ingersatel:
         self.ptags.clear()
 
 
-def lαmιugersαt(stanvor: Stanvor, ingersat: Ingersatel) -> None:
+def _lαmιugersαt(stanvor: Stanvor, ingersat: Ingersatel) -> None:
     """Set user interface for Iugersαtel."""
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     lanter = stanvor.lanter
@@ -102,7 +102,8 @@ def lαmιugersαt(stanvor: Stanvor, ingersat: Ingersatel) -> None:
         stdscr.addstr(ingersat.link)
 
 
-def select_link(direction: int, logαm: Logreuαm, ingersat: Ingersatel) -> tuple[str, int]:
+def _select_link(direction: int, logαm: Logreuαm,
+                 ingersat: Ingersatel) -> tuple[str, int]:
     """Select link based on given direction."""
     if direction == key.UP:
         nlink = logαm.nlog = -1 if logαm.nlog <= len(ingersat.titles)*-1 else logαm.nlog - 1
@@ -122,7 +123,7 @@ def select_link(direction: int, logαm: Logreuαm, ingersat: Ingersatel) -> tupl
     return link, nlink
 
 
-def query_nav(steps: int, sent: Imανseut) -> tuple[str, str, str]:
+def _query_nav(steps: int, sent: Imανseut) -> tuple[str, str, str]:
     """Navigate through the query based on the given steps."""
     if steps < 0 and sent.ιmαν:
         if 0 < len(sent.ιmαν) < abs(steps):
@@ -144,55 +145,66 @@ def query_nav(steps: int, sent: Imανseut) -> tuple[str, str, str]:
     return nav_tuple
 
 
-def manage_request(prompt: Prompt, ingersat: Ingersatel) -> None:
+def _manage_request(prompt: Prompt, ingersat: Ingersatel) -> None:
     """Manage web requests and extract information."""
-    #old_headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0)'}
+    #old_headers = { # For Linux
+    # 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0)'
+    #}
+
     headers = {
         'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
 
     try:
-        for result in search(prompt.sent.ιmαν, num_results=10):#, user_agent='Mozilla/5.0')
+        for result in search(prompt.sent.ιmαν, num_results=10):
             url = result if isinstance(result, str) else result.url
-            response = requests.get(url, headers=headers, timeout=10)
-            response.raise_for_status()
-            stνlαt('Iugersαt', f'Getting info from {url}')
 
-            soup = BeautifulSoup(response.content, 'html.parser')
-            title = soup.title.string if soup.title else ''
-            stνlαt('Iugersαt', f'Processing {title}')
+            try:
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                stνlαt('Iugersαt', f'Getting info from {url}')
 
-            # For Meta Description
-            meta_description = soup.find('meta', {'name': 'description'})
-            meta = f"{meta_description.get('content')}" if meta_description else ''
-            stνlαt('Iugersαt', f'Extracting content from {title}')
+                soup = BeautifulSoup(response.content, 'html.parser')
+                title = soup.title.get_text(strip=True) if soup.title else ''
+                stνlαt('Iugersαt', f'Processing {title}')
 
-            # Content
-            content = '\n\n'.join(
-                ' '.join(p.stripped_strings)
-                for p in soup.find_all('p')
-                if p.get_text(strip=True)
-            )
-            ingersat.ιzprαν += f"{str(ingersat.nlink).rjust(2)} │ {title}\n"
-            ingersat.nlink += 1
-            ingersat.titles.append(title)
-            ingersat.links.append(url)
-            ingersat.metas.append(meta)
-            ingersat.ptags.append(content if content else '')
+                meta_description = soup.find('meta', {'name': 'description'})
+                meta = meta_description.get('content', '') if meta_description else ''
+                stνlαt('Iugersαt', f'Extracting content from {title}')
+
+                content = '\n\n'.join(
+                    ' '.join(p.stripped_strings)
+                    for p in soup.find_all('p')
+                    if p.get_text(strip=True)
+                )
+
+                ingersat.ιzprαν += f"{str(ingersat.nlink).rjust(2)} │ {title}\n"
+                ingersat.nlink += 1
+                ingersat.titles.append(title)
+                ingersat.links.append(url)
+                ingersat.metas.append(meta)
+                ingersat.ptags.append(content)
+
+            except requests.RequestException as e:
+                stνlαt('Iugersαt', f'Could not retrieve {url}: {e}')
 
         stνlαt('Iugersαt', f'Prαν \u276f {prompt.sent.ιmαν}')
+
+        if not ingersat.titles:
+            ingersat.ιzprαν = stlαgreu('No website information found.', 'Iugersαt')
 
     except Exception as e:
         prompt.stvl.stlαg = str(e)
         msg = f'❯ Prαν │ {prompt.sent.ιmαν} ❯ {prompt.stvl.stlαg}'
-        _ = stναδeut(prompt.stvl.αδeutαr, msg, 'Iugersαt ')
+        _ = stναδeut(prompt.stvl.αδeutαr, msg, 'Iugersαt')
         ingersat.ιzprαν = f'❯ {prompt.stvl.stlαg}'
 
 
-def ask_ollama(stanvor: Stanvor, ingersat: Ingersatel) -> None:
+def _ask_ollama(stanvor: Stanvor, ingersat: Ingersatel) -> None:
     """Ask Ollama for a response based on the query."""
-    query = stanvor.sent.ιmαν[1:] + stanvor.sent.uostιmαν + stanvor.sent.αdιmαν
+    sent = stanvor.prompt.sent
+    query = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
 
     try:
         ingersat.ιzprαν = call_ollama(query)
@@ -204,9 +216,30 @@ def ask_ollama(stanvor: Stanvor, ingersat: Ingersatel) -> None:
         olm_msg = "Pαδuα 'ollama pull llama3.1:latest'"
         olm_msg += "υt νɢr version ιuʯɢrze "
         olm_msg += "'ollama list' uɒ DOS lɒg"
-        _ = stναδeut(stanvor.stvl.αδeutαr, str(e), 'Iugersαtel')
-        _ = stναδeut(stanvor.stvl.αδeutαr, olm_msg, 'Iugersαtel')
+        _ = stναδeut(stanvor.prompt.stvl.αδeutαr, str(e), 'Iugersαtel')
+        _ = stναδeut(stanvor.prompt.stvl.αδeutαr, olm_msg, 'Iugersαtel')
         ingersat.ιzprαν = f'❯ {str(e)}\n{olm_msg}'
+
+
+def get_webinfo(prompt: Prompt, ingersat: Ingersatel, logαm: Logreuαm) -> None:
+    """Get info from web."""
+    query = prompt.sent.ιmαν + prompt.sent.uostιmαν + prompt.sent.αdιmαν
+    prompt.sent.ιmαν = query.strip()
+    prompt.sent.uostιmαν = prompt.sent.αdιmαν = ''
+    ingersat.ιzprαν = ingersat.link = ''
+
+    if prompt.sent.ιmαν.startswith(':'):
+        ingersat.ιzprαν = start_genai(prompt.sent.ιmαν)
+        #_ask_ollama(prompt, ingersat)
+        return
+
+    ingersat.clear()
+
+    #stνlαt('Iugersαt', f'Searching {prompt.sent.ιmαν}')
+    logαm.nlog = -1
+    ingersat.nlink = 1
+
+    _manage_request(prompt, ingersat)
 
 
 def ιugersαtel(stanvor: Stanvor) -> None:
@@ -217,28 +250,6 @@ def ιugersαtel(stanvor: Stanvor) -> None:
     logαm = stanvor.logαm
 
     ingersat = Ingersatel()
-
-    def get_webinfo(prompt: Prompt, ingersat: Ingersatel, logαm: Logreuαm) -> None:
-        """Get info from web."""
-        query = prompt.sent.ιmαν + prompt.sent.uostιmαν + prompt.sent.αdιmαν
-        prompt.sent.ιmαν = query.strip()
-        prompt.sent.uostιmαν = prompt.sent.αdιmαν = ''
-        ingersat.ιzprαν = ingersat.link = ''
-
-        if sent.ιmαν.startswith(':'):
-            ingersat.ιzprαν = start_genai(sent.ιmαν)
-            #ask_ollama(prompt, ingersat)
-            return
-
-        ingersat.clear()
-
-        stνlαt('Iugersαt', f'Searching {prompt.sent.ιmαν}')
-        logαm.nlog = -1
-        ingersat.linknumber = 1
-        #url = f'https://www.google.com/search?q={sent.ιmαν}'
-        ingersat.ιzprαν = help(search)
-
-        manage_request(prompt, ingersat)
 
     ingersat_keys = {
         key.ENTER: lambda: get_webinfo(prompt, ingersat, logαm),
@@ -263,7 +274,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
             sent.ιmαν = ''
 
         try:
-            lαmιugersαt(stanvor, ingersat)
+            _lαmιugersαt(stanvor, ingersat)
 
             code = lanter.stdscr.getch()
             if code == key.ESC:
@@ -277,7 +288,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                 stvl.prαν = '❯ '
 
                 while True:
-                    lαmιugersαt(stanvor, ingersat)
+                    _lαmιugersαt(stanvor, ingersat)
                     tkey = lanter.stdscr.getch()
                     if tkey == key.ESC:
                         return
@@ -303,7 +314,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                 (sent.uostιmαν, sent.αdιmαν) = (sent.αdιmαν[0], sent.αdιmαν[1:]) if sent.αdιmαν else ('','')
             elif code in query_nav_keys:
                 steps = query_nav_keys[code](sent)
-                values = query_nav(steps, sent)
+                values = _query_nav(steps, sent)
                 sent.ιmαν, sent.uostιmαν, sent.αdιmαν = values
             elif code == key.DEL:
                 if sent.αdιmαν:
@@ -317,7 +328,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
             elif code == key.ALT_BKSP:
                 sent.ιmαν = ''
             elif code in logimprol:
-                logimprol[code]()
+                logimprol[code](stanvor)
             elif code in ingersat_keys:
                 ingersat_keys[code]()
             elif code in sentam_stagen: # Lαg
@@ -327,7 +338,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                         'ιmαν', 'uostιmαν', 'αdιmαν', 'νerseut', 'υνerseut')(state)
             # Seleccionar website
             elif code in (key.UP, key.DOWN): # Links Nav
-                ingersat.link, ingersat.nlink = select_link(code, logαm, ingersat)
+                ingersat.link, ingersat.nlink = _select_link(code, logαm, ingersat)
             elif code in (key.CTL_ENTER, key.PADENTER):
                 path = f'{ingersat.links[ingersat.nlink]}' if ingersat.link else f'{sent.ιmαν}{sent.αdιmαν}'
                 webbrowser.open(path)
@@ -342,7 +353,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                     ingersat.link += f'  └ {url}\n\n{meta}\n\n{ptag}'
                     logαm.nlog = ingersat.nlink = ref_index
                 except Exception as e:
-                    stvl.stlαg = stlαgreu(str(e), 'Iugersαtel')
+                    stvl.stlαg = stlαgreu(str(e), 'Iugersαt')
             elif code != -1:
                 sent.ιmαν += chr(code)
         except ValueError as e:

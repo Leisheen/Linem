@@ -22,7 +22,7 @@ class Sender:
     ymαν_αrνol: int = 0
 
 
-def move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
+def _move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
     """Move the 'seut' character on the screen in Soδαt.
 
     :fig: Character to display.
@@ -190,9 +190,9 @@ def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
                 logimprol[mαν]()
             elif mαν in move_fixes:
                 if move_fixes[mαν][0] in ['⮙', '⮛']:
-                    sender.ypos, seut, sender.sναrt = move_sent([x, y], move_fixes[mαν], sender.sναrt)
+                    sender.ypos, seut, sender.sναrt = _move_sent([x, y], move_fixes[mαν], sender.sναrt)
                 else:
-                    sender.xpos, seut, sender.sναrt = move_sent([x, y], move_fixes[mαν], sender.sναrt)
+                    sender.xpos, seut, sender.sναrt = _move_sent([x, y], move_fixes[mαν], sender.sναrt)
             elif mαν == 10: # 10
                 xseuαt = np.random.randint(x - 1)
                 yseuαt = np.random.randint(2, y - 2)

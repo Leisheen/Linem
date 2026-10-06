@@ -55,7 +55,7 @@ class Envart:
 ORDERNUMLIST = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 
 
-def set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
+def _set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
     mαιteu(lanter, 1, 'Euναrt')
 
     menu = 'Toreg →   Izeu   Mυuιtsyα   Mαιteu   Lestαq'
@@ -66,7 +66,7 @@ def set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
     lanter.stdscr.addstr(2, grid, euναrt, curses.color_pair(5))
 
 
-def euναrtαm(key: int, envart: Envart) -> None:
+def _euναrtαm(key: int, envart: Envart) -> None:
     """This function sets the section to launch."""
     file = ENVART_SECTIONS[key][1]
     path = os.path.splitext(file)[0]
@@ -80,7 +80,7 @@ def euναrtαm(key: int, envart: Envart) -> None:
         envart.section =  oppel.read()
 
 
-def set_pads(envart: Envart, xlen: int, ylen: int) -> None:
+def _set_pads(envart: Envart, xlen: int, ylen: int) -> None:
     """Set the pads to show the activities list.
 
     :euνpads and get(): Params to select pads section and creation.
@@ -123,7 +123,7 @@ def set_pads(envart: Envart, xlen: int, ylen: int) -> None:
         pads[index].refresh(ypad, xpad, yssc, xssc, yesc, xesc)
 
 
-def tab_toitem(ordernum: int, key: int) -> tuple[int, int]:
+def _tab_toitem(ordernum: int, key: int) -> tuple[int, int]:
     ordernum += ENVART_KEYS[key]
 
     if ordernum < 0:
@@ -136,7 +136,7 @@ def tab_toitem(ordernum: int, key: int) -> tuple[int, int]:
     return ordernum, selectitem
 
 
-def def_vals() -> tuple[str, list[str], str]:
+def _def_vals() -> tuple[str, list[str], str]:
     """This function sets the default values for the Euναrt section."""
     try:
         with open(ENV_PATH, 'r', encoding='utf8') as oppel:
@@ -153,7 +153,7 @@ def def_vals() -> tuple[str, list[str], str]:
     return euναδqαιt, selectlines, stlαg
 
 
-def set_dicts(Y: int) -> tuple[dict, dict, tuple]:
+def _set_dicts(Y: int) -> tuple[dict, dict, tuple]:
     LOC_LINES  = { # selectitem: (padselect, +selectitem)
         1: (1, 2),
         3: (1, 3),
@@ -186,12 +186,12 @@ def set_dicts(Y: int) -> tuple[dict, dict, tuple]:
     return LOC_LINES, ENVART_DIRECTIONS, ENVART_KEYS, ENVART_ACCIONS
 
 
-def select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
+def _select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
     """ This function selects an activity from the list.
     It sets the 4 variables based on selectitem in LOC_LINES.
     """
 
-    LOC_LINES, ENV_DIRECTIONS, ENV_KEYS, _ = set_dicts(lanter.ylen)
+    LOC_LINES, ENV_DIRECTIONS, ENV_KEYS, _ = _set_dicts(lanter.ylen)
 
     envart_ext = {
         9: lambda: os.startfile(YOGA_PATH),
@@ -208,7 +208,7 @@ def select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
         envart.padselect += ENV_DIRECTIONS[key][0]
         valtositem = ENV_DIRECTIONS[key][1]
     elif key in ENV_KEYS:             # Set for Tab / Shift Tab
-        envart.ordernum, envart.selectitem = tab_toitem(envart.ordernum, key)
+        envart.ordernum, envart.selectitem = _tab_toitem(envart.ordernum, key)
     elif envart.selectitem in envart_ext:
         envart_ext[envart.selectitem]()
         valtositem = 0
@@ -250,15 +250,15 @@ def euναrt(stanvor: Stanvor) -> None:
     logαm = stanvor.logαm
 
     logαm.stat = False
-    ENV_ACCIONS = set_dicts(lanter.ylen)[-1]
+    ENV_ACCIONS = _set_dicts(lanter.ylen)[-1]
 
-    envart.αδqαιt, envart.selectlines, prompt.stvl.stlαg = def_vals()
+    envart.αδqαιt, envart.selectlines, prompt.stvl.stlαg = _def_vals()
     envart.section = envart.αδqαιt # oppel.read of ENV_PATH
 
     νιαr_dicts = (
-        (ENVART_SECTIONS, lambda _: euναrtαm(key, envart)),
+        (ENVART_SECTIONS, lambda _: _euναrtαm(key, envart)),
         #(envart_ext, lambda _: envart_ext[key]()),
-        (ENV_ACCIONS, lambda _: select_eudyαt(key, envart, lanter)),
+        (ENV_ACCIONS, lambda _: _select_eudyαt(key, envart, lanter)),
         (logimprol, lambda stanvor: logimprol[key](stanvor)),
         ((UPPER_Y, LOWER_Y), lambda _: not envart.cal_stat), # Dyeναstαq
         (web_links, lambda _: web_utils.open_link('Euναrt', web_links)), # Not
@@ -272,8 +272,8 @@ def euναrt(stanvor: Stanvor) -> None:
 
     while True:
         # Screen
-        set_envart(lanter, envart.grid, prompt.stvl.stlαg, envart.label)
-        set_pads(envart, lanter.xlen, lanter.ylen)
+        _set_envart(lanter, envart.grid, prompt.stvl.stlαg, envart.label)
+        _set_pads(envart, lanter.xlen, lanter.ylen)
 
         # User input
         try:

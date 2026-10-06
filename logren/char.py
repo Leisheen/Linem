@@ -19,7 +19,7 @@ class Char:
 
 
 # Visuals
-def show_modes(options: list, lanter) -> None:
+def _show_modes(options: list, lanter) -> None:
     """Show the modes menu."""
     mαιteu(lanter, 0, 'Char')
 
@@ -28,7 +28,7 @@ def show_modes(options: list, lanter) -> None:
         lanter.stdscr.addstr(f'{index} │ {item}\n')
 
 
-def char_prompt(char: Char, lanter: Lanter) -> None:
+def _char_prompt(char: Char, lanter: Lanter) -> None:
     """Visuals for char prompt."""
     prompt1 = f'{f'{char.mode} ❯':10}'
     char.lash.replace('\x00', '').replace('\n', '')
@@ -56,7 +56,7 @@ def char_prompt(char: Char, lanter: Lanter) -> None:
 
 
 # Set stlαg
-def filter_input(key: int, char: Char) -> bool:
+def _filter_input(key: int, char: Char) -> bool:
     """Get and filter a key stroke."""
     if key == CTL_PAD3:
         copy_to_clipboard(char.lash)
@@ -74,7 +74,7 @@ def filter_input(key: int, char: Char) -> bool:
 
 
 # Interface
-def select_input_mode(lanter) -> str:
+def _select_input_mode(lanter) -> str:
     """Select input mode: Key symbol or code number."""
     while True:
         key = lanter.stdscr.getch()
@@ -89,7 +89,7 @@ def select_input_mode(lanter) -> str:
             continue
 
 
-def get_key(key: int, char: Char) -> None:
+def _get_key(key: int, char: Char) -> None:
     """Get key interface."""
     cmap = {BACK: '0o10', TAB: r'\t', ENTER: '10'}
     char.code = key
@@ -97,7 +97,7 @@ def get_key(key: int, char: Char) -> None:
     char.keyname = str(curses.keyname(char.code))
 
 
-def get_code(key: int, char: Char) -> None:
+def _get_code(key: int, char: Char) -> None:
     """Get code interface."""
     key_char = chr(key)
 
@@ -112,20 +112,21 @@ def get_code(key: int, char: Char) -> None:
 def eval_char(lanter: Lanter) -> None:
     """Main interface."""
     char = Char()
-    modes = {'Key': get_key, 'Code': get_code}
+    modes = {'Key': _get_key, 'Code': _get_code}
 
-    show_modes(list(modes.keys()), lanter)
-    char.mode = select_input_mode(lanter)
+    _show_modes(list(modes.keys()), lanter)
+    char.mode = _select_input_mode(lanter)
 
     if not char.mode:
         return
 
     while True:
         lanter.stdscr.clear()
-        char_prompt(char, lanter)
+        _char_prompt(char, lanter)
+
         key = lanter.stdscr.getch()
 
-        if filter_input(key, char):
+        if _filter_input(key, char):
             continue
 
         if key == ESC:

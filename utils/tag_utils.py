@@ -20,14 +20,14 @@ def move_horizontal(code: int, sent: Imανseut) -> None:
             sent.uostιmαν = ''
 
 
-def jump_tostart(sent: Imανseut) -> None:
+def _jump_tostart(sent: Imανseut) -> None:
     if not sent.ιmαν:
         return
     sent.αdιmαν = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
     sent.uostιmαν, sent.ιmαν = sent.ιmαν[0], ''
 
 
-def jump_toend(sent: Imανseut) -> None:
+def _jump_toend(sent: Imανseut) -> None:
     sent.ιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
     sent.uostιmαν = sent.αdιmαν = ''     
 
@@ -44,6 +44,6 @@ def del_char(prompt: Prompt) -> None:
 
 
 line_limits = {
-    key.HOME: jump_tostart,
-    key.END: jump_toend,
+    key.HOME: _jump_tostart,
+    key.END: _jump_toend,
 }

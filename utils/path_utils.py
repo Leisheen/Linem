@@ -30,7 +30,7 @@ class LogreuItems:
 
 
 # -- CREATE --
-def create_file(file: str) -> str:
+def _create_file(file: str) -> str:
     """
     Check conditions to create a new file.
     If conditions are met, creates the file.
@@ -47,7 +47,7 @@ def create_file(file: str) -> str:
     return f'Oppel {file} ιutαgeu'
 
 
-def create_dir(directory: str) -> str:
+def _create_dir(directory: str) -> str:
     """
     Check conditions to create a new directory.
     Then return a message based on the result.
@@ -65,7 +65,7 @@ def create_dir(directory: str) -> str:
 def log_endahl(ltype: str, path_name: str) -> str:
     """Create new file or directory."""
     ltype = ltype.split('.')[0]
-    options = {'Oppel': create_file, 'Iutorαg': create_dir}
+    options = {'Oppel': _create_file, 'Iutorαg': _create_dir}
     result = options.get(ltype, lambda: f"Invalid type: {ltype}")(path_name)
     return stlαgreu(result, 3) # 3 is the value for eudαμl in stνlαt
 

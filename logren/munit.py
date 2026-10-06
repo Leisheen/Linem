@@ -66,7 +66,7 @@ notes = [
 ]
 
 
-def lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
+def _lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
     """Structure for the Mυuιtsyα section."""
     menu = ' Iνouιm   Tαuder   Terιguer   Stαuνor   Vermαt   Teνuα'
 
@@ -76,7 +76,7 @@ def lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
     lanter.stdscr.addstr(f"{subs.sub1}{subs.sub2}\n{subs.sub3}")
 
 
-def mυutαuder(subs):
+def _mυutαuder(subs):
     """Show the content of Mυuιmα Stαgeu.csv."""
 
     if not os.path.exists('Mυuιmα Stαgeu.csv'):
@@ -88,11 +88,11 @@ def mυutαuder(subs):
     subs.sub1 = data.to_string(index=False)
 
 
-def mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None:
+def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None:
     """Menu for Mυuιt sιguα."""
     while True: # Toreg
         subs.sub1 = f'{section} │ '
-        lαmυuιt(lanter, subs)
+        _lαmυuιt(lanter, subs)
         mυusιg = lanter.stdscr.getch()
 
         if mυusιg == ESC:
@@ -114,15 +114,15 @@ def mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None
             subs.sub2 += chr(mυusιg)
 
 
-def munit_signa(subs, lanter):
+def _munit_signa(subs, lanter):
     """Add a new Mυuιt sιguα."""
     mυuιt = Mυuιt()
     
     subs.sub3 = f'{mυuιt.lαιue}  {mυuιt.αuemαt}  {mυuιt.sιeνιt}  {mυuιt.toreg}'
 
-    mυusιg_menu('Lαιu  ', subs, lanter)
-    mυusιg_menu('Auemαt', subs, lanter)
-    mυusιg_menu('Sιeνιt', subs, lanter)
+    _mυusιg_menu('Lαιu  ', subs, lanter)
+    _mυusιg_menu('Auemαt', subs, lanter)
+    _mυusιg_menu('Sιeνιt', subs, lanter)
 
     # Crear menú de géneros según la métrica
     mυutαudrα = [mυuιt.lαιue, mυuιt.αuemαt, mυuιt.sιeνιt, mυuιt.toreg]
@@ -132,7 +132,7 @@ def munit_signa(subs, lanter):
         writer.writerow(mυutαudrα)
 
 
-def open_mpx() -> None:
+def _open_mpx() -> None:
     """Open Mpxplay."""
     mpx = r"C:\Users\Leane\OneDrive\Escritorio\Logreuα\Μυuιt"
     mpx += r"\Player\Mpxplay_v167_Win32_FFmpeg\mpxplayf.exe"
@@ -142,7 +142,7 @@ def open_mpx() -> None:
 
 
 # Youtube
-def convert_youtube_to_mp3(url: str, format: str) -> str:
+def _convert_youtube_to_mp3(url: str, format: str) -> str:
     """Convert a YouTube video to MP3 format and save it locally.
     Without postprocessor in ydl dict, it just downloads the video."""
     ydl_opts = {
@@ -168,7 +168,7 @@ def convert_youtube_to_mp3(url: str, format: str) -> str:
     return stlαgreu(msg, 0, STANVOR)
 
 
-def get_youtube_url(stanvor: Stanvor, vsent: Vseut):
+def _get_youtube_url(stanvor: Stanvor, vsent: Vseut):
     """Prompt user for YouTube URL."""
     lanter = stanvor.lanter
     url = ''
@@ -196,19 +196,19 @@ def get_youtube_url(stanvor: Stanvor, vsent: Vseut):
             url += chr(key)
 
 
-def get_youtube(stanvor: Stanvor, vsent: Vseut,
+def _get_youtube(stanvor: Stanvor, vsent: Vseut,
                 subs: MυuιtsyαLanter) -> None:
     """Get videos from Youtube."""
-    url = get_youtube_url(stanvor, vsent)
+    url = _get_youtube_url(stanvor, vsent)
 
     if url:
-        msg = convert_youtube_to_mp3(url, 'Audio')
+        msg = _convert_youtube_to_mp3(url, 'Audio')
         subs.sub1 = f'{msg}'
 
     stanvor.lanter.stdscr.clear()
 
 
-def keyboard(stanvor: Stanvor):
+def _keyboard(stanvor: Stanvor):
     """Mυuιtsyα Keyboard Sound Module."""
     lanter = stanvor.lanter
 
@@ -257,7 +257,7 @@ def keyboard(stanvor: Stanvor):
                 playing = True
 
 
-def terιguer(stanvor: Stanvor) -> None:
+def _terιguer(stanvor: Stanvor) -> None:
     """Terιguer program."""
     # Parameters
     prompt = stanvor.prompt
@@ -337,19 +337,19 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
     subs = MυuιtsyαLanter('', '', '')
 
     munit_actions = {
-        NUM1: lambda: open_mpx(), # Uuιtαm Iνouιm
+        NUM1: lambda: _open_mpx(), # Uuιtαm Iνouιm
         NUM2: lambda: tαuder_manager(stanvor, 'Mυuιtsyα'),
         LOWER_T: lambda: tαuder_manager(stanvor, 'Mυuιtsyα'),
-        NUM3: lambda: terιguer(stanvor),
+        NUM3: lambda: _terιguer(stanvor),
         NUM4: lambda: subprocess.Popen(ABPATH),
-        NUM5: lambda: keyboard(stanvor),
-        NUM6: lambda: mυutαuder(subs), # Tαuder
-        NUM7: lambda: get_youtube(stanvor, vsent, subs),
-        PLUS: lambda: munit_signa(subs, lanter), # Num(+) Sιguα
+        NUM5: lambda: _keyboard(stanvor),
+        NUM6: lambda: _mυutαuder(subs), # Tαuder
+        NUM7: lambda: _get_youtube(stanvor, vsent, subs),
+        PLUS: lambda: _munit_signa(subs, lanter), # Num(+) Sιguα
     }
 
     while True:
-        lαmυuιt(lanter, subs)
+        _lαmυuιt(lanter, subs)
 
         mυuιt = lanter.stdscr.getch()
         if mυuιt == ESC:

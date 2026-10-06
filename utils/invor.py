@@ -34,7 +34,7 @@ def _display_invor(lanter: Lanter) -> None:
         lanter.stdscr.addstr(f'{INVOR_MENU[key]}\n')
 
 
-def get_intorag(lanter: Lanter) -> str:
+def _get_intorag(lanter: Lanter) -> str:
     """Drive user to the directory given via user input."""
     INVOR_MAP = {
         NUM0: INVASH,
@@ -62,7 +62,7 @@ def get_intorag(lanter: Lanter) -> str:
 
 def ιuνor(stanvor: Stanvor) -> None:
     """This function drives Stαuνor to a selected directory."""
-    os.chdir(f'{get_intorag(stanvor.lanter)}')
+    os.chdir(f'{_get_intorag(stanvor.lanter)}')
 
     stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
     log(stanvor)
