@@ -2,6 +2,17 @@
 """Lιuemαg Stαuνor is a task workstation.
 With several features, it's aimed to manage events and tasks info,
 to do lists, and also manage files, apps and some native os functions.
+
+Roadmap:
+- Professionalize this as an application first: separate UI, domain logic,
+    and OS-specific services; add automated tests, type checking, linting, CI,
+    user-facing documentation, and reproducible packaging.
+- Centralize configuration and logging, validate persisted data, and handle
+    unsupported OS features explicitly. Keep the curses interface replaceable.
+- Treat a native OS as a separate, long-term project: define its scope and
+    architecture, then build and test a bootable prototype in an emulator before
+    tackling drivers, memory/process management, storage, and security. Reuse
+    this project as an application only after defining a stable OS interface.
 """
 
 # Standard libraries
@@ -11,7 +22,7 @@ import sys
 # Locals
 from core import sentam
 from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
-from operations.operator import start_interface
+from operations.operator import operate_interface
 
 
 def main(stdscr: curses.window) -> None:
@@ -23,12 +34,12 @@ def main(stdscr: curses.window) -> None:
     vsent = sentam.Vseut()
     audio = sentam.Audio()
     logαm = sentam.Logreuαm()
-    fileinfo = sentam.File()
+    filedata = sentam.File()
 
     srch = sentam.Search()
     alarm = sentam.Alarm()
     stanvor = sentam.Stanvor(
-        lanter, prompt, vsent, audio, logαm, fileinfo, srch, alarm
+        lanter, prompt, vsent, audio, logαm, filedata, srch, alarm
         )
 
     for pair_id, fg, bg in sentam.COLORS:
@@ -43,7 +54,7 @@ def main(stdscr: curses.window) -> None:
     curses.curs_set(False)
     sys.stdout.write('\033[?25l')
 
-    start_interface(stanvor)
+    operate_interface(stanvor)
 
 
 if __name__ == '__main__':

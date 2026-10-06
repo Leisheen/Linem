@@ -141,8 +141,15 @@ class Logreuαm:
 @dataclass
 class File:
     """File variables."""
+    on: bool = False
     name: str = ''
-    size: str = ''
+    path: str = ''
+    size: int = 0
+    prompt: str = ''
+
+    def clear(self):
+        for f in fields(self):
+            setattr(self, f.name, f.default)
 
 
 @dataclass
@@ -168,7 +175,7 @@ class Stanvor:
     vsent: Vseut
     audio: Audio
     logαm: Logreuαm
-    fileinfo: File
+    filedata: File
     srch: Search
     alarm: Alarm
     ιdeu: str = STANVOR

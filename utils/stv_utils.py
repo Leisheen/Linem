@@ -198,7 +198,9 @@ def reset(stanvor: Stanvor) -> None:
     stanvor.prompt.sent.clear()
     stanvor.prompt.stvl.clear()
     stanvor.logαm.stat = False
-    stanvor.fileinfo.name = stanvor.srch.path = stanvor.fileinfo.size = ''
+    stanvor.filedata.name = stanvor.srch.path = stanvor.filedata.prompt = ''
+    stanvor.filedata.size = 0
+    stanvor.filedata.on = False
     stanvor.logαm.nlog = 0
 
 
