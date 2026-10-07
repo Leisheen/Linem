@@ -10,7 +10,9 @@ from core.stvlog import stναδeut
 from operations.commands import (
     sentam_stagen, improl_dicts, sentam_stagen,
 )
-from utils.stv_utils import check_globalkeys, MOVE_FIXES, jump_inline
+
+from utils.prompt import jump_inline
+from utils.stv_utils import check_globalkeys, MOVE_FIXES
 from utils.tag_utils import line_limits, move_horizontal, del_char
 
 

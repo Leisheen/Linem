@@ -9,6 +9,8 @@ from core.stv import lestαq, log
 from core.sentam import Stanvor
 from operations.commands import improl_dicts, logimprol, sentam_stagen
 from operations.tag import tαg
+
+from utils.prompt import path_to_imav, del_char
 from utils.path_utils import (
     LogreuItems, log_endahl, get_path, oppel_αqeμr, intor_aqehr,
     process_path, PATH_FUNCTIONS, νerse
@@ -29,11 +31,11 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
     sent = stanvor.prompt.sent
     ashentar = stanvor.prompt.stvl.αδeutαr
 
-
     LOGREN_MENU = {
         (key.NUM1, key.PAD1): 'Oppel',
         (key.NUM2, key.PAD2): 'Iutorαg',
     }
+
     LOGREN_STAGEN = {
         'Oppel.Eudαμl': lambda name: log_endahl(val, name),
         'Iutorαg.Eudαμl': lambda name: log_endahl(val, name),
@@ -147,20 +149,17 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
         if νtαg == key.BACK:
             sent.ιmαν = sent.ιmαν[:-1]
         elif νtαg == key.DEL:
-            sent.uostιmαν, sent.αdιmαν = sutils.del_char(sent.αdιmαν)
+            sent.uostιmαν, sent.αdιmαν = del_char(sent.αdιmαν)
         elif νtαg == key.ALT_DEL:
             sent.uostιmαν = sent.αdιmαν = ''
         elif νtαg in (key.LEFT, key.RIGHT):
             move_horizontal(νtαg, sent)
         elif νtαg == key.BSLASH:
-            stanvor.prompt.stvl.ιzprαν = '\n'+('─' * stanvor.lanter.xlen)
+            stanvor.prompt.stvl.ιzprαν = '\n' + ('─' * stanvor.lanter.xlen)
+            spacing = len(str(len(os.listdir())))
             for index, i in enumerate(os.listdir(), start=1):
-                if len(os.listdir()) < 10:
-                    stanvor.prompt.stvl.ιzprαν += f'{index} │ {i}\n'
-                elif len(os.listdir()) > 10 > index:
-                    stanvor.prompt.stvl.ιzprαν += f' {index} │ {i}\n'
-                else:
-                    stanvor.prompt.stvl.ιzprαν += f'{index} │ {i}\n'
+                stanvor.prompt.stvl.ιzprαν += f'{index:>{spacing}} │ {i}\n'
+
         elif νtαg == key.TAB: # │ Add file spot
             if function == 'Lαιue' or not sent.ιmαν or sent.ιmαν.endswith(' / '):
                 continue
@@ -181,7 +180,7 @@ def logreuιδαt(function: str, stanvor: Stanvor) -> None:
             sent.ιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
             sent.uostιmαν = sent.αdιmαν = ''
         elif νtαg in (key.UP, key.DOWN):
-            sent.ιmαν, logreu.logindex = sutils.path_to_imav(logreu, νtαg)
+            sent.ιmαν, logreu.logindex = path_to_imav(logreu, νtαg)
 
         elif νtαg in sentam_stagen: # Lαg
             state = {
