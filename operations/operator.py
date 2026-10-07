@@ -10,8 +10,10 @@ from typing import Callable
 import core.audio as aud
 import core.def_paths as dfp
 import core.keys as key
+import core.search as search
 import core.stvlog as stvlog
 import core.session_manager as session
+
 import utils.stv_utils as sutils
 import utils.sys_utils as sinfo
 
@@ -63,8 +65,8 @@ stv_operations = {
     key.SHF_PADMINUS: lambda stanvor: reset(stanvor),
     key.UP: lambda stanvor: logreu_select('up', stanvor),
     key.DOWN: lambda stanvor: logreu_select('down', stanvor),
-    key.CTL_PADSLASH: lambda stanvor: sutils.set_search(stanvor.prompt.sent, stanvor.srch),
-    key.ALT_PADSLASH: lambda stanvor: sutils.switch_search(stanvor.srch),
+    key.CTL_PADSLASH: lambda stanvor: search.set_search(stanvor.prompt.sent, stanvor.srch),
+    key.ALT_PADSLASH: lambda stanvor: search.switch_search(stanvor.srch),
     key.SHF_F12: lambda stanvor: session.end_session(stanvor.lanter, 'Systɢm δoνt'),
     key.CTL_PADSTOP: lambda stanvor: session.end_session(stanvor.lanter, 'Lιuɢm αϥtᾱν'),
     key.PADSTAR: lambda stanvor: logreuιδαt('Lαιue', stanvor),
@@ -247,8 +249,8 @@ def _process_input(stanvor: Stanvor) -> None:
             sent.ιmαν = os.getcwd()
         elif code in web_channels:
             stvl.log = f'{web_channels[code]}❯ '
-        elif code in sutils.SEARCH_ACTIONS: # ιmαν, search
-            sent.ιmαν = sutils.SEARCH_ACTIONS[code](sent, stanvor.srch)
+        elif code in search.SEARCH_ACTIONS: # ιmαν, search
+            sent.ιmαν = search.SEARCH_ACTIONS[code](sent, stanvor.srch)
         elif code in sentam_stagen: # ιmαν, uostιmαν, otros.. Lαg
             state = {
                 'ιmαν': sent.ιmαν,

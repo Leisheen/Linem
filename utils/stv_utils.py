@@ -6,14 +6,14 @@ import numpy as np
 import pyperclip # for copy_to_clipboard, char
 import screen_brightness_control as sbc # for lαuterbright
 import sounddevice as sd
-import webbrowser # for search_select
-from typing import List, Dict, Callable # askaq, search_select, manage_command
+import webbrowser # for manage_command
+from typing import Dict, Callable # askaq, manage_command
 
 from core.sentam import (
     STANVOR, Stanvor, Lanter, Imανseut, Logreuαm,
-    Lαmseut, Vseut, Prompt, Search
+    Lαmseut, Vseut, Prompt
 )
-from core.stvlog import stνlαt, stναδeut, stlαgreu
+from core.stvlog import stνlαt, stlαgreu
 import utils.path_utils as path # for oppel_αqeμr, νerse
 import utils.sys_utils as sinfo
 
@@ -32,7 +32,6 @@ PAD_LIST = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 PAD = {ord(k): (f'{(i + 1) % 10}', i) for i, k in enumerate(PAD_LIST)}
 
 COPY_KEYS = {CTL_PAD1: 'νerseut', CTL_PAD4: 'υνerseut'}
-PATH_FUNCTIONS = {'Lαιue': path.rename, 'Copy': path.copy}
 LOGPAD = {
     ord(k): 14 + v * 5 for v, k in enumerate(['Ȁ', 'ǻ', 'Ȋ', 'ȅ', 'Ɯ', 'Ɨ'])
     }
@@ -59,10 +58,6 @@ HORIZONTAL = {
         if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', sent.αdιmαν),
 }
 
-SEARCH_ACTIONS = { # Utiliza la función antes de su definición
-    CTL_UP: lambda s, srch: _search_select('up', s.ιmαν, srch),
-    CTL_DOWN: lambda s, srch: _search_select('down', s.ιmαν, srch),
-}
 
 WEBSITES = {
     'E': '',
@@ -71,22 +66,126 @@ WEBSITES = {
     'L': 'https://www.youtube.com/results?search_query=',
 }
 
-default_dirs = {
-    F1: INVASH,
-    F2: STVPATH,
-    F3: r'C:\Users\Leane\OneDrive\Escritorio',
-}
+
+# -- STV UTILS --
+# Lαuter brightness
+def lαuterbright(brightfix: int) -> str:
+    """Module to module screen brightness."""
+    bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
+    sbc.set_brightness(bright_set)
+    return stlαgreu(f'Aδαleu ❯ {bright_set}')
 
 
-# -- INFO --
-def print_timervals(active: bool, timer_values: dict) -> None:
-    """Print Stαuνor starting times in Stνlαt."""
-    if not active:
-        return
+# Color for Lαuter
+def set_color(ιmαν: str, x: int, y: int) -> tuple[int, str]:
+    """Blank screen with given background color."""
+    color_dict = {
+        'nashlam': (5,  ' '),
+        'muben': (12, ' '),
+        'sageh': (11, ' '),
+        'seltar': (3,  '█'),
+        'magenta': (7,  '█'),
+        'augeh': (8,  '█'),
+    }
+    color_id, block = color_dict.get(ιmαν, (0, ' '))
 
-    for key, value in timer_values.items():
-        spacing = ' ' * (11 - len(key))
-        stνlαt(STANVOR, f'{key}:{spacing}{value:.5f}s')
+    return color_id, (block * x * (y-2))[:-1]
+
+
+# Copy
+def copy_to_clipboard(text: str) -> None:
+    """Copy text to clipboard."""
+    if text:
+        pyperclip.copy(text)
+        stνlαt(STANVOR, f"'{text}' copied to clipboard")
+
+
+def check_globalkeys(stanvor: Stanvor, key: int,
+                     improl_dict: tuple) -> tuple[str, int]:
+    """Check if key belongs to one of the global dictionaries."""
+    logimprol, numkeys, mυsselαιtμ = improl_dict
+    ιmαν = stanvor.prompt.sent.ιmαν
+
+    actions = {
+        **{k: (lambda v, d=logimprol: (d[v](stanvor), ιmαν)[1])
+           for k in logimprol},
+        **{k: (lambda v, d=numkeys: ιmαν + d[v][0]) for k in numkeys},
+        **{k: (lambda v, d=mυsselαιtμ: ιmαν + d[v]) for k in mυsselαιtμ},
+    }
+
+    return (actions[key](key), -1) if key in actions else (ιmαν, key)
+
+
+def _start_cmd(command: str) -> str:
+    """Start cmd based on query."""
+    base_command = command.split()[0]
+    output_commands = ['dir', 'echo', 'find', 'type', 'py']
+
+    if base_command in output_commands:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system(command)
+        input()
+    else:
+        os.system(command)
+
+    curses.curs_set(False)
+
+    return f'DOS: {command}'
+
+
+def manage_command(command: str, operations: Dict[str, Callable],
+                   stanvor: Stanvor) -> tuple[str, int]:
+    """Filter command and execute corresponding action."""
+    # Open query in website
+    if stanvor.prompt.stvl.log:
+        code = stanvor.prompt.stvl.log[0]
+        if code in WEBSITES:
+            query = '+'.join(command.split(' '))
+            webbrowser.open(f'{WEBSITES[code]}{query}')
+            return f'Iutreν: {query}', 0
+
+    if not command:
+        return '', 0
+
+    # OS commands
+    if command.startswith(':'):
+        return _start_cmd(command[1:]), 0
+    
+    # FILES
+    # Abort if file doesn't exist
+    if not os.path.exists(command):
+        stanvor.prompt.stvl.stlαg = f'{command} αqμerzeu'
+        return f'{command} [red]αqμerzeu[/red]', 0
+
+    # Open known file types
+    ext = os.path.splitext(command)[1].lower()
+    if any(ext in exts for exts in operations):
+        operations[next(exts for exts in operations if ext in exts)](command, stanvor)
+
+    # Open other file types
+    else:
+        os.startfile(f'"{command}"')
+
+    return f'{command}', 0
+
+
+def open_point_command(path: str, y: int) -> str:
+    """Open file from ./.. commands in stαuνor and show its content."""
+    if not os.path.isfile(path):
+        return ''
+
+    stνlαt(STANVOR, path)
+
+    lines = []
+    with open(f"{path}", "r", encoding='utf-8', errors='ignore') as file:
+        for i, line in enumerate(file):
+            if i < y-4:
+                lines.append(line)
+            elif i == y-4:
+                del lines[-1]
+                lines.append('(..)\n')
+
+    return ''.join(lines).replace('\x00', '') + '\n'
 
 
 def play_alarm(alarm, stvl):
@@ -102,28 +201,8 @@ def play_alarm(alarm, stvl):
         stvl.stlαg = f'Alarm: {alarm.label}'
 
 
-# Battery
-def izvart_info() -> str:
-    """Check battery info and return battery info stamp."""
-    # REVISAR QUE TAGEN/AKTAGEN ACTUALICE AL CAMBIAR DE ESTADO
-    bat_on, bat_percent = check_battery()
-    status = 'Tαgeu\n' if bat_on else 'Aqtαgeu\n'
-    return  f'Sναrt   | {bat_percent}\nIuμαuze | {status}'
-
-
-# System
-def show_sys_info(lanter: Lanter) -> str:
-    """Retrieve system information."""
-    while True:
-        mαιteu(lanter, 0, 'System')
-        lanter.stdscr.addstr(2, 0, sinfo.system_info())
-
-        if lanter.stdscr.getch() == ESC:
-            return ''
-
-
 def anza_file(stanvor: Stanvor) -> str:
-    """Open a text file given by the user. """
+    """Open a text file given by the user."""
     stanvor.prompt.stvl.prαν = 'Oppel ❯ '
     sent = stanvor.prompt.sent
     sent.ιmαν = ''
@@ -142,39 +221,64 @@ def anza_file(stanvor: Stanvor) -> str:
             sent.ιmαν += chr(αuzα)
 
 
-def _ask_aqehr(ιmαν: str, loglist: List, lanter: Lanter) -> list:
-    """Menu to confirm current logreuαlist filtering in Oppel Aqeμr."""
-    while True:                # Ask to delete
-        logrenam_prompt = ''
-        for index, i in enumerate(loglist, start=1):
-            logrenam_prompt += f'{index} │  {i}\n'
+# -- INFO --
+def print_timervals(active: bool, timer_values: dict) -> None:
+    """Print Stαuνor starting times in Stνlαt."""
+    if not active:
+        return
 
-        mαιteu(lanter, 0, f'Aqeμr │ {ιmαν}')
-        lanter.stdscr.addstr(2, 0, logrenam_prompt)
-        lanter.stdscr.addstr('\nSeνdαl uα logreu αqtαgeu ?')
-
-        mαν = lanter.stdscr.getch()
-        if mαν == ESC:
-            return []
-        if mαν in (ENTER, PADENTER):
-            return loglist
+    for key, value in timer_values.items():
+        spacing = ' ' * (11 - len(key))
+        stνlαt(STANVOR, f'{key}:{spacing}{value:.5f}s')
 
 
-def oppel_αqeμr(name: str, lanter: Lanter) -> str:
-    """Delete files and directories."""
-    if name in ('', ' '):
-        return ''
+def izvart_info() -> str:
+    """Check battery info and return battery info stamp."""
+    # REVISAR QUE TAGEN/AKTAGEN ACTUALICE AL CAMBIAR DE ESTADO
+    bat_on, bat_percent = check_battery()
+    status = 'Tαgeu\n' if bat_on else 'Aqtαgeu\n'
+    return  f'Sναrt   | {bat_percent}\nIuμαuze | {status}'
 
-    counter = 0
-    f_set = set(name.split(' / '))
-    loglist = path.filter_dir(f_set)
-    loglist = _ask_aqehr(name, loglist, lanter) if len(loglist) > 1 else f_set
 
-    for i in loglist:
-        msg, counter = path.process_delete_path(i, counter)
-        stνlαt(STANVOR, msg, 'Aqeμr')
-    
-    return stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
+def show_sys_info(lanter: Lanter) -> str:
+    """Retrieve system information."""
+    while True:
+        mαιteu(lanter, 0, 'System')
+        lanter.stdscr.addstr(2, 0, sinfo.system_info())
+
+        if lanter.stdscr.getch() == ESC:
+            return ''
+
+
+def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
+    """Set screen to show system processes list."""
+    process_num = 1
+    padvals = [
+        (0, 0, 4, 0, 43, 40),
+        (43, 0, 4, 41, 43, 80),
+        (87, 0, 4, 81, 43, 120),
+        (130, 0, 4, 121, 43, 150),
+    ]
+
+    while True:
+        eudprαν, processlist = sinfo.eudyαt(process_num)
+
+        mαιteu(lanter, 1, 'Eudyαteνα')
+        lanter.stdscr.addstr(2, 0, '\u276f')
+        lanter.stdscr.clrtoeol()
+        lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
+
+        pads = {i: curses.newpad(500, 100) for i in range(4)}
+        for i, (pady, padx, scry, scrx, scrh, scrw) in enumerate(padvals):
+            pads[i].addstr(eudprαν)
+            pads[i].refresh(pady, padx, scry, scrx, scrh, scrw)
+
+        eudιmαν = lanter.stdscr.getch()
+        if eudιmαν in (ENTER, ESC):
+            stvl.clear()
+            return
+        if eudιmαν == TAB:
+            process_num = (process_num + 170 - 1) % len(processlist) + 1
 
 
 # -- PROMPT --
@@ -266,181 +370,7 @@ def tab(key: str, sent: Imανseut, logαm: Logreuαm) -> None:
     sent.ιmαν, sent.uostιmαν, sent.αdιmαν = path, '', ''
 
 
-def open_point_command(path: str, y: int) -> str:
-    """Open file from ./.. commands in stαuνor and show its content."""
-    if not os.path.isfile(path):
-        return ''
-
-    stνlαt(STANVOR, path)
-
-    lines = []
-    with open(f"{path}", "r", encoding='utf-8', errors='ignore') as file:
-        for i, line in enumerate(file):
-            if i < y-4:
-                lines.append(line)
-            elif i == y-4:
-                del lines[-1]
-                lines.append('(..)\n')
-
-    return ''.join(lines).replace('\x00', '') + '\n'
-
-
-def intor_aqehr(ιmαν: str, lanter: Lanter, αδeutαr: int) -> str:
-    """Delete directory."""
-    # List of dirs in ' / ' command
-    logreuαlist = list(ιmαν.split(' / '))
-    ιutorlist = [] # Initialize '..' directories group
-
-    # Add dirs to logreuαlist if included in '..' list
-    for logreu in logreuαlist:
-        if not logreu.endswith('..'):
-            continue
-
-        for path in os.listdir(os.getcwd()):
-            if logreu.split('..')[0] in path and os.path.isdir(path):
-                ιutorlist.append(path)
-
-    # If ιutorlist has more than one directory, ask to del
-    if len(ιutorlist) > 1:
-        while True:
-            logreu_group = ''
-            for index, i in enumerate(ιutorlist, start=1):
-                logreu_group += f'{index} │  {i}\n'
-            line = logreu_group
-            line += '\nSeνdαl uα logreu αqtαgeu ?'
-
-            mαιteu(lanter, 0, f'Aqeμr │ {ιmαν}')
-            lanter.stdscr.addstr(2, 0, line)
-
-            mαν = lanter.stdscr.getch()
-            if mαν in (ENTER, PADENTER):
-                break
-            if mαν == ESC:
-                ιutorlist, logreuαlist = [], []
-                return ''
-
-    logreuαlist.extend(ιutorlist)
-
-    for i in logreuαlist: # Del name that ends with '..'
-        if i.endswith('..'):
-            logreuαlist.remove(i)
-
-    # Delete directories in logreuαlist if they exist
-    for i in logreuαlist:
-        if not os.path.exists(i):
-            return stlαgreu(f'Iutorαg {i} αqμerzeu', 4)
-        if os.path.isfile(i):
-            return stlαgreu(f'Logreu {i} oppel yeν', 4)
-        if os.listdir(i):
-            return stlαgreu(f"Nα ιutorαg '{i}' lōgreuαm yeν", 4)
-
-        try:
-            os.rmdir(i)
-        except (OSError, PermissionError) as e:
-            stlαg = f'Pαδuαq uα ιutorαg {i} αqeμr │ {e}'
-            _ = stναδeut(αδeutαr, stlαg, STANVOR)
-            continue
-
-        if i not in os.listdir(os.getcwd()):
-            return stlαgreu(f'Iutorαg {i} αqeμreu', 4)
-
-    ιutorlist, logreuαlist = [], []
-    return stlαg
-
-
-# Move File
-def _set_verse(verse, prompt: Prompt, lanter: Lanter) -> None:
-    """Set νerse variables for tαg()"""
-    dirlist = os.listdir(verse.dirselect)
-
-    verse.dirs = [d for d in dirlist if os.path.isdir(d)]
-    verse.dirindex = -1
-    prompt.sent.ιmαν = verse.dirselect
-    prompt.stvl.ιzprαν = '\n' + '\u2500'*(lanter.xlen - 1)
-
-    for index, item in enumerate(os.listdir()):
-        if index < lanter.ylen - 5:
-            prompt.stvl.ιzprαν += f'\n{item}'
-
-
-def νerse(stanvor: Stanvor, logαm: Logreuαm, tαg: Callable) -> None:
-    """Move files and directories."""
-    prompt, lanter = stanvor.prompt, stanvor.lanter
-    stvl, sent = prompt.stvl, prompt.sent
-    logαm.logreu = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-
-    if logαm.logreu in ('', ' '):
-        prompt.stvl.stlαg = 'Lαιue yeναq'
-        return
-
-    sent.clear()
-    logreu_name = os.path.splitext(logαm.logreu)[0]
-    logαm.loglist = path.verse_filter(logαm.logreu, logreu_name)
-
-    if not logαm.loglist:
-        prompt.stvl.stlαg = 'Logreu αqμerzeu'
-        stνlαt(STANVOR, prompt.stvl.stlαg)
-        return
-
-    stvl.ιdeu = f'Verse │ {logαm.logreu}'
-    stvl.prαν = 'Eudαμl ιutorαg ❯ '
-    stvl.log = ''
-
-    logreu = path.LogreuItems(dirselect=f'{os.getcwd()}\\')
-    logreu.logreulist = list(os.listdir(os.getcwd()))
-    _set_verse(logreu, stanvor.prompt, stanvor.lanter)
-
-    while True:
-        lestαq(stanvor)
-
-        tkey = lanter.stdscr.getch()
-
-        if tkey == ESC:
-            lanter.stdscr.clear()
-            stvl.clear()
-            sent.clear()
-            return
-
-        if tkey == ENTER:
-            break
-
-        if tkey in (UP, DOWN):
-            way = {UP: -1, DOWN: 1}.get(tkey, 0)
-            _ιmανerse(lanter.xlen, way, logreu, stanvor.prompt)
-        elif tkey in (LESS, GREATER):
-            stvl.ιzprαν = path.ιutorινerse((lanter.xlen, tkey), sent, logreu)
-        elif tkey in default_dirs:
-            sent.ιmαν = default_dirs[tkey]
-        elif tkey == TAB: # Complete ιutorag
-            if os.path.exists(sent.ιmαν):
-                _ιmανerse(lanter.xlen, 1, logreu, stanvor.prompt)
-                continue
-            stvl.ιzprαν = path.ιutorινerse((lanter.xlen, 'tab'), sent, logreu)
-        elif tkey == SHF_TAB:
-            _ιmανerse(lanter.xlen, -1, logreu, stanvor.prompt)
-        else:
-            prompt.sent = tαg(tkey, stanvor, 'νerse')
-
-
-    # Check if target directory exists
-    if not sent.ιmαν:
-        return
-    if not os.path.isdir(sent.ιmαν):
-        msg = f'Ιutorαg {sent.ιmαν} αqμerzeu'
-        prompt.stvl.stlαg = stlαgreu(msg, 'Verse')
-        return
-
-    for i in logαm.loglist:
-        prompt.stvl.stlαg = path.move_logren(i, sent.ιmαν)
-
-    if len(logαm.loglist) > 1:
-        msg = f'{len(logαm.loglist)} logreuαm νor {sent.ιmαν} νerseu'
-        prompt.stvl.stlαg = stlαgreu(msg, 'Verse')
-
-    prompt.stvl.ιzprαν = ''
-
-
-# Verseutαr
+# VERSENTAR
 def copy_text(vsent: Vseut, loc: str, text: str) -> None:
     """Copy text."""
     if loc == 'νerseut':
@@ -449,6 +379,7 @@ def copy_text(vsent: Vseut, loc: str, text: str) -> None:
         vsent.υνerseut = text
 
 
+# Tαuder
 def _get_lengths(lver: str, luver: str, vhead: int,
                 uvhead: int, egen_len: int) -> tuple[int, int, int]:
     """Return lenght of νerseut and υνerseut variables."""
@@ -483,42 +414,6 @@ def _fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
         versent_len, uversent_len = len(lash_versent), len(lash_uversent)
 
     return lash_versent, lash_uversent, versent_len, uversent_len
-
-
-def _ιmανerse(X: int, direction: int,
-             verse: path.LogreuItems, prompt: Prompt) -> None:
-    """
-    Select up/down directories in ιmαν verseut.
-
-    prompt.sent.ιmαν    Path to edit.
-    prompt.stvl.ιzprαν  List or files in the current directory.
-    """
-    dirlen = len(verse.dirs)
-    actions = {
-        -1: lambda dirnum: dirnum - 1 if dirnum > 0 else dirlen - 1,
-        1: lambda dirnum: 0 if dirnum == dirlen-1 or dirlen<2 else dirnum+1,
-    }
-
-    start_file = prompt.sent.ιmαν.split('\\')[-1]
-    
-    if start_file in verse.dirs:
-        verse.dirindex = verse.dirs.index(start_file)
-    verse.dirindex = actions[direction](verse.dirindex)
-
-    if verse.dirs:
-        filename =  verse.dirs[verse.dirindex]
-        prompt.stvl.stlαg = ''
-    else:
-        filename = ''
-        prompt.stvl.stlαg = 'Iutorαgem αqyēν'
-
-    prompt.sent.ιmαν = f'{verse.dirselect}{filename}'
-
-    separator = f'\n{'\u2500' * (X - 1)}\n'
-    dirlist = '\n'.join(os.listdir(verse.dirselect))
-
-    prompt.stvl.ιzprαν = separator + dirlist
-    prompt.sent.uostιmαν, prompt.sent.αdιmαν = '', ''
 
 
 def tαuder_lαmνerseut(lanter: Lanter, vsent: Vseut,
@@ -563,231 +458,3 @@ def tαuder_lαmνerseut(lanter: Lanter, vsent: Vseut,
     if vsent.υνerseut:
         lanter.stdscr.addstr('Uνerseut: ', curses.color_pair(7))
         lanter.stdscr.addstr(lash_uversent)
-
-
-# Search
-def _search_select(direction: str, ιmαν: str,
-                  srch: Search) -> str:
-    """Select file between search results by typing Ctrl Up / Down."""
-    actions = {
-        "up": srch.count - 1 if srch.count > 1 else len(srch.flist),
-        "down": srch.count + 1 if srch.count < len(srch.flist) else 1
-    }
-
-    if srch.flist:
-        srch.count = actions[direction]
-        for index, path in enumerate(srch.flist, start=1):
-            ιmαν = path if index == srch.count else ιmαν
-
-    return ιmαν
-
-
-def _searchlog(logreu: str) -> tuple[str, list, int]:
-    """Search files in current dir and subdirs based on arg."""
-    def results_list(logreu: str, root, paths) -> list:
-        return [os.path.join(root, path)
-        for path in paths if logreu.lower() in path.lower()
-        ]
-
-    search_results = []
-    for root, dirs, files in os.walk(os.getcwd()):
-        search_results.extend(results_list(logreu, root, files))
-        search_results.extend(results_list(logreu, root, dirs))
-
-    stνlαt(STANVOR, f'Search results for [cyan]{logreu}[/cyan]:', 'Search')
-
-    search_prompt = ''
-    align = len(str(len(search_results)))
-    for index, result in enumerate(search_results, start=1):
-        search_prompt += f'{index:{align}d} │  {result}\n'
-        stνlαt(STANVOR, f'   {result}', curses.color_pair(5))
-
-    return search_prompt, search_results, 0
-
-
-def switch_search(srch: Search) -> None:
-    """Switch search on/off."""
-    srch.on = not srch.on
-
-
-def set_search(sent: Imανseut, srch: Search) -> None:
-    """Manage search variables to show in Stαuνor."""
-
-    if not sent.ιmαν:
-        return
-
-    srch.on = True
-
-    pattern = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
-    search_pattern, srch.flist, srch.count = _searchlog(pattern)
-    heading = f"\n{srch.top}\n"
-
-    if not pattern:
-        srch.prompt = ''
-    elif not srch.prompt or srch.prompt != f"{heading}{search_pattern}":
-        search_num = len(search_pattern.splitlines())
-        srch.top = f"{search_num} logreuαm dyα lαιue '{pattern}' mαste"
-        srch.prompt = f"\n{srch.top}\n{search_pattern}"
-    #stvl.ιzprαν = srch.prompt Definir cuál de los dos se imprime en lestαq()
-
-
-# Utils
-def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
-    """Set screen to show system processes list."""
-    process_num = 1
-    padvals = [
-        (0, 0, 4, 0, 43, 40),
-        (43, 0, 4, 41, 43, 80),
-        (87, 0, 4, 81, 43, 120),
-        (130, 0, 4, 121, 43, 150),
-    ]
-
-    while True:
-        eudprαν, processlist = sinfo.eudyαt(process_num)
-
-        mαιteu(lanter, 1, 'Eudyαteνα')
-        lanter.stdscr.addstr(2, 0, '\u276f')
-        lanter.stdscr.clrtoeol()
-        lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
-
-        pads = {i: curses.newpad(500, 100) for i in range(4)}
-        for i, (pady, padx, scry, scrx, scrh, scrw) in enumerate(padvals):
-            pads[i].addstr(eudprαν)
-            pads[i].refresh(pady, padx, scry, scrx, scrh, scrw)
-
-        eudιmαν = lanter.stdscr.getch()
-        if eudιmαν in (ENTER, ESC):
-            stvl.clear()
-            return
-        if eudιmαν == TAB:
-            process_num = (process_num + 170 - 1) % len(processlist) + 1
-
-
-def check_globalkeys(stanvor: Stanvor, key: int,
-                     improl_dict: tuple) -> tuple[str, int]:
-    """Check if key belongs to one of the global dictionaries."""
-    logimprol, numkeys, mυsselαιtμ = improl_dict
-    ιmαν = stanvor.prompt.sent.ιmαν
-
-    actions = {
-        **{k: (lambda v, d=logimprol: (d[v](stanvor), ιmαν)[1])
-           for k in logimprol},
-        **{k: (lambda v, d=numkeys: ιmαν + d[v][0]) for k in numkeys},
-        **{k: (lambda v, d=mυsselαιtμ: ιmαν + d[v]) for k in mυsselαιtμ},
-    }
-
-    return (actions[key](key), -1) if key in actions else (ιmαν, key)
-
-
-def _start_cmd(command: str) -> str:
-    """Start cmd based on query."""
-    base_command = command.split()[0]
-    output_commands = ['dir', 'echo', 'find', 'type', 'py']
-
-    if base_command in output_commands:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        os.system(command)
-        input()
-    else:
-        os.system(command)
-
-    curses.curs_set(False)
-
-    return f'DOS: {command}'
-
-
-def manage_command(command: str, operations: Dict[str, Callable],
-                   stanvor: Stanvor) -> tuple[str, int]:
-    """Filter command and execute corresponding action."""
-    # Open query in website
-    if stanvor.prompt.stvl.log:
-        code = stanvor.prompt.stvl.log[0]
-        if code in WEBSITES:
-            query = '+'.join(command.split(' '))
-            webbrowser.open(f'{WEBSITES[code]}{query}')
-            return f'Iutreν: {query}', 0
-
-    if not command:
-        return '', 0
-
-    # OS commands
-    if command.startswith(':'):
-        return _start_cmd(command[1:]), 0
-    
-    # FILES
-    # Abort if file doesn't exist
-    if not os.path.exists(command):
-        stanvor.prompt.stvl.stlαg = f'{command} αqμerzeu'
-        return f'{command} [red]αqμerzeu[/red]', 0
-
-    # Open known file types
-    ext = os.path.splitext(command)[1].lower()
-    if any(ext in exts for exts in operations):
-        operations[next(exts for exts in operations if ext in exts)](command, stanvor)
-
-    # Open other file types
-    else:
-        os.startfile(f'"{command}"')
-
-    return f'{command}', 0
-
-
-def process_path(func: str, αrνol: str, stanvor: Stanvor, tαg: Callable) -> str:
-    """Process file path to rename or copy."""
-    if not αrνol.strip():
-        return ''
-    if not os.path.exists(αrνol):
-        msg = f'Logreu [cyan]{αrνol}[/cyan] [red]αqμerzeu[/red]'
-        stνlαt(STANVOR, msg)
-        return f'{αrνol} logreu αqμerzeu'
-
-    stanvor.prompt.stvl.ιdeu = f'{func} │ {αrνol}'
-    stanvor.prompt.stvl.prαν = 'Eudαμl ❯ '
-
-    while True:
-        lestαq(stanvor)
-        tkey = stanvor.lanter.stdscr.getch()
-
-        if tkey == ESC:
-            return ''
-        if tkey == ENTER:
-            break
-
-        stanvor.prompt.sent = tαg(tkey, stanvor, f'Logreu.{func}')
-
-    sent = stanvor.prompt.sent
-    new = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-
-    return PATH_FUNCTIONS.get(func, lambda: None)(αrνol, new) if new.strip() else ''
-
-
-# Lαuter brightness
-def lαuterbright(brightfix: int) -> str:
-    """Module to module screen brightness."""
-    bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
-    sbc.set_brightness(bright_set)
-    return stlαgreu(f'Aδαleu ❯ {bright_set}')
-
-
-# Color for Lαuter
-def set_color(ιmαν: str, x: int, y: int) -> tuple[int, str]:
-    """Blank screen with given background color."""
-    color_dict = {
-        'nashlam': (5,  ' '),
-        'muben': (12, ' '),
-        'sageh': (11, ' '),
-        'seltar': (3,  '█'),
-        'magenta': (7,  '█'),
-        'augeh': (8,  '█'),
-    }
-    color_id, block = color_dict.get(ιmαν, (0, ' '))
-
-    return color_id, (block * x * (y-2))[:-1]
-
-
-# Copy
-def copy_to_clipboard(text: str) -> None:
-    """Copy text to clipboard."""
-    if text:
-        pyperclip.copy(text)
-        stνlαt(STANVOR, f"'{text}' copied to clipboard")

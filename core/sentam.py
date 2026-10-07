@@ -25,7 +25,7 @@ COLORS = ( # Foreground | Background
     (15, curses.COLOR_WHITE,   curses.COLOR_CYAN), # Doesn't work
 )
 
-def get_screen(stdscr):
+def _get_screen(stdscr):
     return stdscr.getmaxyx()
 
 @dataclass
@@ -43,7 +43,7 @@ class Lanter:
 
     @classmethod
     def set_stanvor(cls, stdscr):
-        ylen, xlen = get_screen(stdscr)
+        ylen, xlen = _get_screen(stdscr)
         return cls(
             stdscr,
             xlen,
