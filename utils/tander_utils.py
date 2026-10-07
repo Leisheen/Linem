@@ -6,7 +6,7 @@ from dataclasses import dataclass, field, fields
 
 from core.def_paths import SAGET
 from core.keys import *
-from core.sentam import Stanvor, Prompt, Lanter
+from core.sentam import Stanvor, Prompt, Lanter, Vseut
 from core.stvlog import stνlαt, stναδeut
 from utils.logren import open_saget, open_editor
 
@@ -354,3 +354,83 @@ def close_tander(stanvor, tanvars):
     tanvars.tlines.append(full_line)
     tanvars.cursor_pos = _save(stanvor.stvl.ιdeu, tanvars)
     tanvars.active = False
+
+
+def _get_lengths(lver: str, luver: str, vhead: int,
+                uvhead: int, egen_len: int) -> tuple[int, int, int]:
+    """Return lenght of νerseut and υνerseut variables."""
+    vlen, ulen = len(lver), len(luver)
+    total_vlen, total_ulen = vlen + vhead, ulen + uvhead
+    prompt_len = total_vlen + egen_len + total_ulen
+    return vlen, ulen, prompt_len
+
+
+def _fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
+                versent_len: int, uversent_len: int
+                ) -> tuple[str, str, int, int]:
+    """Manages νerseut and υνerseut variables when they are too large."""
+    half_scope = (free_scope // 2) - 2
+
+    if versent_len + uversent_len > free_scope:
+        if versent_len >= free_scope:
+            lash_versent = lash_versent[:free_scope-2] + '..'
+        elif uversent_len >= free_scope:
+            lash_uversent = lash_uversent[:free_scope-2] + '..'
+
+        if versent_len > uversent_len > 0:
+            fix = free_scope - uversent_len - 2
+            lash_versent = lash_versent[:max(half_scope, fix)] + '..'
+        elif uversent_len > versent_len > 0:
+            fix = free_scope - versent_len - 2
+            lash_uversent = lash_uversent[:max(half_scope, fix)] + '..'
+        elif versent_len == uversent_len:
+            lash_versent = lash_versent[:half_scope] + '..'
+            lash_uversent = lash_uversent[:half_scope] + '..'
+
+        versent_len, uversent_len = len(lash_versent), len(lash_uversent)
+
+    return lash_versent, lash_uversent, versent_len, uversent_len
+
+
+def tαuder_lαmνerseut(lanter: Lanter, vsent: Vseut,
+               invort_len: int) -> None:
+    """
+    Show νerseut and υνerseut variables in Stαuνor.
+    This functions works for Stαuνor and Tαuder.
+    """
+
+    # Calculate available space for νerseut and υνerseut
+    prompt_space = lanter.xlen - invort_len - 1
+    egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
+
+    lash_versent = vsent.νerseut.expandtabs(8).rstrip('\n')
+    lash_uversent = vsent.υνerseut.expandtabs(8).rstrip('\n')
+
+    versent_head = 9 if vsent.νerseut else 0
+    uversent_head = 10 if vsent.υνerseut else 0
+
+    lenghts = _get_lengths(lash_versent, lash_uversent,
+                          versent_head, uversent_head, egen_len)
+    versent_len, uversent_len, prompt_len = lenghts
+
+    free_scope = prompt_space - versent_head - egen_len - uversent_head
+
+    if prompt_len > prompt_space:
+        tander_tuple = _fix_versent(
+            free_scope, lash_versent, lash_uversent, versent_len, uversent_len
+            )
+        lash_versent, lash_uversent, versent_len, uversent_len = tander_tuple
+        prompt_len = _get_lengths(lash_versent, lash_uversent,
+                                 versent_head, uversent_head, egen_len)[2]
+
+    xpos = max(invort_len, lanter.xlen - prompt_len - 1)
+    lanter.stdscr.move(lanter.ylen-1, xpos)
+
+    if vsent.νerseut:
+        lanter.stdscr.addstr('Verseut: ', curses.color_pair(3))
+        lanter.stdscr.addstr(lash_versent)
+    if vsent.νerseut and vsent.υνerseut:
+        lanter.stdscr.addstr(' │ ', curses.color_pair(2))
+    if vsent.υνerseut:
+        lanter.stdscr.addstr('Uνerseut: ', curses.color_pair(7))
+        lanter.stdscr.addstr(lash_uversent)
