@@ -4,15 +4,15 @@ import webbrowser
 from operator import itemgetter
 
 import core.keys as key
-from core.audio import AUDIO_ACTIONS, drive_audio
+from utils.audio import AUDIO_ACTIONS, drive_audio
 from core.sentam import Stanvor, Imανseut
 from core.stvlog import stναδeut
 from operations.commands import (
     sentam_stagen, improl_dicts, sentam_stagen,
 )
 
-from utils.prompt import jump_inline
-from utils.stv_utils import check_globalkeys, MOVE_FIXES
+from utils.prompt import MOVE_FIXES, jump_inline
+from utils.stv_utils import check_globalkeys
 from utils.tag_utils import line_limits, move_horizontal, del_char
 
 

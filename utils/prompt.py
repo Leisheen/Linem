@@ -1,9 +1,18 @@
 """Prompt utils for Stαuνor. Maybe can go to core."""
-from core.keys import UP, DOWN
+from core.keys import (
+    UP, DOWN, SLEFT, SRIGHT, CTL_LEFT, CTL_RIGHT, ALT_LEFT, ALT_RIGHT
+)
 from core.sentam import Imανseut, Logreuαm
 
 from utils.path_utils import LogreuItems
-from utils.stv_utils import MUSSELAITH, MOVE_FIXES, PAD, LOGPAD
+from utils.stv_utils import MUSSELAITH, PAD, LOGPAD
+
+
+MOVE_FIXES = { # Not accurate
+    (SLEFT, SRIGHT): (3, 4),
+    (CTL_LEFT, CTL_RIGHT): (7, 8),
+    (ALT_LEFT, ALT_RIGHT): (17, 18),
+}
 
 
 def add_key(sent: Imανseut, key: int, logαm: Logreuαm, nlog: int) -> None:

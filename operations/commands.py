@@ -12,7 +12,7 @@ from core.def_paths import (
     VERKLAIT_PATH, FINALE_PATH, DAVINCI_PATH, DATA_PATH,
     VSCODE_PATH, GDRIVE_PATH, GCAL_PATH, NOTION_PATH, MUSDEV_PATH
 )
-from core.session_manager import eudαμl_stαuνor
+from utils.session_manager import eudαμl_stαuνor
 from core.stv import log_page
 from core.stvlog import set_stνlαt
 

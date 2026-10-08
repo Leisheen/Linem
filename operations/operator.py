@@ -7,17 +7,17 @@ import os.path
 from operator import itemgetter
 from typing import Callable
 
-import core.audio as aud
+import utils.audio as aud
 import core.def_paths as dfp
 import core.keys as key
 import core.search as search
 import core.stvlog as stvlog
-import core.session_manager as session
+import utils.session_manager as session
 
 import utils.stv_utils as sutils
 import utils.sys_utils as sinfo
 
-from core.audio import drive_audio
+from utils.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.sentam import STANVOR, Stanvor
 from core.stv import (
@@ -48,7 +48,7 @@ from operations.commands import (
 from operations.path_operations import logreutαg, logreuιδαt
 
 from utils.info import show_sys_info, sys_eudyαt
-from utils.prompt import jump_inline, loc_numkey, add_key
+from utils.prompt import MOVE_FIXES, jump_inline, loc_numkey, add_key
 from utils.logren import open_pyside, open_video
 from utils.invor import ιuνor as invor
 
@@ -272,7 +272,7 @@ def _process_input(stanvor: Stanvor) -> None:
                         'υνerseut', 'nlog', 'stlαg')(state)
         elif code in sutils.HORIZONTAL: # ιmαν, uostιmαν, αdιmαν
             sent.ιmαν, sent.uostιmαν, sent.αdιmαν = sutils.HORIZONTAL.get(code, lambda: None)(sent)
-        elif any(code in keys for keys in sutils.MOVE_FIXES): # None # Not accurate
+        elif any(code in keys for keys in MOVE_FIXES): # None # Not accurate
             jump_inline(code, sent)
         elif code in logimprol: # None
             logimprol[code](stanvor)

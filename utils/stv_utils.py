@@ -9,22 +9,14 @@ import sounddevice as sd
 import webbrowser # for manage_command
 from typing import Dict, Callable # askaq, manage_command
 
-from core.sentam import (
-    STANVOR, Stanvor, Lanter, Imανseut, Logreuαm, Vseut
-)
-from core.stvlog import stνlαt, stlαgreu
-import utils.path_utils as path # for oppel_αqeμr, νerse
-
 from core.def_paths import *
 from core.keys import *
+from core.sentam import (
+    STANVOR, Stanvor, Vseut
+)
 from core.stv import lestαq
+from core.stvlog import stνlαt, stlαgreu
 
-
-MOVE_FIXES = { # Not accurate
-    (SLEFT, SRIGHT): (3, 4),
-    (CTL_LEFT, CTL_RIGHT): (7, 8),
-    (ALT_LEFT, ALT_RIGHT): (17, 18),
-}
 
 PAD_LIST = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 PAD = {ord(k): (f'{(i + 1) % 10}', i) for i, k in enumerate(PAD_LIST)}
