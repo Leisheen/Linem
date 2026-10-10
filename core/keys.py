@@ -87,6 +87,7 @@ F12             = 276
 SHF_F1          = 277       # ord('ĕ') / curses.KEY_F13
 SHF_F2          = 278       # ord('Ė')
 SHF_F3          = 279       # ord('ė')
+SHF_F4          = 280       # ord('Ę')
 SHF_F12         = 288
 
 # ALT FUNCTION

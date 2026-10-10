@@ -95,9 +95,9 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
  
             break
 
-    name = stanvor.prompt.sent.ιmαν
+    name = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     stanvor.prompt.stvl.clear()
-    stanvor.prompt.sent.clear()
+    sent.clear()
 
     if name not in ('', ' ', '..'):
         stanvor.prompt.stvl.stlαg = LOGREN_STAGEN[f'{val}.{function}'](name)

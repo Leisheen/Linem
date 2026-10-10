@@ -1,4 +1,3 @@
-import os
 import webbrowser
 
 from operator import itemgetter

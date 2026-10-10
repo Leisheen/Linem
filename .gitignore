@@ -16,3 +16,5 @@ credentials.json
 token.json
 *.pem
 *.p12
+
+Scripts

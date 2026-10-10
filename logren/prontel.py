@@ -2,7 +2,7 @@ import curses
 from dataclasses import dataclass
 
 from core.stv import mαιteu
-from core.sentam import Lanter
+from core.sentam import Stanvor
 
 
 @dataclass
@@ -14,8 +14,9 @@ class Prontel:
     void: str = ''
 
 
-def proutel(lanter: Lanter) -> None:
+def proutel(stanvor: Stanvor) -> None:
     """Proutel program."""
+    lanter = stanvor.lanter
     prt = Prontel()
 
     while True:

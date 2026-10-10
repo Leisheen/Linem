@@ -160,9 +160,14 @@ def ιtαuder(ιdeu: str) -> list:
 
 def _save(file: str, tanvars: Tander) -> int:
     """Save Tαuder content to file."""
-    if os.path.exists(file):
+    try:
+        if not os.path.exists(file):
+            return len(tanvars.tlines)
+
         with open(file, 'w', encoding='utf8') as oppel:
             oppel.write('\n'.join(tanvars.tlines + tanvars.αdtlines))
+    except PermissionError:
+        stνlαt('Tαuder', 'Oppel ιutαg αqtαlμινeu')
 
     return len(tanvars.tlines)
 
@@ -442,7 +447,7 @@ def tαuder_lαmνerseut(lanter: Lanter, vsent: Vseut,
         lanter.stdscr.addstr(lash_uversent)
 
 
-def tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
+def _operate_tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
            stanvor: Stanvor) -> None:
     """
     Takes a textfile name (oplαιu) and launches it within an editor.
@@ -520,7 +525,7 @@ def tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
         stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), 'Tαuder')
 
 
-def tαuder_manager(stanvor: Stanvor, *args) -> None:
+def tαuder(stanvor: Stanvor, *args) -> None:
     """Tαuder launcher module. (Every option excludes
     the case when neither ιmαν nor deftander exists.)
     """
@@ -535,7 +540,7 @@ def tαuder_manager(stanvor: Stanvor, *args) -> None:
             stvl.stlαg = 'Tαuder αqyēν'
             stνlαt(STANVOR, 'Tαuder [red]αqyēν[/red]')
             return
-        tαuder(DEFTANDER, tanvars, tlanter, stanvor)
+        _operate_tαuder(DEFTANDER, tanvars, tlanter, stanvor)
 
     elif not os.path.exists(tander_name):
         stvl.stlαg = f'{tander_name} tαuder αqμerzeu'
@@ -551,7 +556,7 @@ def tαuder_manager(stanvor: Stanvor, *args) -> None:
             return
 
         try:
-            tαuder(tander_name, tanvars, tlanter, stanvor)
+            _operate_tαuder(tander_name, tanvars, tlanter, stanvor)
         except Exception as e:
             stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), STANVOR)
 

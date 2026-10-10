@@ -38,7 +38,7 @@ from logren.prontel import proutel
 from logren.siev import ιsιeν
 from logren.soshat import soδᾱt as soshat
 from logren.stv_programs import print_color, install_module
-from logren.tαuder import tαuder_manager
+from logren.tαuder import tαuder
 from logren.vermat import νermαt
 
 from operations.commands import (
@@ -57,7 +57,7 @@ media_drivers = {
     dfp.IMG_EXT: lambda command, _: open_pyside(command),
     dfp.VIDEO_EXT: lambda command, _: open_video(command),
     dfp.AUDIO_EXT: lambda file, stanvor: drive_audio(file, 'play', stanvor),
-    dfp.TEXT_EXT: lambda file, stanvor: tαuder_manager(stanvor, file),
+    dfp.TEXT_EXT: lambda file, stanvor: tαuder(stanvor, file),
 }
 
 stv_operations = {
@@ -78,7 +78,7 @@ stv_operations = {
     key.PADMINUS: lambda stanvor: logreutαg('Aqeμr', stanvor),
 }
 
-int_logrenam = {
+str_logrenam = {
     '.chr': lambda stanvor: eval_char(stanvor.lanter),
     '.logαt': lambda stanvor: set_logat(stanvor),
     '.sιeν': lambda stanvor: ιsιeν(stanvor),
@@ -87,20 +87,19 @@ int_logrenam = {
     '.tαg': lambda stanvor: install_module(stanvor),
 }
 
-logrenam = {
-    key.ALT_BSLASH: lambda stanvor: invor(stanvor),
-    key.SHF_PADSLASH: lambda stanvor: invor(stanvor),
-    key.F1: lambda stanvor: euναrt(stanvor),
-    key.F2: lambda stanvor: νermαt(stanvor),
-    key.F3: lambda stanvor: tαuder_manager(stanvor),
-    key.F4: lambda stanvor: angestaq(stanvor.lanter, stanvor.prompt.stvl.αδeutαr),
-    key.F5: lambda stanvor: mυuιtsyα(stanvor),
-    key.F6: lambda stanvor: dyαteν(stanvor),
-    key.F7: lambda stanvor: ιugersαtel(stanvor),
-    key.F8: lambda stanvor: soshat(stanvor.lanter, stanvor.prompt.stvl.αδeutαr),
-    key.F9: lambda stanvor: calculator(stanvor),
-    key.SHF_F1: lambda _: os.system('start . command'),
-    key.ALT_F1: lambda stanvor: proutel(stanvor.lanter),
+int_logrenam = {
+    key.F1: euναrt,
+    key.F2: νermαt,
+    key.F3: tαuder,
+    key.F4: angestaq,
+    key.F5: mυuιtsyα,
+    key.F6: dyαteν,
+    key.F7: ιugersαtel,
+    key.F8: soshat,
+    key.F9: calculator,
+    key.ALT_BSLASH: invor,
+    key.SHF_PADSLASH: invor,
+    key.ALT_F1: proutel,
 }
 
 # This decorator is not in use
@@ -129,30 +128,42 @@ def _open_file(command):
     os.startfile(f'"{command}"')
 
 
-def app_manager(command: Callable, stanvor: Stanvor) -> None:
+def _log_stamp(command: Callable) -> None:
+    """Make stamp based on command."""
+    if command not in int_logrenam.values():
+        return
+    
+    comname = command.__name__
+
+    if comname in ('ιuνor', '<lambda>'):
+        return
+
+    unique_letters = { 'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'}
+    stamp = comname.translate(str.maketrans(unique_letters))
+    stamp = stamp.replace('cn', 'cu').upper()
+    stνlαt(STANVOR, f'<{stamp}>')
+
+
+def _app_manager(command: Callable, stanvor: Stanvor) -> None:
     """App launcher module.
     1. Clear the screen.
     2. Print an app stamp in Stνlαt.
     3. Launch the app.
     4. Clear sent and srch.flist.
     5. Print the list of files at the end if needed.
+    Must set a handler for when logrenam doesn't work, maybe cuz a env.
     """
 
     stanvor.lanter.stdscr.clear()
 
-    comname = command.__name__
-    if command in logrenam.values() and comname not in ('ιuνor', '<lambda>'):
-        comname = comname.translate(str.maketrans({
-            'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'
-            })).replace('_manager', '').replace('cn', 'cu')
-        stνlαt(STANVOR, f'<{comname.upper()}>')
+    _log_stamp(command)
 
     command(stanvor)
 
     stanvor.srch.flist = []
     stanvor.prompt.sent.clear()
-
     stanvor.ιdeu = STANVOR
+
     if stanvor.logαm.stat:
         log(stanvor)
 
@@ -162,13 +173,9 @@ def _process_enter(stanvor: Stanvor) -> None:
     stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
     command = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
 
-    # Clear fields
     sent.clear()
-    #if not stvl.prαν:
-    #    stvl.set_stanvor()
     stanvor.lanter.stdscr.clrtoeol()
-    stvl.stlαg = ''
-    stanvor.srch.path = ''
+    stvl.stlαg = stanvor.srch.path = ''
 
     # Info
     if command == '.wifi': # WiFi Connection
@@ -186,22 +193,29 @@ def _process_enter(stanvor: Stanvor) -> None:
 
     elif command in main_paths: # Qαιteu ιutorαg νerseut
         stvl.log, sent.ιmαν = main_paths[command]
+
     elif command in ext_programs:
         ext_programs.get(command, lambda: None)()
         stvlog.stνlαt(STANVOR, f'❯ {command}')
         stanvor.prompt.stvl.clear()
+
     elif command in uprav_functions:
         stvl.υprαν = uprav_functions[command](stanvor)
+
     elif command in stvlog.ASHENTAR_MODES:
         stvl.αδeutαr, stvl.stlαg = stvlog.set_αδeutαr(command)
+
     elif command in ('.stlam', 'DOS'):
         session.rprompt_operation(command, stanvor.lanter.xlen)
-    elif command in int_logrenam:
-        app_manager(int_logrenam[command], stanvor)
+
+    elif command in str_logrenam:
+        _app_manager(str_logrenam[command], stanvor)
+
     elif command in ('.locals', '.globals'):
         all_values = {'.locals': locals(), '.globals': globals()}
         stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
         stvl.υprαν = sinfo.show_vars(all_values[command])
+
     elif command != '..' and command.endswith('..'):
         _open_file(command)
         stvlog.stνlαt(STANVOR, f'{command}')
@@ -280,11 +294,10 @@ def _process_input(stanvor: Stanvor) -> None:
             stv_operations[code](stanvor)
         elif code in aud.AUDIO_PROCESS: # None
             aud.AUDIO_PROCESS[code](stanvor.audio.file, stanvor)
-        elif code in logrenam: # None
-            app_manager(logrenam[code], stanvor)
+        elif code in int_logrenam: # None
+            _app_manager(int_logrenam[code], stanvor)
         elif code in (key.ENTER, key.PADENTER): # None
             _process_enter(stanvor)
-
         elif code in (*sutils.PAD, *sutils.LOGPAD): # nlog
             loc_numkey(code, sent, stanvor.logαm)
         elif any(code in keys for keys in log_vals): # None

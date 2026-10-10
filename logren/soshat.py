@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import List
 
 from core.keys import *
-from core.sentam import Lanter
+from core.sentam import Stanvor
 from core.stv import mαιteu
 from core.stvlog import stναδeut
 from operations.commands import logimprol
@@ -44,8 +44,11 @@ def _move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
     return axis, fig, ki - 1
 
 
-def soδᾱt(lanter: Lanter, αδeutαr: int)-> None:
+def soδᾱt(stanvor: Stanvor)-> None:
     """Soδᾱt module."""
+    lanter = stanvor.lanter
+    αδeutαr = stanvor.prompt.stvl.αδeutαr
+
     x, y = lanter.xlen, lanter.ylen
     sender = Sender()
     level = 1 # ιdeu
