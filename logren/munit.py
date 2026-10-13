@@ -15,7 +15,7 @@ import sounddevice as sd
 import yt_dlp
 from dataclasses import dataclass, field
 
-from core.def_paths import ABPATH
+from core.def_paths import ABLETON
 from core.keys import *
 from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import stvrefresh, mαιteu, lestαq
@@ -341,7 +341,7 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
         NUM2: lambda: tαuder(stanvor, 'Mυuιtsyα'),
         LOWER_T: lambda: tαuder(stanvor, 'Mυuιtsyα'),
         NUM3: lambda: _terιguer(stanvor),
-        NUM4: lambda: subprocess.Popen(ABPATH),
+        NUM4: lambda: subprocess.Popen(ABLETON),
         NUM5: lambda: _keyboard(stanvor),
         NUM6: lambda: _mυutαuder(subs), # Tαuder
         NUM7: lambda: _get_youtube(stanvor, vsent, subs),

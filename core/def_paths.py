@@ -54,3 +54,5 @@ VIDEO_EXT = (
     '.mp4', '.mkv', '.avi', '.mov', '.webm',
     '.wmv', '.flv', '.3gp', '.mpg', '.mpeg'
 )
+
+EXCLUDED = ('desktop.ini')
