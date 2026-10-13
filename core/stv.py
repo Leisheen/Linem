@@ -17,6 +17,7 @@ It assumes it is executed in the same process/thread that owns the
 terminal window, and any heavier work should update application state elsewhere
 before the UI is redrawn.
 """
+
 import curses
 import datetime
 import os
@@ -33,8 +34,10 @@ def set_invash(stvl: Lαmseut):
     if os.path.exists(INVASH):
         os.chdir(INVASH)
 
-        with open(LOG_FILE, 'a', encoding='utf8') as oppel:
-            oppel.write('\n' + datetime.datetime.now().strftime('%d%m%y') + '\n')
+        if os.path.exists(LOG_FILE):
+            date = datetime.datetime.now().strftime('%d%m%y')
+            with open(LOG_FILE, 'a', encoding='utf8') as oppel:
+                oppel.write('\n' + date + '\n')
 
     else:
         stvl.stlαg = 'Iuναδ αqsνῑt'

@@ -8,9 +8,8 @@ import core.keys as key
 import utils.stv_utils as sutils
 
 from core.def_paths import (
-    INVASH, SAGET, PROSERV_PATH, PIANO_PATH, CITIES_PATH,
-    VERKLAIT_PATH, FINALE_PATH, DAVINCI_PATH, DATA_PATH,
-    VSCODE_PATH, GDRIVE_PATH, GCAL_PATH, NOTION_PATH, MUSDEV_PATH, MNCOMMANDER
+    INVASH, SAGET, MNCOMMANDER, GDRIVE, GCAL, GMAPS, PROSERV, PIANO,
+     CITIES, VERKLAIT, FINALE, DAVINCI, DATASET, VSCODE, NOTION, MUSDEV
 )
 from utils.session_manager import eudαμl_stαuνor
 from core.stv import log_page
@@ -56,8 +55,8 @@ log_vals = {
 }
 
 web_links = { # For euναrt and νermαt
-    (key.UPPER_D, key.LOWER_D): ('Dyeναstαq', 'https://calendar.google.com/calendar/'),
-    (key.UPPER_Q, key.LOWER_Q): ('Qαmpαr', 'https://www.google.com/maps'),
+    (key.UPPER_D, key.LOWER_D): ('Dyeναstαq', GCAL),
+    (key.UPPER_Q, key.LOWER_Q): ('Qαmpαr', GMAPS),
 }
 web_channels = { # For operator
     key.ALT_R: 'E', key.ALT_P: 'P', key.ALT_M: 'M', key.ALT_L: 'L'
@@ -74,21 +73,21 @@ uprav_functions = {
     '.dyαt': lambda stanvor: calendar(False, stanvor.gcal_creds, stanvor.prompt.stvl.αδeutαr),
 }
 ext_programs = {
-    '.Olyαν': lambda: os.startfile(MNCOMMANDER),
     '.Sαget': lambda: subprocess.Popen(SAGET),
+    '.Olyαν': lambda: os.startfile(MNCOMMANDER),
     '.Vαt': lambda: os.system('start whatsapp:'),
     '.Explorer': lambda: os.system('start . command'),
-    '.Proserv': lambda: os.startfile(PROSERV_PATH),
+    '.Proserv': lambda: os.startfile(PROSERV),
     '.msconfig': lambda: os.system('start ms-settings:'),
-    '.Piano': lambda: os.startfile(PIANO_PATH),
-    '.Lινseu': lambda: os.startfile(CITIES_PATH),
-    '.Verqlαιt': lambda: os.startfile(VERKLAIT_PATH),
-    '.Qιδlαg': lambda: os.startfile(FINALE_PATH),
-    '.Davinci': lambda: os.startfile(DAVINCI_PATH),
-    '.Dataset': lambda: os.startfile(DATA_PATH),
-    '.Iuslαg': lambda: os.startfile(VSCODE_PATH),
-    '.Dαuqαδ': lambda: webbrowser.open_new(GDRIVE_PATH),
-    '.Dyeν': lambda: webbrowser.open(GCAL_PATH),
-    '.Stαuνor': lambda: webbrowser.open_new(NOTION_PATH),
-    '.Mυsdeν': lambda: os.startfile(MUSDEV_PATH),
+    '.Piano': lambda: os.startfile(PIANO),
+    '.Lινseu': lambda: os.startfile(CITIES),
+    '.Verqlαιt': lambda: os.startfile(VERKLAIT),
+    '.Qιδlαg': lambda: os.startfile(FINALE),
+    '.Davinci': lambda: os.startfile(DAVINCI),
+    '.Dataset': lambda: os.startfile(DATASET),
+    '.Iuslαg': lambda: os.startfile(VSCODE),
+    '.Dαuqαδ': lambda: webbrowser.open_new(GDRIVE),
+    '.Dyeν': lambda: webbrowser.open(GCAL),
+    '.Stαuνor': lambda: webbrowser.open_new(NOTION),
+    '.Mυsdeν': lambda: os.startfile(MUSDEV),
 }
