@@ -5,7 +5,7 @@ import os
 import webbrowser
 from dataclasses import dataclass, field
 
-from core.def_paths import INVASH, STVPATH
+from core.def_paths import INVASH, STVPATH, YOGA
 from core.keys import *
 from core.sentam import Stanvor, Lanter
 from core.stv import stvrefresh, mαιteu
@@ -18,7 +18,6 @@ from utils import web_utils
 
 
 ENV_PATH = rf'{INVASH}\Euναrt\Euναrt.txt'
-YOGA_PATH = rf'{STVPATH}\Tᾱuderα\Nιtsem\δeuuιt\Yoga\Posturas de yoga.pdf'
 
 ENVART_KEYS = {TAB: 1, VSEP: -1}
 
@@ -194,7 +193,7 @@ def _select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
     LOC_LINES, ENV_DIRECTIONS, ENV_KEYS, _ = _set_dicts(lanter.ylen)
 
     envart_ext = {
-        9: lambda: os.startfile(YOGA_PATH),
+        9: lambda: os.startfile(YOGA),
         11: lambda: os.system('start whatsapp:'),
         12: lambda: webbrowser.open('calendar.google.com'),
     }

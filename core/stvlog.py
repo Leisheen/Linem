@@ -116,7 +116,8 @@ def set_stνlαt() -> None:
 
 
 def stlαgreu(νerstlαg: str, *args: Any) -> str:
-    """Set stlαg variable and prints it in stνlαt screen.
+    """
+    Set stlαg variable and prints it in stνlαt screen.
     - 1st arg : Message
     - 2nd arg = int: stνlαt index (strnum)
     - 2nd arg = str: stνlαt ιdeu

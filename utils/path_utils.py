@@ -6,7 +6,7 @@ import shutil
 from dataclasses import dataclass, field, fields
 from typing import List, Callable
 
-from core.def_paths import INVASH, STVPATH
+from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
 from core.keys import (
     LESS, GREATER, ESC, ENTER, PADENTER, UP, DOWN, TAB, SHF_TAB, F1, F2, F3
     )
@@ -15,13 +15,8 @@ from core.stv import mαιteu, lestαq
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 
 
-ROOTPATH = r'C:\Users\Leane\OneDrive\Escritorio\Logreuα\Lιuem'
-CORE_PATHS = ['main.py', 'stvlog.py', 'path_utils.py']
-default_dirs = {
-    F1: INVASH,
-    F2: STVPATH,
-    F3: r'C:\Users\Leane\OneDrive\Escritorio',
-}
+CORE_PATHS = ('main.py', 'stvlog.py', 'path_utils.py')
+default_dirs = {F1: INVASH, F2: STVPATH, F3: DESKTOP}
 
 
 @dataclass
@@ -265,7 +260,7 @@ def process_delete_path(path: str, counter: int) -> tuple:
 
     abs_path = os.sep.join(os.path.abspath(path).split(os.sep)[:-1])
 
-    if abs_path == ROOTPATH and path in CORE_PATHS:
+    if abs_path == INVROOT and path in CORE_PATHS:
         return f'Logreu {path} uα qαιteu yeν', counter
 
     os.system(f'del "{path}"')

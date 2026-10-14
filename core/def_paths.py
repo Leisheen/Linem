@@ -2,8 +2,12 @@
 import os
 from dotenv import load_dotenv
 
-DEFROOT = r'C:\\'
+
 DEFAULT = ''
+
+# 
+DEFROOT       = os.getenv('STVPATH', r'C:\\' if os.name == 'nt' else '/')
+DESKTOP       = os.getenv('DESKTOP', DEFAULT)
 
 load_dotenv()
 # STANVOR
@@ -12,6 +16,8 @@ INVASH        = os.getenv('INVASH', DEFROOT)
 INVROOT       = os.getenv('INVROOT', DEFROOT)
 LOG_FILE      = os.getenv('LOG_FILE', 'log.txt')
 OLDLOG_FILE   = os.getenv('OLDLOG_FILE', 'oldlog.txt')
+LINEMAG       = os.getenv('LINEMAG', DEFROOT)
+MANSLAG       = os.getenv('MANSLAG', DEFROOT)
 
 # PROGRAMS (EXE)
 CPROG         = os.getenv('CPROG', DEFAULT)
@@ -29,6 +35,7 @@ PIANO         = os.getenv('PIANO', DEFAULT)
 ABLETON       = os.getenv('ABLETON', DEFAULT)
 FINALE        = os.getenv('FINALE', DEFAULT)
 DAVINCI       = os.getenv('DAVINCI', DEFAULT)
+MPX           = os.getenv('MPX', DEFAULT)
 
 # DATA
 TANDERA       = os.getenv('TANDERA', DEFAULT)
@@ -39,9 +46,16 @@ DATASET       = os.getenv('DATA', DEFAULT)
 NOTION        = os.getenv('NOTION', DEFAULT)
 
 # GOOGLE
-GDRIVE        = os.getenv('GDRIVE', DEFAULT)
-GCAL          = os.getenv('GCAL', DEFAULT)
-GMAPS         = os.getenv('GMAPS', DEFAULT)
+GDRIVE        = 'https://drive.google.com/drive'
+GCAL          = 'https://calendar.google.com/calendar'
+GMAPS         = 'https://www.google.com/maps'
+
+# OTHERS
+YOGA          = os.getenv('YOGA', DEFAULT)
+AI            = os.getenv('AI', DEFAULT)
+
+
+EXCLUDED = ('desktop.ini')
 
 # EXTENSIONS
 IMG_EXT  = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.tiff')
@@ -55,4 +69,3 @@ VIDEO_EXT = (
     '.wmv', '.flv', '.3gp', '.mpg', '.mpeg'
 )
 
-EXCLUDED = ('desktop.ini')

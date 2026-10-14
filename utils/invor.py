@@ -4,7 +4,7 @@ import curses
 import os
 
 from core.sentam import STANVOR, Stanvor, Lanter
-from core.def_paths import INVASH, STVPATH, INVROOT
+from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
 from core.keys import *
 from core.stv import log, mαιteu
 from core.stvlog import stνlαt
@@ -40,12 +40,12 @@ def _get_intorag(lanter: Lanter) -> str:
         NUM0: INVASH,
         F1: INVASH,
         F2: STVPATH,
-        F3: r'C:\Users\Leane\OneDrive\Escritorio',
+        F3: DESKTOP,
         F4: INVROOT,
         NUM1: rf'{STVPATH}\Tᾱuderα',
         NUM2: rf'{STVPATH}\Mῡuιtsyα\Nιtsem\Imαδ',
-        NUM3: r'C:\Users\Leane\OneDrive\Escritorio\Mυuιt',
-        NUM4: r'C:\Users\Leane\OneDrive\Escritorio\Ilαδ',
+        NUM3: rF'{DESKTOP}\Mυuιt',
+        NUM4: rF'{DESKTOP}\Ilαδ',
     }
 
     while True:

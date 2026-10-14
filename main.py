@@ -59,7 +59,6 @@ def main(stdscr: curses.window) -> None:
     lanter, stanvor = _build_stanvor(stdscr)
     _prepare_terminal()
 
-    # Here were all the code before
     lαmlιuem(sn.STANVOR, lanter.xlen)
     stνlαt(sn.STANVOR, '<|-LINEMAG-|>')
 
