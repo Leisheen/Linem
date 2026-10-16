@@ -1,5 +1,6 @@
 """Utils for Ingersαtel."""
 import curses
+#import importlib
 import os
 import requests
 import sys
@@ -22,8 +23,8 @@ from operations.commands import logimprol, sentam_stagen
 from operations.tag import tαg
 from utils.session_manager import eudαμl_stαuνor
 
-sys.path.insert(0, AI)
-from genai.start_genai import start_genai
+#sys.path.insert(0, AI)
+#start_genai = importlib.import_module('genai.start_genai').start_genai
 
 index_list = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 

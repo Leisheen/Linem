@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 DEFAULT = ''
 
-# 
+# OS
 DEFROOT       = os.getenv('STVPATH', r'C:\\' if os.name == 'nt' else '/')
 DESKTOP       = os.getenv('DESKTOP', DEFAULT)
 

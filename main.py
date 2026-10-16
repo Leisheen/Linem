@@ -22,7 +22,7 @@ import sys
 # Locals
 from core import sentam as sn
 from core.stvlog import stνlαt, lαmlιuem, stναδeut, catch_crash
-from operations.operator import render_interface
+from operations.operator import run_interface
 
 
 def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
@@ -45,26 +45,25 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     return lanter, stanvor
 
 
-def _prepare_terminal() -> None:
+def _prepare_terminal(lanter: sn.Lanter) -> None:
     """Initialize terminal colors and hide the cursor."""
     for pair_id, fg, bg in sn.COLORS:
         curses.init_pair(pair_id, fg, bg)
 
     curses.curs_set(False)
     sys.stdout.write('\033[?25l')
+    lanter.stdscr.nodelay(True)
 
 
 def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
     lanter, stanvor = _build_stanvor(stdscr)
-    _prepare_terminal()
+    _prepare_terminal(stanvor.lanter)
 
     lαmlιuem(sn.STANVOR, lanter.xlen)
     stνlαt(sn.STANVOR, '<|-LINEMAG-|>')
 
-    lanter.stdscr.nodelay(True)
-
-    render_interface(stanvor)
+    run_interface(stanvor)
 
 
 if __name__ == '__main__':
