@@ -7,14 +7,36 @@ import pyperclip # for copy_to_clipboard, char
 import screen_brightness_control as sbc # for lαuterbright
 import sounddevice as sd
 import webbrowser # for manage_command
+
+from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
+from core.def_paths import EXCLUDED
 from core.keys import *
 from core.sentam import (
-    STANVOR, Stanvor, Vseut
+    STANVOR, Stanvor, Vseut, Alarm
 )
 from core.stv import lestαq
-from core.stvlog import stνlαt, stlαgreu
+from core.stvlog import stνlαt, stlαgreu, stναδeut
+
+
+sentam_stagen = {
+    ALT_BKSP: {'ιmαν': lambda *_: ''},
+    BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
+    CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
+    CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
+    CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    CTL_PAD7: {'νerseut': lambda *_: ''},
+    CTL_PAD8: {'υνerseut': lambda *_: ''},
+    PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
+    ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
+    ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
+    ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
+    ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
+    ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
+    ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
+}
 
 
 PAD_LIST = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
@@ -189,17 +211,23 @@ def open_point_command(path: str, y: int) -> str:
     return ''.join(lines).replace('\x00', '') + '\n'
 
 
-def play_alarm(alarm, stvl):
+def play_alarm(alarm: Alarm) -> str:
     """Play alarm in real time."""
-    if alarm.on and alarm.time == datetime.datetime.now().strftime('%H.%M'):
-        t = np.linspace(0, 10, int(44100 * 10), endpoint=False)
-        sine_wave = np.sin(2 * np.pi * 420 * t)
-        #transformed_wave = np.tanh(sine_wave)
-        sd.play(sine_wave, samplerate=44100)
-        #sd.wait()
-        alarm.on = False
-        alarm.label = alarm.time if not alarm.label else alarm.label
-        stvl.stlαg = f'Alarm: {alarm.label}'
+    now = datetime.datetime.now().strftime('%H.%M')
+    if not alarm.on or not alarm.time == now:
+        return ''
+
+    t = np.linspace(0, 10, int(44100 * 10), endpoint=False)
+    sine_wave = np.sin(2 * np.pi * 420 * t)
+    #transformed_wave = np.tanh(sine_wave)
+
+    sd.play(sine_wave, samplerate=44100)
+    #sd.wait()
+
+    alarm.on = False
+    alarm.label = alarm.time if not alarm.label else alarm.label
+
+    return f'Alarm: {alarm.label}'
 
 
 def anza_file(stanvor: Stanvor) -> str:
@@ -216,7 +244,93 @@ def anza_file(stanvor: Stanvor) -> str:
             return ''
         if αuzα == 10:
             return ''.join(sent.ιmαν.split('.')[:-1])
+
         if αuzα == BACK:
             sent.ιmαν = sent.ιmαν[:-1]
         elif αuzα != -1:
             sent.ιmαν += chr(αuzα)
+
+
+def set_ilog(root: str) -> list:
+    """Get the list of the current directory filtered and sorted."""
+    dir = [i for i in os.listdir() if i not in EXCLUDED]
+    dir.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))
+    return dir
+
+
+def set_sentam(code: int, stanvor: Stanvor) -> None:
+    sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
+    vsent = stanvor.vsent
+
+    state = {
+        'ιmαν': sent.ιmαν,
+        'uostιmαν': sent.uostιmαν,
+        'αdιmαν': sent.αdιmαν,
+        'νerseut': vsent.νerseut,
+        'υνerseut': vsent.υνerseut,
+        'nlog': stanvor.logαm.nlog,
+        'stlαg': stvl.stlαg,
+    }
+
+    for seutα, operation in sentam_stagen[code].items():
+        state[seutα] = operation(sent, vsent)
+        sent.ιmαν, sent.uostιmαν, sent.αdιmαν, vsent.νerseut, \
+            vsent.υνerseut, stanvor.logαm.nlog, stvl.stlαg = itemgetter(
+            'ιmαν', 'uostιmαν', 'αdιmαν', 'νerseut', \
+                'υνerseut', 'nlog', 'stlαg')(state)
+
+
+def process_handlers(stanvor: Stanvor, handlers: tuple) -> None:
+    """
+    TEMPORAL
+    This is the original process_handlers function,
+    and must be replaced for the real_process_handlers,
+    which must be recalled as process_handlers.
+    """
+
+    try:
+        for matches, process in handlers:
+            if matches():
+                process()
+                break
+    except ValueError:
+        sent = stanvor.prompt.sent
+        sent.ιmαν = sent.ιmαν[:-1]
+    except Exception as e:
+        stvl = stanvor.prompt.stvl
+        stvl.clear()
+        stvl.ιdeu = stanvor.ιdeu
+        stvl.prαν = stvl.stlαg = str(e)
+        stvl.stlαg = stναδeut(
+                        stvl.αδeutαr,
+                        f'[red]{stvl.stlαg}[/red]',
+                        stvl.ιdeu
+                        )
+
+
+def real_process_handlers(cmd: int, stanvor: Stanvor) -> None:
+    """
+    PERMANENT
+    This is the code intented to stay as
+    the official process_handlers function.
+    Must be recalled so at the end of the refactor.
+    """
+
+    try:
+        for matches, process in stanvor.handlers:
+            if matches(cmd):
+                process(cmd)
+                break
+    except ValueError:
+        sent = stanvor.prompt.sent
+        sent.ιmαν = sent.ιmαν[:-1]
+    except Exception as e:
+        stvl = stanvor.prompt.stvl
+        stvl.clear()
+        stvl.ιdeu = stanvor.ιdeu
+        stvl.prαν = stvl.stlαg = str(e)
+        stvl.stlαg = stναδeut(
+                        stvl.αδeutαr,
+                        f'[red]{stvl.stlαg}[/red]',
+                        stvl.ιdeu
+                        )

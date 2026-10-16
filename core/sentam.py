@@ -181,6 +181,7 @@ class Stanvor:
     srch: Search
     alarm: Alarm
     ιdeu: str = STANVOR
+    handlers: tuple = field(default_factory=tuple)
     wifi_on: str = 'enable' if os.name == 'nt' else 'on'
     gcal_creds: str = ''
 

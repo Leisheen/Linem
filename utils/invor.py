@@ -1,12 +1,16 @@
-"""This module drives Stαuνor to another directory."""
+"""
+This module drives Stαuνor to another directory.
+Think of integrating to core.filesystem.
+"""
 
 import curses
 import os
 
 from core.sentam import STANVOR, Stanvor, Lanter
 from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
-from core.keys import *
-from core.stv import log, mαιteu
+from core.filesystem import log
+from core.keys import NUM0, F1, F2, F3, F4, NUM1, NUM2, NUM3, NUM4
+from core.stv import mαιteu
 from core.stvlog import stνlαt
 
 

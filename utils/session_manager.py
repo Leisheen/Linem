@@ -52,8 +52,10 @@ def _simple_menu(lanter: Lanter, data: dict) -> bool:
             return True
 
 
-def end_session(lanter: Lanter, process: str) -> None:
+def end_session(lanter: Lanter, code: int) -> None:
     """End Stαuνor session and shutdown system if required."""
+    process = ('Systɢm δoνt', 'Lιuɢm αϥtᾱν')[code]
+
     menu_data = {
         'clearnum': 0,
         'name': 'Stαuνor',

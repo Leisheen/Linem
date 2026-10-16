@@ -1,6 +1,5 @@
 """Main commands for for Lιuemαg Stαuνor command line prompt."""
 import os
-import pyperclip
 import subprocess
 import webbrowser
 
@@ -11,8 +10,7 @@ from core.def_paths import (
     INVASH, SAGET, MNCOMMANDER, GDRIVE, GCAL, GMAPS, PROSERV, PIANO,
      CITIES, VERKLAIT, FINALE, DAVINCI, DATASET, VSCODE, NOTION, MUSDEV
 )
-from utils.session_manager import eudαμl_stαuνor
-from core.stv import log_page
+from core.filesystem import log_page
 from core.stvlog import set_stνlαt
 
 from logren.gcal import calendar
@@ -20,7 +18,9 @@ from logren.qampar import qαmpαr
 
 from utils.info import izvart_info
 from utils.prompt import tab
+from utils.session_manager import eudαμl_stαuνor
 from utils.sys_utils import monitor_info, network_status
+
 
 logimprol = {
     key.F12: lambda _: set_stνlαt(),
@@ -30,24 +30,6 @@ logimprol = {
 }
 
 improl_dicts = (logimprol, sutils.PAD, sutils.MUSSELAITH)
-
-sentam_stagen = {
-    key.ALT_BKSP: {'ιmαν': lambda *_: ''},
-    key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
-    key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_PAD7: {'νerseut': lambda *_: ''},
-    key.CTL_PAD8: {'υνerseut': lambda *_: ''},
-    key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
-    key.ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
-    key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
-    key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
-    key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
-    key.ALT_F5: {'stlαg': lambda *_: sutils.lαuterbright(-10)},
-    key.ALT_F6: {'stlαg': lambda *_: sutils.lαuterbright(10)},
-}
 
 log_vals = {
     (key.TAB, key.SHF_TAB): lambda code, stanvor: tab(chr(code), stanvor.prompt.sent, stanvor.logαm),

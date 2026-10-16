@@ -10,9 +10,8 @@ from core.keys import *
 from core.sentam import STANVOR, Stanvor, Prompt, Lanter, Vseut
 from core.stv import lestαq
 from core.stvlog import stνlαt, stναδeut, stlαgreu
-from operations.tag import tαg
+from operations.tag import tαg, move_horizontal
 from utils.logren import open_saget, open_editor
-from utils.tag_utils import move_horizontal
 from utils.stv_utils import anza_file
 
 
