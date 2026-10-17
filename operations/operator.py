@@ -50,7 +50,7 @@ from utils.invor import ιuνor as invor
 from utils.prompt import MOVE_FIXES, jump_inline, loc_numkey, add_key
 from utils.logren import open_pyside, open_video
 from utils.stv_utils import (
-    sentam_stagen, set_sentam, process_handlers, real_process_handlers
+    sentam_stagen, set_sentam, process_handlers, process_stanvor_handlers
 )
 
 
@@ -261,7 +261,7 @@ def _process_enter(stanvor: Stanvor) -> None:
         (lambda _: os.path.isdir(prompt), lambda cmd: _go_to_directory(cmd, stanvor)),
     )
 
-    if not process_handlers(stanvor, handlers=(
+    if not process_handlers((
         (lambda: prompt == '.wifi', lambda: _show_wifi(stanvor)),
         (lambda: prompt == '.log', lambda: _show_log(stanvor)), # NOT WORKING
         (lambda: prompt == '.lam:oldlog', lambda: _clear_log(stanvor)),
@@ -363,7 +363,7 @@ def _process_input(stanvor: Stanvor) -> None:
         if stanvor.ιdeu == STANVOR:
             stanvor.handlers = _set_stanvor_handlers(stanvor)
 
-        real_process_handlers(cmd, stanvor)
+        process_stanvor_handlers(cmd, stanvor)
         # Must be recalled as process_handlers() at the end of the refactor.
 
         stvrefresh(stanvor.lanter.stdscr)

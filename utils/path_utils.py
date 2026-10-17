@@ -28,6 +28,7 @@ class LogreuItems:
     logindex: int = -1
     νerιmαν: str = ''
     νorιmαν: str = ''
+    section: str = ''
 
     def clear(self):
         for f in fields(self):

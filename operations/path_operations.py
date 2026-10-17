@@ -24,57 +24,87 @@ LOGREN_MENU = {
     (key.NUM2, key.PAD2): 'Iutorαg',
 }
 
-def set_menu_variables(function: str, code: int, stanvor: Stanvor) -> None:
-    val = LOGREN_MENU[next(keys for keys in LOGREN_MENU if code in keys)]
+
+def set_menu_variables(function: str, cmd: int, stanvor: Stanvor) -> str:
+    val = LOGREN_MENU[next(keys for keys in LOGREN_MENU if cmd in keys)]
     stanvor.prompt.stvl.ιdeu = function
     stanvor.prompt.stvl.prαν = f'{val} ❯ '
     stanvor.prompt.stvl.log = stanvor.prompt.stvl.stlαg = ''
+    return val
 
 
-def operate_file(stanvor: Stanvor, logreu: LogreuItems) -> None:
+def _abort_process(stanvor: Stanvor) -> None:
+    """Reset variables to its default before exit the process."""
+    stanvor.lanter.stdscr.clear()
+    stanvor.prompt.stvl.clear()
+    stanvor.prompt.sent.clear()
+
+
+def _add_path(stanvor: Stanvor, logreu: LogreuItems) -> None:
+    """Add tab to ιmαν in αqeμr."""
+    if not stanvor.ιdeu == 'αqeμr':
+        return
+
+    sent = stanvor.prompt.sent
+    if sent.ιmαν or not sent.ιmαν.endswith(' / '):
+        sent.ιmαν += ' / '
+        logreu.νerιmαν = sent.ιmαν
+
+
+def _move_vertical(stanvor: Stanvor, logreu: LogreuItems, tkey: int) -> None:
+    """Place in the next or previous path inside the current directory."""
+    sent = stanvor.prompt.sent
+    way = {key.UP: -1, key.DOWN: 1}.get(tkey, 0)
+    get_path(way, logreu)
+    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
+
+
+def _del_path(stanvor: Stanvor, logreu: LogreuItems) -> None:
+    """Delete last path from list of files to delete in αqeμr."""
+    sent = stanvor.prompt.sent
+
+    if not stanvor.ιdeu == 'αqeμr':
+        sent.ιmαν += '│ '
+    if ' / ' not in sent.ιmαν:
+        return
+
+    logreu.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
+    logreu.νorιmαν = sent.ιmαν.split(' / ')[-2]
+    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
+
+
+def operate_file(stanvor: Stanvor, logreu: LogreuItems) -> bool:
     """
     TEMPORAL
     This function creates a new lestαq and input frames,
     but this is not supposed to working so anymore.
     This function must be removed at the end of refactor.
     """
+
     while True:
         lestαq(stanvor)
 
         tkey = stanvor.lanter.stdscr.getch()
 
+        process_handlers((
+            (lambda: tkey == key.ESC, lambda: _abort_process(stanvor)),
+            (lambda: tkey == key.TAB, lambda: _add_path(stanvor, logreu)),
+            (lambda: tkey in (key.UP, key.DOWN),
+             lambda: _move_vertical(stanvor, logreu, tkey)),
+            (lambda: tkey == key.SHF_TAB, lambda: _del_path(stanvor, logreu)),
+        ), stanvor)
+
         if tkey in (key.ENTER, key.PADENTER):
-            break
+            return True
 
         if tkey == key.ESC:
-            stanvor.lanter.stdscr.clear()
-            stanvor.prompt.stvl.clear()
-            sent.clear()
-            return
+            return False
 
-        elif stanvor.ιdeu == 'αqeμr' and tkey == key.TAB:
-            if sent.ιmαν or not sent.ιmαν.endswith(' / '):
-                sent.ιmαν += ' / '
-                logreu.νerιmαν = sent.ιmαν
-        elif tkey in (key.UP, key.DOWN):
-            way = {key.UP: -1, key.DOWN: 1}.get(tkey, 0)
-            get_path(way, logreu)
-            sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
-
-        elif tkey == key.SHF_TAB:
-            if not stanvor.ιdeu == 'αqeμr':
-                sent.ιmαν += '│ '
-            if ' / ' not in sent.ιmαν:
-                continue
-            logreu.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
-            logreu.νorιmαν = sent.ιmαν.split(' / ')[-2]
-            sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
-
-        sent = tαg(tkey, stanvor, 'logren')        
+        stanvor.prompt.sent = tαg(tkey, stanvor, 'logren')        
 
 
-def process_file(function: str, code: int,
-                 logreu: LogreuItems, stanvor: Stanvor) -> None:
+def process_file(function: str, cmd: int,
+                 logreu: LogreuItems, stanvor: Stanvor) -> bool:
     """
     TEMPORAL
     This function sets and operates the file,
@@ -82,8 +112,8 @@ def process_file(function: str, code: int,
     so this functions will be removed as well
     at the end of the refactor.
     """
-    set_menu_variables(function, code, stanvor)
-    operate_file(stanvor, logreu)
+    logreu.section = set_menu_variables(function, cmd, stanvor)
+    return operate_file(stanvor, logreu)
 
 
 def logreutαg(function: str, stanvor: Stanvor) -> None:
@@ -98,60 +128,23 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
     sent = stanvor.prompt.sent
 
     stanvor.handlers = (
-         (lambda cmd: cmd in logimprol, lambda cmd: logimprol[cmd](cmd)),
-       (lambda cmd: any(cmd in keys for keys in LOGREN_MENU),
+        (lambda cmd: cmd in logimprol, lambda cmd: logimprol[cmd](cmd)),
+        (lambda cmd: any(cmd in keys for keys in LOGREN_MENU),
                     lambda cmd: process_file(function, cmd, logreu, stanvor)),
     )
 
     while True:
         lestαq(stanvor)
 
-        mtαg = stanvor.lanter.stdscr.getch()
-        if mtαg in (key.ESC, key.ENTER, key.PADENTER, key.PADMINUS):
+        cmd = stanvor.lanter.stdscr.getch()
+        if cmd in (key.ESC, key.ENTER, key.PADENTER, key.PADMINUS):
             return
 
-        if mtαg in logimprol:
-            logimprol[mtαg](mtαg)
-        elif any(mtαg in keys for keys in LOGREN_MENU):
-            val = LOGREN_MENU[next(keys for keys in LOGREN_MENU if mtαg in keys)]
-            stanvor.prompt.stvl.ιdeu = function
-            stanvor.prompt.stvl.prαν = f'{val} ❯ '
-            stanvor.prompt.stvl.log = stanvor.prompt.stvl.stlαg = ''
-
-            while True:
-                lestαq(stanvor)
-
-                tkey = stanvor.lanter.stdscr.getch()
-
-                if tkey in (key.ENTER, key.PADENTER):
-                    break
-
-                if tkey == key.ESC:
-                    stanvor.lanter.stdscr.clear()
-                    stanvor.prompt.stvl.clear()
-                    sent.clear()
-                    return
-
-                elif stanvor.ιdeu == 'αqeμr' and tkey == key.TAB:
-                    if sent.ιmαν or not sent.ιmαν.endswith(' / '):
-                        sent.ιmαν += ' / '
-                        logreu.νerιmαν = sent.ιmαν
-                elif tkey in (key.UP, key.DOWN):
-                    way = {key.UP: -1, key.DOWN: 1}.get(tkey, 0)
-                    get_path(way, logreu)
-                    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
-
-                elif tkey == key.SHF_TAB:
-                    if not stanvor.ιdeu == 'αqeμr':
-                        sent.ιmαν += '│ '
-                    if ' / ' not in sent.ιmαν:
-                        continue
-                    logreu.νerιmαν = ' / '.join(sent.ιmαν.split(' / ')[:-2]) + ' / '
-                    logreu.νorιmαν = sent.ιmαν.split(' / ')[-2]
-                    sent.ιmαν = f'{logreu.νerιmαν}{logreu.νorιmαν}'.removeprefix(' / ')
-
-                sent = tαg(tkey, stanvor, 'logren')
- 
+        if cmd in logimprol:
+            logimprol[cmd](cmd)
+        elif any(cmd in keys for keys in LOGREN_MENU):
+            if not process_file(function, cmd, logreu, stanvor):
+                return
             break
 
     name = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
@@ -160,15 +153,15 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
     ashentar = stanvor.prompt.stvl.αδeutαr
 
     LOGREN_STAGEN = {
-        'Oppel.Eudαμl': lambda name: log_endahl(val, name),
-        'Iutorαg.Eudαμl': lambda name: log_endahl(val, name),
+        'Oppel.Eudαμl': lambda name: log_endahl(logreu.section, name),
+        'Iutorαg.Eudαμl': lambda name: log_endahl(logreu.section, name),
         'Oppel.Aqeμr': lambda name: oppel_αqeμr(name, stanvor.lanter),
         'Iutorαg.Aqeμr': lambda name: intor_aqehr(
                                             name, stanvor.lanter, ashentar),
     }
 
     if name not in ('', ' ', '..'):
-        stanvor.prompt.stvl.stlαg = LOGREN_STAGEN[f'{val}.{function}'](name)
+        stanvor.prompt.stvl.stlαg = LOGREN_STAGEN[f'{logreu.section}.{function}'](name)
 
     if stanvor.logαm.stat:
         log(stanvor)

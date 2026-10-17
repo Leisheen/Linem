@@ -280,7 +280,7 @@ def set_sentam(code: int, stanvor: Stanvor) -> None:
                 'υνerseut', 'nlog', 'stlαg')(state)
 
 
-def process_handlers(stanvor: Stanvor, handlers: tuple) -> None:
+def process_handlers(handlers: tuple, *args, **kwargs) -> None:
     """
     TEMPORAL
     This is the original process_handlers function,
@@ -288,27 +288,21 @@ def process_handlers(stanvor: Stanvor, handlers: tuple) -> None:
     which must be recalled as process_handlers.
     """
 
-    try:
-        for matches, process in handlers:
+    for matches, process in handlers:
+        if args:
+            if matches(): # Maybe add args when refactor
+                process(args)
+                break
+        if kwargs:
+            if matches(kwargs['key']):
+                process(kwargs['args'])
+                break
+        else:
             if matches():
                 process()
-                break
-    except ValueError:
-        sent = stanvor.prompt.sent
-        sent.ιmαν = sent.ιmαν[:-1]
-    except Exception as e:
-        stvl = stanvor.prompt.stvl
-        stvl.clear()
-        stvl.ιdeu = stanvor.ιdeu
-        stvl.prαν = stvl.stlαg = str(e)
-        stvl.stlαg = stναδeut(
-                        stvl.αδeutαr,
-                        f'[red]{stvl.stlαg}[/red]',
-                        stvl.ιdeu
-                        )
 
 
-def real_process_handlers(cmd: int, stanvor: Stanvor) -> None:
+def process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
     """
     PERMANENT
     This is the code intented to stay as
@@ -316,21 +310,8 @@ def real_process_handlers(cmd: int, stanvor: Stanvor) -> None:
     Must be recalled so at the end of the refactor.
     """
 
-    try:
-        for matches, process in stanvor.handlers:
-            if matches(cmd):
-                process(cmd)
-                break
-    except ValueError:
-        sent = stanvor.prompt.sent
-        sent.ιmαν = sent.ιmαν[:-1]
-    except Exception as e:
-        stvl = stanvor.prompt.stvl
-        stvl.clear()
-        stvl.ιdeu = stanvor.ιdeu
-        stvl.prαν = stvl.stlαg = str(e)
-        stvl.stlαg = stναδeut(
-                        stvl.αδeutαr,
-                        f'[red]{stvl.stlαg}[/red]',
-                        stvl.ιdeu
-                        )
+    for matches, process in stanvor.handlers:
+        if matches(cmd):
+            process(cmd)
+            break
+
