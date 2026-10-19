@@ -15,8 +15,8 @@ master = pygame.mixer
 music = master.music
 
 AUDIO_ACTIONS = {
-    ALT_F1: 'stop',
-    ALT_F2: 'pause',
+    ALT_F1: 'pause',
+    ALT_F2: 'stop',
     SHF_F2: 'rewind',
     SHF_F3: 'forward',
 } 

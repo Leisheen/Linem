@@ -17,7 +17,7 @@ from core.sentam import (
     STANVOR, Stanvor, Vseut, Alarm
 )
 from core.stv import lestαq
-from core.stvlog import stνlαt, stlαgreu, stναδeut
+from core.stvlog import stνlαt, stlαgreu
 
 
 sentam_stagen = {
@@ -129,6 +129,7 @@ def copy_text(vsent: Vseut, loc: str, text: str) -> None:
     else:
         vsent.υνerseut = text
 
+
 # Copy to system
 def copy_to_clipboard(text: str) -> None:
     """Copy text to clipboard."""
@@ -139,16 +140,19 @@ def copy_to_clipboard(text: str) -> None:
 
 # Check Stαuνor global commands
 def check_globalkeys(stanvor: Stanvor, key: int,
-                     improl_dict: tuple) -> tuple[str, int]:
-    """Check if key leads to one of the global commands."""
-    logimprol, numkeys, mυsselαιtμ = improl_dict
+                     logimprol: dict) -> tuple[str, int]:
+    """
+    Check if key leads to one of the global commands.
+    It doesn't work with any dictionary (e.g. AUDIO_ACTIONS)
+    because it must return ιmαν.
+    """
     ιmαν = stanvor.prompt.sent.ιmαν
 
     actions = {
         **{k: (lambda v, d=logimprol: (d[v](stanvor), ιmαν)[1])
            for k in logimprol},
-        **{k: (lambda v, d=numkeys: ιmαν + d[v][0]) for k in numkeys},
-        **{k: (lambda v, d=mυsselαιtμ: ιmαν + d[v]) for k in mυsselαιtμ},
+        **{k: (lambda v, d=PAD: ιmαν + d[v][0]) for k in PAD},
+        **{k: (lambda v, d=MUSSELAITH: ιmαν + d[v]) for k in MUSSELAITH},
     }
 
     return (actions[key](key), -1) if key in actions else (ιmαν, key)
@@ -185,7 +189,7 @@ def manage_command(command: str, operations: Dict[str, Callable],
         operations[next(exts for exts in operations if ext in exts)](command, stanvor)
 
     # Open other file types
-    else:
+    elif command != '..':
         os.startfile(f'"{command}"')
 
     return f'{command}', 0
@@ -302,16 +306,9 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> None:
                 process()
 
 
-def process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
-    """
-    PERMANENT
-    This is the code intented to stay as
-    the official process_handlers function.
-    Must be recalled so at the end of the refactor.
-    """
-
-    for matches, process in stanvor.handlers:
-        if matches(cmd):
-            process(cmd)
-            break
-
+def set_stanvor_defaults(func: Callable) -> Callable:
+    def wrapper(stanvor: Stanvor):
+        func()
+        stanvor.ιdeu = STANVOR
+        stanvor.prompt.stvl.clear()
+    return wrapper

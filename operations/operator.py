@@ -16,7 +16,7 @@ import utils.sys_utils as sinfo
 
 from core.def_paths import LOG_FILE
 from core.search import set_search, switch_search, SEARCH_ACTIONS
-from core.sentam import STANVOR, Stanvor, Lαmseut, File
+from core.sentam import STANVOR, Stanvor, Lαmseut, File, Imανseut
 from core.stv import (
     reset, stvrefresh, lestαq, set_filedata, set_invash
 )
@@ -50,7 +50,7 @@ from utils.invor import ιuνor as invor
 from utils.prompt import MOVE_FIXES, jump_inline, loc_numkey, add_key
 from utils.logren import open_pyside, open_video
 from utils.stv_utils import (
-    sentam_stagen, set_sentam, process_handlers, process_stanvor_handlers
+    sentam_stagen, set_sentam, process_handlers
 )
 
 
@@ -281,10 +281,11 @@ def _process_enter(stanvor: Stanvor) -> None:
     )):
         msg, _ = sutils.manage_command(prompt, media_drivers, stanvor)
         stvlog.stνlαt(STANVOR, msg)
-        stanvor.ιdeu = STANVOR
 
-    stvl.log = '❯ ' if stvl.prαν else ''
+    stanvor.ιdeu = STANVOR
+    stanvor.prompt.stvl.clear()
     stanvor.logαm.nlog = 0
+    stvl.log = '❯ ' if stvl.prαν else ''
 
 
 def check_o_ords(stanvor: Stanvor) -> None:
@@ -320,6 +321,15 @@ def _apply_xaxis(cmd, sent) -> None:
     sent.ιmαν, sent.uostιmαν, sent.αdιmαν = sent_tuple
 
 
+def _del_char(sent: Imανseut) -> None:
+    """Delete next char in prompt."""
+    if sent.αdιmαν:
+        sent.uostιmαν = sent.αdιmαν[0]
+        sent.αdιmαν = sent.αdιmαν[1:]
+    else:
+        sent.uostιmαν = ''
+
+
 def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
     """Dispatch one key cmd to its corresponding input handler."""
     sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
@@ -344,13 +354,28 @@ def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
         (lambda cmd: cmd in web_channels, lambda cmd: setattr(stvl, 'log', f'{web_channels[cmd]}❯ ')),
         (lambda cmd: cmd in AUDIO_PROCESS, lambda cmd: AUDIO_PROCESS[cmd](stanvor.audio.file, stanvor)),
         (lambda cmd: cmd == key.ALT_DEL, lambda _: (setattr(sent, 'uostιmαν', ''), setattr(sent, 'αdιmαν', ''))),
-        (lambda cmd: cmd == key.DEL, lambda _: setattr(sent, 'uostιmαν', sent.αdιmαν[0]) if sent.αdιmαν else None),
+        (lambda cmd: cmd == key.DEL, lambda _: _del_char(stanvor.prompt.sent)),
         (lambda cmd: cmd not in (key.WAIT, key.NULL), lambda cmd: add_key(sent, cmd, stanvor.logαm, stanvor.logαm.nlog)),
         (lambda cmd: cmd in SEARCH_ACTIONS, lambda cmd: setattr(sent, 'ιmαν', SEARCH_ACTIONS[cmd](sent, stanvor.srch))),
         (lambda cmd: any(cmd in keys for keys in log_vals), lambda cmd: log_vals[next(k for k in log_vals if cmd in k)](cmd, stanvor)),
     )
 
     return stanvor_handlers
+
+def _process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
+    """
+    PERMANENT
+    This is the code intented to stay as
+    the official process_handlers function.
+    Must be recalled so at the end of the refactor.
+    """
+
+    for matches, process in stanvor.handlers:
+        if matches(cmd):
+            process(cmd)
+            stanvor.ιdeu = STANVOR
+            stanvor.handlers = _set_stanvor_handlers(stanvor)
+            break
 
 
 def _process_input(stanvor: Stanvor) -> None:
@@ -360,10 +385,7 @@ def _process_input(stanvor: Stanvor) -> None:
     try:
         cmd = stanvor.lanter.stdscr.getch()
 
-        if stanvor.ιdeu == STANVOR:
-            stanvor.handlers = _set_stanvor_handlers(stanvor)
-
-        process_stanvor_handlers(cmd, stanvor)
+        _process_stanvor_handlers(cmd, stanvor)
         # Must be recalled as process_handlers() at the end of the refactor.
 
         stvrefresh(stanvor.lanter.stdscr)
@@ -392,6 +414,7 @@ def _manage_drivers(stanvor: Stanvor) -> None:
 def run_interface(stanvor: Stanvor) -> None:
     """Main loop for the Stαuνor interface."""
     stvmng = StanvorManager()
+    stanvor.handlers = _set_stanvor_handlers(stanvor)
     stvl, logαm = stanvor.prompt.stvl, stanvor.logαm
 
     root = set_invash(stvl)
