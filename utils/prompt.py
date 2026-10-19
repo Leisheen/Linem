@@ -9,7 +9,7 @@ from utils.stv_utils import MUSSELAITH, PAD, LOGPAD
 
 
 MOVE_FIXES = { # Not accurate
-    (SLEFT, SRIGHT): (3, 4),
+    (SLEFT, SRIGHT):       (3, 4),
     (CTL_LEFT, CTL_RIGHT): (7, 8),
     (ALT_LEFT, ALT_RIGHT): (17, 18),
 }

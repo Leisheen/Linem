@@ -55,7 +55,7 @@ MSLTH_STRS = ['ϥ', 'α', 'ᾱ', 'ɢ', 'ē', 'ι', 'ō', 'υ', 'ῡ', 'ν', 'ʯ'
 MUSSELAITH = {k: v for k, v in zip(MSLTH_ORDS, MSLTH_STRS)}
 
 
-HORIZONTAL = {
+HNAV = {
     HOME: lambda sent:
         ('', sent.ιmαν[0], sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν) \
         if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν), # Start
@@ -282,28 +282,6 @@ def set_sentam(code: int, stanvor: Stanvor) -> None:
             vsent.υνerseut, stanvor.logαm.nlog, stvl.stlαg = itemgetter(
             'ιmαν', 'uostιmαν', 'αdιmαν', 'νerseut', \
                 'υνerseut', 'nlog', 'stlαg')(state)
-
-
-def process_handlers(handlers: tuple, *args, **kwargs) -> None:
-    """
-    TEMPORAL
-    This is the original process_handlers function,
-    and must be replaced for the real_process_handlers,
-    which must be recalled as process_handlers.
-    """
-
-    for matches, process in handlers:
-        if args:
-            if matches(): # Maybe add args when refactor
-                process(args)
-                break
-        if kwargs:
-            if matches(kwargs['key']):
-                process(kwargs['args'])
-                break
-        else:
-            if matches():
-                process()
 
 
 def set_stanvor_defaults(func: Callable) -> Callable:

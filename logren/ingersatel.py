@@ -288,7 +288,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                 ingersat.ιugιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
                 return
             if code == key.F2: # Youtube |
-                stvl.ιdeu = 'Youtube'
+                stanvor.ιdeu = stvl.ιdeu = 'Youtube'
                 stvl.prαν = '❯ '
 
                 while True:
@@ -298,7 +298,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                         return
                     if tkey == key.ENTER:
                         break
-                    sent = tαg(tkey, stanvor, 'YouTube')
+                    sent = tαg(tkey, stanvor)
 
                 query = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
                 _ = open_youtube(query),

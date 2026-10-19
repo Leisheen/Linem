@@ -4,7 +4,7 @@ import os
 import sys
 
 from core.def_paths import LINEMAG
-from core.keys import ESC
+from core.keys import ESC, ENTER
 from core.sentam import STANVOR, Lanter
 from core.stv import mαιteu
 from core.stvlog import stνlαt, lαmlιuem, set_log
@@ -46,9 +46,10 @@ def _simple_menu(lanter: Lanter, data: dict) -> bool:
             lanter.stdscr.addstr(yrow, 0, prompt)
 
         key = lanter.stdscr.getch()
+
         if key == ESC:
             return False
-        if key == 10:
+        if key == ENTER:
             return True
 
 

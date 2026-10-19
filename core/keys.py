@@ -103,9 +103,9 @@ SHF_TAB         = 351       # ord('ş')
 SLEFT           = 391       # ord('Ƈ') / curses.KEY_SLEFT
 SRIGHT          = 400       # ord('Ɛ') / curses.KEY_SRIGHT
 FN_I            = 331       # ord('ŋ') / curses.KEY_IC
-SEND            = 384       # ord('ƀ') / curses.KEY_SEND
-SNEXT           = 394       # ord('Ɗ')
-SPREVIOUS       = 396       # ord('ƌ')
+SHF_END         = 384       # ord('ƀ') / curses.KEY_SEND
+SHF_NEXT        = 394       # ord('Ɗ')
+SHF_PREVIOUS    = 396       # ord('ƌ')
 
 # ALT ALPHA
 ALT_A           = 417       # ord('ơ')
@@ -220,7 +220,14 @@ VSEP            = 9474      # ord('│') / '\u2505' / curses.VERTICAL_SEP ?
 
 PROMPT          = 10095     # ord('❯')
 
-specials_ref = ('ALT', 'CTL', 'SHF', 'F', 'PAD')
-special_keys = [WAIT, NULL, TAB, ENTER, ESC, BACK, DEL,
-                ALT_DEL, LEFT, RIGHT, UP, DOWN, HOME, END]
-special_keys += [y for x, y in vars().items() if x.startswith(specials_ref)]
+
+VERTICAL        = (UP, DOWN)
+HORIZONTAL      = (LEFT, RIGHT)
+SEND            = (ENTER, PADENTER)
+ESCAPE          = (ESC, PADMINUS)
+COMPARE         = (LESS, GREATER)
+SPECIALS_REF    = ('ALT', 'CTL', 'SHF', 'F', 'PAD')
+special_keys    = [WAIT, NULL, TAB, ENTER, ESC, BACK, DEL,
+                    ALT_DEL, LEFT, RIGHT, UP, DOWN, HOME, END]
+special_keys    += [y for x, y in vars().items() if x.startswith(SPECIALS_REF)]
+SPECIAL         = special_keys

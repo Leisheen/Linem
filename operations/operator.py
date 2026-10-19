@@ -18,7 +18,8 @@ from core.def_paths import LOG_FILE
 from core.search import set_search, switch_search, SEARCH_ACTIONS
 from core.sentam import STANVOR, Stanvor, Lαmseut, File, Imανseut
 from core.stv import (
-    reset, stvrefresh, lestαq, set_filedata, set_invash
+    stvrefresh, lestαq, set_filedata,
+    reset, set_invash, process_handlers
 )
 from core.filesystem import log, logreu_select
 from core.stvlog import set_ashentar_mode, stνlαt, stναδeut
@@ -49,9 +50,7 @@ from utils.info import show_sys_info, sys_eudyαt
 from utils.invor import ιuνor as invor
 from utils.prompt import MOVE_FIXES, jump_inline, loc_numkey, add_key
 from utils.logren import open_pyside, open_video
-from utils.stv_utils import (
-    sentam_stagen, set_sentam, process_handlers
-)
+from utils.stv_utils import sentam_stagen, set_sentam
 
 
 media_drivers = {
@@ -103,7 +102,6 @@ int_logrenam = {
     key.SHF_PADSLASH: invor,
 }
 
-enter_keys = (key.ENTER, key.PADENTER)
 pad_keys = (*sutils.PAD, *sutils.LOGPAD)
 o_ords = (key.ORD_O, key.SHF_PADSTAR)
 
@@ -317,7 +315,7 @@ def _set_current_path(sent, stvl) -> None:
 
 
 def _apply_xaxis(cmd, sent) -> None:
-    sent_tuple = sutils.HORIZONTAL.get(cmd, lambda: None)(sent)
+    sent_tuple = sutils.HNAV.get(cmd, lambda: None)(sent)
     sent.ιmαν, sent.uostιmαν, sent.αdιmαν = sent_tuple
 
 
@@ -338,7 +336,7 @@ def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
     stanvor_handlers = (
         (lambda cmd: cmd in o_ords, lambda _: check_o_ords(stanvor)),
         (lambda cmd: cmd == key.ALT_F12, lambda _: _set_ashentar(stvl)),
-        (lambda cmd: cmd in enter_keys, lambda _: _process_enter(stanvor)),
+        (lambda cmd: cmd in key.SEND, lambda _: _process_enter(stanvor)),
         (lambda cmd: cmd in logimprol, lambda cmd: logimprol[cmd](stanvor)),
         (lambda cmd: cmd == key.ALT_END, lambda _: _append_path_marker(sent)),
         (lambda cmd: cmd == key.ORD_A, lambda _: _set_current_path(sent, stvl)),
@@ -346,7 +344,7 @@ def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
         (lambda cmd: cmd == key.CTL_ENTER, lambda _: _switch_filedata(filedata)),
         (lambda cmd: cmd in stv_operations, lambda cmd: _checkstv(cmd, stanvor)),
         (lambda cmd: cmd in sentam_stagen, lambda cmd: set_sentam(cmd, stanvor)),
-        (lambda cmd: cmd in sutils.HORIZONTAL, lambda cmd: _apply_xaxis(cmd, sent)),
+        (lambda cmd: cmd in sutils.HNAV, lambda cmd: _apply_xaxis(cmd, sent)),
 
         (lambda cmd: cmd in pad_keys, lambda cmd: loc_numkey(cmd, sent, stanvor.logαm)),
         (lambda cmd: cmd in int_logrenam, lambda cmd: _app_manager(int_logrenam[cmd], stanvor)),

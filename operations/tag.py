@@ -2,11 +2,13 @@ import webbrowser
 
 import core.keys as key
 from core.sentam import Stanvor, Imανseut, Prompt
+from core.stv import process_handlers
 from operations.commands import logimprol
+
 from utils.audio import AUDIO_ACTIONS, drive_audio
 from utils.prompt import MOVE_FIXES, jump_inline
 from utils.stv_utils import (
-    check_globalkeys, sentam_stagen, set_sentam, process_handlers
+    check_globalkeys, sentam_stagen, set_sentam
 )
 
 
@@ -70,7 +72,7 @@ def _addchar(key: int, sent: Imανseut) -> None:
     sent.ιmαν += chr(key)
 
 
-def tαg(tkey: int, stanvor: Stanvor, command: str) -> Imανseut:
+def tαg(tkey: int, stanvor: Stanvor) -> Imανseut:
     """This function is the input manager.
     It works for:
         - Tαuder            tαuder          > add line
@@ -86,22 +88,21 @@ def tαg(tkey: int, stanvor: Stanvor, command: str) -> Imανseut:
     El orden es prαν - log - υprαν - \n - ιmαν - ιzprαν
     """
 
-    stanvor.ιdeu = command
     sent = stanvor.prompt.sent
     sent.lαδuιmαν = sent.uostιmαν if sent.uostιmαν not in ('', '\n') else ' '
 
     sent.ιmαν, tkey = check_globalkeys(stanvor, tkey, logimprol)
     process_handlers((
-        (lambda: tkey == key.DEL, lambda: _del_char(stanvor.prompt)),
-        (lambda: tkey == key.TAB, lambda: _tab_to_imav(stanvor.prompt.sent)),
         (lambda: tkey == key.CTL_ENTER, lambda: webbrowser.open(sent.ιmαν)),
+        (lambda: tkey == key.TAB, lambda: _tab_to_imav(stanvor.prompt.sent)),
+        (lambda: tkey == key.DEL, lambda: _del_char(stanvor.prompt)),
         (lambda: tkey == key.ALT_DEL, lambda: _del_remaining_inline(stanvor)),
-        (lambda: tkey in (key.LEFT, key.RIGHT), lambda: move_horizontal(tkey, sent)),
+        (lambda: tkey in key.HORIZONTAL, lambda: move_horizontal(tkey, sent)),
         (lambda: tkey in line_limits, lambda: line_limits[tkey](sent)),
+        (lambda: any(tkey in keys for keys in MOVE_FIXES), lambda: jump_inline(tkey, sent)),
         (lambda: tkey in sentam_stagen, lambda: set_sentam(tkey, stanvor)),
         (lambda: tkey in AUDIO_ACTIONS, lambda: drive_audio(stanvor.audio.file, AUDIO_ACTIONS[tkey], stanvor)), # Pαδuα add to globalkeys
-        (lambda: any(tkey in keys for keys in MOVE_FIXES), lambda: jump_inline(tkey, sent)),
-        (lambda: tkey not in key.special_keys, lambda: _addchar(tkey, stanvor.prompt.sent)),
+        (lambda: tkey not in key.SPECIAL, lambda: _addchar(tkey, stanvor.prompt.sent)),
     ))
 
     return sent

@@ -25,9 +25,8 @@ import psutil
 import time
 
 from core.def_paths import INVASH, LOG_FILE
-from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut, File
+from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut
 from core.stvlog import stναδeut
-from core.keys import PPAGE, NPAGE
 
 
 def set_invash(stvl: Lαmseut) -> str:
@@ -277,3 +276,25 @@ def set_filedata(stanvor: Stanvor) -> None:
     ιmtαuspace = '\n' if not stv_log else '\n  '
 
     filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'
+
+
+def process_handlers(handlers: tuple, *args, **kwargs) -> None:
+    """
+    TEMPORAL
+    This is the original process_handlers function,
+    and must be replaced for the real_process_handlers,
+    which must be recalled as process_handlers.
+    """
+
+    for matches, process in handlers:
+        if args:
+            if matches(): # Maybe add args when refactor
+                process(args)
+                break
+        if kwargs:
+            if matches(kwargs['key']):
+                process(kwargs['args'])
+                break
+        else:
+            if matches():
+                process()
