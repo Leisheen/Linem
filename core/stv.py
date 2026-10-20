@@ -304,3 +304,8 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> None:
         else:
             if matches():
                 process()
+
+
+def stop_stanvor(stanvor: Stanvor) -> None:
+    """Stop Stauνor."""
+    stanvor.on = False

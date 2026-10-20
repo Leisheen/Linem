@@ -24,7 +24,7 @@ ENVART_KEYS = {TAB: 1, VSEP: -1}
 
 ENVART_SECTIONS = {} # Euναrt character mappings
 euν_mappings = [ # input : (placeholder, filepath)
-    (['1', 'i', 'I'], (9, r'Euναrt\Izeu Teνuα.txt')),
+    (['1', 'i', 'I'], (9,  r'Euναrt\Izeu Teνuα.txt')),
     (['2', 'm', 'M'], (16, r'Euναrt\Mυuιtsyα Teνuα.txt')),
     (['3', 'a', 'A'], (27, r'Euναrt\Mαιteu Teνuα.txt')),
     (['4', 'l', 'L'], (36, r'Vermαt\Lestαq.txt'))
@@ -34,7 +34,7 @@ for chars, props in euν_mappings:
         ENVART_SECTIONS[ord(char)] = props
 
 ENV_EDIT = {
-    NUM0: r"Euναrt\Euναrt.txt",
+    NUM0:  r"Euναrt\Euναrt.txt",
     ALT_I: r'"Euναrt\Izeu Teνuα.txt"',
 }
 

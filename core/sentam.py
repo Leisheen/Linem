@@ -180,6 +180,7 @@ class Stanvor:
     filedata: File
     srch: Search
     alarm: Alarm
+    on: bool = True
     ιdeu: str = STANVOR
     handlers: tuple = field(default_factory=tuple)
     wifi_on: str = 'enable' if os.name == 'nt' else 'on'

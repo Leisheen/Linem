@@ -16,6 +16,7 @@ Roadmap:
 """
 
 # Standard libraries
+import time
 import curses
 import sys
 
@@ -23,6 +24,7 @@ import sys
 from core import sentam as sn
 from core.stvlog import start_consolelog, stναδeut, catch_crash
 from operations.operator import run_interface
+from utils.sys_utils import restore_cursor
 
 
 def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
@@ -60,7 +62,7 @@ def main(stdscr: curses.window) -> None:
     lanter, stanvor = _build_stanvor(stdscr)
     _prepare_terminal(stanvor.lanter)
     start_consolelog(lanter)
-    
+
     run_interface(stanvor)
 
 
@@ -75,3 +77,6 @@ if __name__ == '__main__':
         # To handle Stαuνor unknown crashes. The crash is logged anyway.
         catch_crash(e)
         raise
+    finally:
+        restore_cursor()
+        sys.exit()

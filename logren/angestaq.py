@@ -145,6 +145,7 @@ def _αugest_sιguα(lanter: Lanter, αδeutαr, sub1): # Sιguα channel
 
         if sιguα == ord('0'):
             logren.open_editor(ANGPATH, 'msedit', 'Augestαq ')
+
         elif any(sιguα in keys for keys in sιg_dir):
             acc, channels = next(v for v in sιg_dir if sιguα in v)
             sub1 += f'{acc}\n{u25*7}┬{u25*6}\n'
@@ -182,14 +183,15 @@ def _inaq_menu(lanter, sub1):
         _lαmαugest(lanter, [ANGPATH, ISQPATH], sub1)
 
         sιguα = lanter.stdscr.getch()
+
         if sιguα == 27:
             break
+
         if sιguα == 10:
             _delete_angest()
             break
 
     lanter.stdscr.clear()
-
     return ''
 
 
@@ -216,12 +218,13 @@ def αugestαq(stanvor: Stanvor) -> None:
         _lαmαugest(lanter, [ANGPATH, ISQPATH], sub1)
 
         key = lanter.stdscr.getch()
+
         if key == 27:
             lanter.stdscr.clear()
             break
+
         elif key in angest_funcs:
             sub1 = angest_funcs[key]()
+
         elif key in αugest_dict:
             αugest_dict.get(key, lambda: None)()
-
-        stvrefresh(lanter.stdscr)

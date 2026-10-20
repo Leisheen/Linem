@@ -29,6 +29,7 @@ logimprol = {
     key.F10:          lambda stanvor: qαmpαr(stanvor.lanter),
     key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.prompt.sent.ιmαν),
 }
+
 improl_dicts = (logimprol, key.PAD, MUSSELAITH)
 
 sentam_stagen = {
@@ -64,7 +65,6 @@ HNAV = {
         (sent.ιmαν + sent.uostιmαν, sent.αdιmαν[0], sent.αdιmαν[1:]) \
         if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', sent.αdιmαν),
 }
-
 
 WEBSITES = {
     'E': '',
@@ -191,7 +191,7 @@ def manage_command(command: str, operations: Dict[str, Callable],
         operations[next(exts for exts in operations if ext in exts)](command, stanvor)
 
     # Open other file types
-    elif command != '..':
+    elif command not in ('.', '..'):
         os.startfile(f'"{command}"')
 
     return f'{command}', 0

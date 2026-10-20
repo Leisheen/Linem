@@ -5,8 +5,8 @@ import sys
 
 from core.def_paths import LINEMAG
 from core.keys import ESC, ENTER
-from core.sentam import STANVOR, Lanter
-from core.stv import mαιteu
+from core.sentam import STANVOR, Stanvor, Lanter
+from core.stv import mαιteu, stop_stanvor
 from core.stvlog import stνlαt, lαmlιuem, set_log
 
 
@@ -54,7 +54,9 @@ def _simple_menu(lanter: Lanter, data: dict) -> bool:
             return True
 
 
-def end_session(lanter: Lanter, code: int) -> None:
+
+
+def end_session(stanvor: Stanvor, code: int) -> None:
     """End Stαuνor session and shutdown system if required."""
     process = ('Systɢm δoνt', 'Lιuɢm αϥtᾱν')[code]
 
@@ -64,11 +66,11 @@ def end_session(lanter: Lanter, code: int) -> None:
         'prompt': (f'Sɢνdɒl uɒ {process} ?',),
     }
 
-    if not _simple_menu(lanter, menu_data):
+    if not _simple_menu(stanvor.lanter, menu_data):
         return
 
     operations = {
-        'Lιuɢm αϥtᾱν': sys.exit,
+        'Lιuɢm αϥtᾱν': lambda: stop_stanvor(stanvor),
         'Systɢm δoνt': lambda: os.system('shutdown /s /t 0'),
     }
 

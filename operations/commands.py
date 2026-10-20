@@ -48,6 +48,6 @@ stv_actions = {
     PADSLASH:     lambda stanvor: logreuιδαt('Verse', stanvor),
     UP:           lambda stanvor: logreu_select('up', stanvor),
     DOWN:         lambda stanvor: logreu_select('down', stanvor),
-    SHF_F12:      lambda stanvor: end_session(stanvor.lanter, 0),
-    CTL_PADSTOP:  lambda stanvor: end_session(stanvor.lanter, 1),
+    SHF_F12:      lambda stanvor: end_session(stanvor, 0),
+    CTL_PADSTOP:  lambda stanvor: end_session(stanvor, 1),
 }
