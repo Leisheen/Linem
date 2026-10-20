@@ -23,7 +23,7 @@ def _search_select(direction: str, ιmαν: str,
     return ιmαν
 
 
-SEARCH_ACTIONS = { # Utiliza la función antes de su definición
+SEARCH = { # Utiliza la función antes de su definición
     CTL_UP: lambda s, srch: _search_select('up', s.ιmαν, srch),
     CTL_DOWN: lambda s, srch: _search_select('down', s.ιmαν, srch),
 }

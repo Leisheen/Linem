@@ -99,6 +99,11 @@ ALT_F6          = 306       # ord('Ĳ')
 ALT_F12         = 312
 
 DEL             = 330       # curses.KEY_DC
+
+# NAV PAGES
+NPAGE           = 338       # ord('Œ')
+PPAGE           = 339       # ord('œ')
+
 SHF_TAB         = 351       # ord('ş')
 SLEFT           = 391       # ord('Ƈ') / curses.KEY_SLEFT
 SRIGHT          = 400       # ord('Ɛ') / curses.KEY_SRIGHT
@@ -108,6 +113,8 @@ SHF_NEXT        = 394       # ord('Ɗ')
 SHF_PREVIOUS    = 396       # ord('ƌ')
 
 # ALT ALPHA
+ALT_0           = 407       # ord('Ɨ')
+ALT_5           = 412       # ord('Ɯ')
 ALT_A           = 417       # ord('ơ')
 ALT_C           = 419       # ord('ƣ')
 ALT_E           = 421       # ord('ƥ')
@@ -132,7 +139,9 @@ CTL_PGUP        = 445       # ord('ƽ')
 CTL_PGDOWN      = 446       # ord('ƾ')
 
 # PAD
+PAD7            = 449       # ord('ǁ') / curses.KEY_A1
 PAD8            = 450       # ord('ǂ') / curses.KEY_A2
+PAD9            = 451       # ord('ǃ') / curses.KEY_A3
 PAD4            = 452       # ord('Ǆ') / curses.KEY_B1
 PAD5            = 453       # ord('ǅ') / curses.KEY_B2
 PAD6            = 454       # ord('ǆ') / curses.KEY_B3
@@ -161,9 +170,6 @@ ALT_PGUP        = 487       # ord('ǧ')
 ALT_PGDN        = 488       # ord('Ǩ')
 ALT_END         = 489
 
-NPAGE           = 338       # ord('Œ')
-PPAGE           = 339       # ord('œ')
-
 # ALT ARROWS
 ALT_UP          = 490       # ord('Ǫ')
 ALT_DOWN        = 491       # ord('ǫ')
@@ -173,6 +179,7 @@ ALT_LEFT        = 493       # ord('ǭ')
 ALT_BKSP        = 504       # ord('Ǹ')
 
 # CTRL PAD
+PAD0            = 506       # ord('Ǻ')
 CTL_PAD0        = 507       # ord('ǻ')
 CTL_PAD1        = 508       # ord('Ǽ')
 CTL_PAD2        = 509       # ord('ǽ')
@@ -226,6 +233,24 @@ HORIZONTAL      = (LEFT, RIGHT)
 SEND            = (ENTER, PADENTER)
 ESCAPE          = (ESC, PADMINUS)
 COMPARE         = (LESS, GREATER)
+
+PAD_VALS = [PAD1, PAD2, PAD3, PAD4, PAD5, PAD6, PAD7, PAD8, PAD9, PAD0]
+PAD = {k: (f'{(i + 1) % 10}', i) for i, k in enumerate(PAD_VALS)}
+
+LOGPAD_VALS = [CTL_PAD5, CTL_PAD0, ALT_PAD5, ALT_PAD0, ALT_5, ALT_0]
+LOGPAD = {k: 14 + v * 5 for v, k in enumerate(LOGPAD_VALS)}
+
+MSLTH_ORDS = [
+    ALT_C, ALT_A, ALT_Q, ALT_E, ALT_W, ALT_I, ALT_O,
+    ALT_U, ALT_Y, ALT_V, ALT_H, ALT_S, FN_I
+    ]
+MSLTH_STRS = ['ϥ', 'α', 'ᾱ', 'ɢ', 'ē', 'ι', 'ō', 'υ', 'ῡ', 'ν', 'ʯ', 'δ', 'ῑ']
+MUSSELAITH = {k: v for k, v in zip(MSLTH_ORDS, MSLTH_STRS)}
+
+O_ORDS = (ORD_O, SHF_PADSTAR)
+
+PAD_KEYS = (*PAD, *LOGPAD)
+
 SPECIALS_REF    = ('ALT', 'CTL', 'SHF', 'F', 'PAD')
 special_keys    = [WAIT, NULL, TAB, ENTER, ESC, BACK, DEL,
                     ALT_DEL, LEFT, RIGHT, UP, DOWN, HOME, END]

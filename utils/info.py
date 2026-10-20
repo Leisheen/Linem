@@ -5,7 +5,7 @@ Gets some process from sys_utils, acting as an assembler for those functions.
 import curses
 
 from core.keys import ESC, ENTER, TAB
-from core.sentam import STANVOR, Lanter, Lαmseut
+from core.sentam import STANVOR, Stanvor, Lanter
 from core.stv import mαιteu, check_battery
 from core.stvlog import stνlαt
 
@@ -40,8 +40,10 @@ def show_sys_info(lanter: Lanter) -> str:
             return ''
 
 
-def sys_eudyαt(stvl: Lαmseut, lanter: Lanter) -> None:
+def sys_eudyαt(stanvor: Stanvor) -> None:
     """Set screen to show system processes list."""
+    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
+
     process_num = 1
     padvals = [
         (0, 0, 4, 0, 43, 40),

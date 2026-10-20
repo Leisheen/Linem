@@ -10,7 +10,8 @@ from core.keys import *
 from core.sentam import Stanvor
 from core.stv import mαιteu
 from core.stvlog import stναδeut
-from operations.commands import logimprol
+
+from utils.stv_utils import logimprol
 
 
 @dataclass

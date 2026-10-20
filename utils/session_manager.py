@@ -22,8 +22,9 @@ def restart_stanvor() -> None:
     sys.exit()
 
 
-def rprompt_operation(command: str, xlen: int) -> None:
+def open_cmd(command: str, lanter: Lanter) -> None:
     """Set environment for regular prompt operation."""
+    xlen = lanter.xlen
     curses.endwin()
 
     if command == 'DOS':

@@ -21,9 +21,9 @@ from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import stvrefresh, mαιteu, lestαq
 from core.stvlog import stνlαt, stlαgreu
 from logren.tαuder import tαuder
-from operations.commands import logimprol
-from utils import logren
 
+from utils import logren
+from utils.stv_utils import logimprol
 
 @dataclass
 class MυuιtsyαLanter():

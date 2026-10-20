@@ -45,6 +45,12 @@ def set_invash(stvl: Lαmseut) -> str:
 
 
 # -- RUNTIME --
+def stvrefresh(stdscr: curses.window) -> None:
+    """Refresh Stαuνor screen."""
+    stdscr.refresh()
+    time.sleep(0.01)
+
+
 # Time
 def _sιeν() -> tuple[str, str, int]:
     """Return hour time, current day and spacing for mαιteu function."""
@@ -81,13 +87,60 @@ def _batpercent(lanter: Lanter, dayfix: int, xlen: int) -> None:
         return
 
 
+# Info
+def set_filedata(stanvor: Stanvor) -> None:
+    """
+    This function updates the filedata object with the data of a selected file.
+
+    If there is a file selected, it updates filedata name, path and size.
+    Otherwise, it clears the prompt.
+
+    Then, if filedata is active and the path is a file, it updates the prompt.
+    Otherwise, it clears the prompt.
+
+    Args:
+        filedata (File): File object to update.
+        file_path (str): Path of the selected file.
+        stv_log (str): Current log string from Stαuνor.
+    """
+    filedata = stanvor.filedata
+    file_path = stanvor.prompt.sent.ιmαν
+    stv_log = stanvor.prompt.stvl.log
+
+    def stamp_size() -> str:
+        def filedata_decpos() -> int:
+            decpos = len(str(filedata.size))
+            factor = 10 ** decpos
+            return len(str(factor)) // 1000
+
+        limit = filedata_decpos()
+        units = { 1000: 'B', 1000000: 'K'}
+        unit = units.get(limit, 'M')
+
+        return f'{str(filedata.size/limit)} {unit}'
+
+    if not file_path or not os.path.isfile(file_path):
+        filedata.prompt = ''
+        return
+
+    filedata.name = os.path.basename(file_path)
+    filedata.path = os.path.abspath(file_path)
+    filedata.size = os.path.getsize(file_path) # in bytes
+
+    if not filedata.on or not filedata.size:
+        # filedata.size is filtered here by now to avoid directories.
+        # The idea is to improve it to work with directories as well.
+        filedata.prompt = ''
+        return
+
+    size_prompt = stamp_size()
+
+    ιmtαuspace = '\n' if not stv_log else '\n  '
+
+    filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'
+
+
 # -- INTERFACE --
-def stvrefresh(stdscr: curses.window) -> None:
-    """Refresh Stαuνor screen."""
-    stdscr.refresh()
-    time.sleep(0.01)
-
-
 def mαιteu(lanter: Lanter, clearnum: int, ιdeu: str) -> None:
     """Main head of all the Stαuνor."""
     stdscr = lanter.stdscr
@@ -215,67 +268,20 @@ def lestαq(stanvor: Stanvor) -> None:
         stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), STANVOR)
 
 
-# INFO
 def reset(stanvor: Stanvor) -> None:
-    """Reset Stαuνor variables."""
+    """
+    Reset Stαuνor variables.
+    The idea is to make it a method of the Stanvor object,
+    and write it cleaner if possible.
+    """
+
+    stanvor.ιdeu = STANVOR
     stanvor.prompt.sent.clear()
     stanvor.prompt.stvl.clear()
     stanvor.filedata.clear()
     stanvor.logαm.stat = False
     stanvor.srch.on = False
     stanvor.logαm.nlog = 0
-
-
-def set_filedata(stanvor: Stanvor) -> None:
-    """
-    This function updates the filedata object with the data of a selected file.
-
-    If there is a file selected, it updates filedata name, path and size.
-    Otherwise, it clears the prompt.
-
-    Then, if filedata is active and the path is a file, it updates the prompt.
-    Otherwise, it clears the prompt.
-
-    Args:
-        filedata (File): File object to update.
-        file_path (str): Path of the selected file.
-        stv_log (str): Current log string from Stαuνor.
-    """
-    filedata = stanvor.filedata
-    file_path = stanvor.prompt.sent.ιmαν
-    stv_log = stanvor.prompt.stvl.log
-
-    def stamp_size() -> str:
-        def filedata_decpos() -> int:
-            decpos = len(str(filedata.size))
-            factor = 10 ** decpos
-            return len(str(factor)) // 1000
-
-        limit = filedata_decpos()
-        units = { 1000: 'B', 1000000: 'K'}
-        unit = units.get(limit, 'M')
-
-        return f'{str(filedata.size/limit)} {unit}'
-
-    if not file_path or not os.path.isfile(file_path):
-        filedata.prompt = ''
-        return
-
-    filedata.name = os.path.basename(file_path)
-    filedata.path = os.path.abspath(file_path)
-    filedata.size = os.path.getsize(file_path) # in bytes
-
-    if not filedata.on or not filedata.size:
-        # filedata.size is filtered here by now to avoid directories.
-        # The idea is to improve it to work with directories as well.
-        filedata.prompt = ''
-        return
-
-    size_prompt = stamp_size()
-
-    ιmtαuspace = '\n' if not stv_log else '\n  '
-
-    filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'
 
 
 def process_handlers(handlers: tuple, *args, **kwargs) -> None:

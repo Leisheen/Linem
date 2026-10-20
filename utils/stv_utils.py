@@ -11,60 +11,56 @@ import webbrowser # for manage_command
 from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
+import core.keys as key
+from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, drive_audio
 from core.def_paths import EXCLUDED
-from core.keys import *
-from core.sentam import (
-    STANVOR, Stanvor, Vseut, Alarm
-)
+from core.keys import BACK, MUSSELAITH, PAD
+from core.sentam import STANVOR, Stanvor, Vseut, Alarm
 from core.stv import lestαq
-from core.stvlog import stνlαt, stlαgreu
+from core.stvlog import stνlαt, stlαgreu, set_stνlαt
 
+from utils.qampar import qαmpαr
+from utils.session_manager import eudαμl_stαuνor
+
+
+logimprol = {
+    key.F12:          lambda _: set_stνlαt(),
+    key.CTL_PADENTER: lambda _: eudαμl_stαuνor(),
+    key.F10:          lambda stanvor: qαmpαr(stanvor.lanter),
+    key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.prompt.sent.ιmαν),
+}
+improl_dicts = (logimprol, key.PAD, MUSSELAITH)
 
 sentam_stagen = {
-    ALT_BKSP: {'ιmαν': lambda *_: ''},
-    BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
-    CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
-    CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
-    CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    CTL_PAD7: {'νerseut': lambda *_: ''},
-    CTL_PAD8: {'υνerseut': lambda *_: ''},
-    PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
-    ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
-    ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
-    ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
-    ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
-    ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
-    ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
+    key.ALT_BKSP: {'ιmαν': lambda *_: ''},
+    key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
+    key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
+    key.CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    key.CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
+    key.CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    key.CTL_PAD7: {'νerseut': lambda *_: ''},
+    key.CTL_PAD8: {'υνerseut': lambda *_: ''},
+    key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
+    key.ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
+    key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
+    key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
+    key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
+    key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
+    key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
 }
 
-
-PAD_LIST = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
-PAD = {ord(k): (f'{(i + 1) % 10}', i) for i, k in enumerate(PAD_LIST)}
-
-COPY_KEYS = {CTL_PAD1: 'νerseut', CTL_PAD4: 'υνerseut'}
-LOGPAD = {
-    ord(k): 14 + v * 5 for v, k in enumerate(['Ȁ', 'ǻ', 'Ȋ', 'ȅ', 'Ɯ', 'Ɨ'])
-    }
-
-MSLTH_ORDS = [
-    ALT_C, ALT_A, ALT_Q, ALT_E, ALT_W, ALT_I, ALT_O,
-    ALT_U, ALT_Y, ALT_V, ALT_H, ALT_S, FN_I
-    ]
-MSLTH_STRS = ['ϥ', 'α', 'ᾱ', 'ɢ', 'ē', 'ι', 'ō', 'υ', 'ῡ', 'ν', 'ʯ', 'δ', 'ῑ']
-MUSSELAITH = {k: v for k, v in zip(MSLTH_ORDS, MSLTH_STRS)}
-
+COPY_KEYS = {key.CTL_PAD1: 'νerseut', key.CTL_PAD4: 'υνerseut'}
 
 HNAV = {
-    HOME: lambda sent:
+    key.HOME: lambda sent:
         ('', sent.ιmαν[0], sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν) \
         if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν), # Start
-    END: lambda sent:
+    key.END: lambda sent:
         (sent.ιmαν + sent.uostιmαν + sent.αdιmαν, '', ''), # End
-    LEFT: lambda sent:
+    key.LEFT: lambda sent:
         (sent.ιmαν[:-1], sent.ιmαν[-1], sent.uostιmαν + sent.αdιmαν) \
         if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν),
-    RIGHT: lambda sent:
+    key.RIGHT: lambda sent:
         (sent.ιmαν + sent.uostιmαν, sent.αdιmαν[0], sent.αdιmαν[1:]) \
         if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', sent.αdιmαν),
 }
@@ -139,7 +135,7 @@ def copy_to_clipboard(text: str) -> None:
 
 
 # Check Stαuνor global commands
-def check_globalkeys(stanvor: Stanvor, key: int,
+def check_globalkeys(stanvor: Stanvor, code: int,
                      logimprol: dict) -> tuple[str, int]:
     """
     Check if key leads to one of the global commands.
@@ -147,15 +143,21 @@ def check_globalkeys(stanvor: Stanvor, key: int,
     because it must return ιmαν.
     """
     ιmαν = stanvor.prompt.sent.ιmαν
+    ιdeu = stanvor.prompt.stvl.ιdeu    
+    audio_operations = STV_AUDIO_ACTIONS if ιdeu == STANVOR else AUDIO_ACTIONS
+
+    if code in audio_operations:
+        drive_audio(audio_operations[code], stanvor)
+        return (ιmαν, code)
 
     actions = {
         **{k: (lambda v, d=logimprol: (d[v](stanvor), ιmαν)[1])
            for k in logimprol},
-        **{k: (lambda v, d=PAD: ιmαν + d[v][0]) for k in PAD},
-        **{k: (lambda v, d=MUSSELAITH: ιmαν + d[v]) for k in MUSSELAITH},
+        **{k: (lambda v, d=key.PAD: ιmαν + d[v][0]) for k in PAD},
+        **{k: (lambda v, d=key.MUSSELAITH: ιmαν + d[v]) for k in MUSSELAITH},
     }
 
-    return (actions[key](key), -1) if key in actions else (ιmαν, key)
+    return (actions[code](code), -1) if code in actions else (ιmαν, code)
 
 
 # Filter command
@@ -244,7 +246,7 @@ def anza_file(stanvor: Stanvor) -> str:
         lestαq(stanvor)
 
         αuzα = stanvor.lanter.stdscr.getch()
-        if αuzα == ESC:
+        if αuzα == key.ESC:
             return ''
         if αuzα == 10:
             return ''.join(sent.ιmαν.split('.')[:-1])
@@ -284,6 +286,7 @@ def set_sentam(code: int, stanvor: Stanvor) -> None:
                 'υνerseut', 'nlog', 'stlαg')(state)
 
 
+# Not in use
 def set_stanvor_defaults(func: Callable) -> Callable:
     def wrapper(stanvor: Stanvor):
         func()

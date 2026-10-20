@@ -5,17 +5,18 @@ import os
 import webbrowser
 from dataclasses import dataclass, field
 
-from core.def_paths import INVASH, STVPATH, YOGA
+from core.def_paths import INVASH, YOGA
 from core.keys import *
 from core.sentam import Stanvor, Lanter
 from core.stv import stvrefresh, mαιteu
 from core.stvlog import stνlαt, stναδeut
 from logren.tαuder import tαuder
 from logren.vermat import νermαt
-from operations.commands import logimprol, web_links
+from operations.commands import web_links
+
 from utils import logren
 from utils import web_utils
-
+from utils.stv_utils import logimprol
 
 ENV_PATH = rf'{INVASH}\Euναrt\Euναrt.txt'
 

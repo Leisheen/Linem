@@ -28,6 +28,7 @@ class LogreuItems:
     logindex: int = -1
     νerιmαν: str = ''
     νorιmαν: str = ''
+    function: str = ''
     section: str = ''
 
     def clear(self):
