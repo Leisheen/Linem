@@ -35,7 +35,7 @@ from utils.session_manager import open_cmd
 from utils.stv_utils import (
     HNAV, open_point_command, manage_command, manage_drivers, set_ilog
 )
-from utils.sys_utils import wifi_status, show_vars, set_syspointer
+from utils.sys_utils import wifi_status, show_vars, set_sysenvironment
 
 
 web_chnls = {key.ALT_R: 'E', key.ALT_P: 'P', key.ALT_M: 'M', key.ALT_L: 'L'}
@@ -51,11 +51,9 @@ media_drivers = {
 class StanvorManager:
     """The object that contains both graphical and input interfaces."""
     def run(self, stanvor: Stanvor) -> None:
-        set_syspointer()   
-        set_filedata(stanvor)
-        manage_drivers(stanvor)
-        lestαq(stanvor)
-        _process_input(stanvor)
+        _set_environment(stanvor) # Environment
+        lestαq(stanvor)           # Visual
+        _process_input(stanvor)   # Input
         stvrefresh(stanvor.lanter.stdscr)
 
 
@@ -390,3 +388,10 @@ def run_interface(stanvor: Stanvor) -> None:
 
     while stanvor.on:
         stvmng.run(stanvor)
+
+
+def _set_environment(stanvor: Stanvor) -> None:
+    """Set Stαuνor environment."""
+    manage_drivers(stanvor) # Drivers
+    set_filedata(stanvor)   # Filesystem
+    set_sysenvironment()    # Set environment

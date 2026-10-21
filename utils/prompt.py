@@ -23,6 +23,9 @@ def addchar(key: int, sent: Imανseut) -> None:
     #else:
     #    logαm.nlog = nlog
 
+def tab_to_imav(sent: Imανseut) -> None:
+    sent.ιmαν += '\t'
+
 
 # MOVE
 def _move_left(sent: Imανseut, num1: int, num2: int) -> None:
@@ -126,10 +129,6 @@ def explore_paths(νtαg: int, stanvor: Stanvor, logreu: LogreuItems) -> None:
     sent = stanvor.prompt.sent
     sent.ιmαν, logreu.logindex = path_to_imav(logreu, νtαg)
     sent.uostιmαν = sent.αdιmαν = ''
-
-
-def tab_to_imav(sent: Imανseut) -> None:
-    sent.ιmαν += '\t'
 
 
 line_limits = {HOME: _move_tostart, END: _move_toend}

@@ -24,15 +24,21 @@ web_links = { # For euναrt and νermαt
     (UPPER_D, LOWER_D): ('Dyeναstαq', GCAL),
     (UPPER_Q, LOWER_Q): ('Qαmpαr', GMAPS),
 }
+
 main_paths = {
     '.invash': ('Iuναδ ιutorαg | ', INVASH),
     '.nostal': ('Nostαl ιutorαg ❯ ', os.getcwd()),
 }
+
 uprav_funcs = {
     '.izv':  lambda _: izvart_info(),
     '.net':  lambda _: network_status(),
     '.lan':  lambda stanvor: monitor_info(stanvor.lanter),
-    '.dyαt': lambda stanvor: calendar(False, stanvor.gcal_creds, stanvor.prompt.stvl.αδeutαr),
+    '.dyαt': lambda stanvor: calendar(
+                                    False,
+                                    stanvor.gcal_creds,
+                                    stanvor.prompt.stvl.αδeutαr
+                                    ),
 }
 
 stv_actions = {

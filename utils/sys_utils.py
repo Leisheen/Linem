@@ -19,100 +19,6 @@ user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
 
 
-# -- SCREEN --
-def get_window():
-    """Get window object."""
-    # 64-bit safe handle types
-    kernel32.GetConsoleWindow.restype = wintypes.HWND
-    user32.GetForegroundWindow.restype = wintypes.HWND
-    user32.GetAncestor.restype = wintypes.HWND
-    user32.GetAncestor.argtypes = [wintypes.HWND, wintypes.UINT]
-
-    GA_ROOTOWNER = 3
-
-    hwnd = kernel32.GetConsoleWindow()
-    if not hwnd:
-        return None
-    # In Windows Terminal, the console HWND is a hidden pseudo-window;
-    # its root owner is the real terminal window. In legacy conhost
-    # it just returns the same window, so this is safe for both.
-    return user32.GetAncestor(hwnd, GA_ROOTOWNER) or hwnd
-
-
-def window_is_active():
-    """Checks if Stauνor is focused."""
-    return user32.GetForegroundWindow() == get_window()
-
-
-# -- CURSOR --
-def restore_pointer():
-    """Restore mouse pointer to defaults (when window is not active)."""
-    SPI_SETCURSORS = 0x0057 # reload all system cursors from the registry
-    try:
-        user32.SystemParametersInfoW(SPI_SETCURSORS, 0, None, 0)
-    except Exception:
-        pass
-
-
-def _hide_pointer() -> None:
-    """Hide mouse pointer (when window is active)."""
-    def _blank_cursor():
-        """Fully transparent 32x32 cursor (hides the pointer)."""
-        and_mask = (ctypes.c_ubyte * 128)(*([0xFF] * 128))  # keep background
-        xor_mask = (ctypes.c_ubyte * 128)(*([0x00] * 128))  # draw nothing
-        return user32.CreateCursor(None, 0, 0, 32, 32, and_mask, xor_mask)
-
-    def _from_file(path):
-        return user32.LoadCursorFromFileW(path) # .cur or .ani
-
-    def replace_pointer(path=None):
-        """Replace the arrow and I-beam. path=None hides the pointer."""
-        OCR_NORMAL = 32512      # arrow
-        OCR_IBEAM = 32513       # text cursor (some terminals use it over text)
-
-        for ocr in (OCR_NORMAL, OCR_IBEAM):
-            # SetSystemCursor destroys the handle it's given,
-            # so create a fresh one for each call.
-            h = _blank_cursor() if path is None else _from_file(path)
-            user32.SetSystemCursor(h, ocr)
-
-    replace_pointer()
-    atexit.register(restore_pointer)
-
-
-def set_syspointer() -> None:
-    """Hide mouse pointer if Stαuνor is active."""
-    user32.LoadCursorFromFileW.restype = wintypes.HANDLE
-    user32.LoadCursorFromFileW.argtypes = [wintypes.LPCWSTR]
-    user32.CreateCursor.restype = wintypes.HANDLE
-    user32.SetSystemCursor.argtypes = [wintypes.HANDLE, wintypes.DWORD]
-
-    if window_is_active():
-        _hide_pointer()
-    else:
-        restore_pointer()
-
-
-def hide_cursor() -> None:
-    sys.stdout.write('\033[?25l')
-    sys.stdout.flush()
-
-
-def restore_cursor() -> None:
-    sys.stdout.write('\033[?25h')
-    sys.stdout.flush()
-
-
-def set_sysdefaults() -> None:
-    restore_pointer()
-    restore_cursor()
-
-
-def end_stanvor() -> None:
-    set_sysdefaults()
-    sys.exit()
-
-
 # -- INFO --
 # System
 def system_info() -> str:
@@ -238,3 +144,105 @@ def show_vars(vars_dict: dict[str, Any]) -> str:
         if line_breaks < 19:
             locs += f'· {k} : {v}\n'.replace('{}', '..').replace('}', '')
     return re.sub(r', |{', '\n     - ', locs)
+
+
+# Screen
+def get_window():
+    """Get window object."""
+    # 64-bit safe handle types
+    kernel32.GetConsoleWindow.restype = wintypes.HWND
+    user32.GetForegroundWindow.restype = wintypes.HWND
+    user32.GetAncestor.restype = wintypes.HWND
+    user32.GetAncestor.argtypes = [wintypes.HWND, wintypes.UINT]
+
+    GA_ROOTOWNER = 3
+
+    hwnd = kernel32.GetConsoleWindow()
+    if not hwnd:
+        return None
+    # In Windows Terminal, the console HWND is a hidden pseudo-window;
+    # its root owner is the real terminal window. In legacy conhost
+    # it just returns the same window, so this is safe for both.
+    return user32.GetAncestor(hwnd, GA_ROOTOWNER) or hwnd
+
+
+def window_is_active():
+    """Checks if Stauνor is focused."""
+    return user32.GetForegroundWindow() == get_window()
+
+
+# -- CONFIG --
+# Mouse pointer
+def restore_pointer():
+    """Restore mouse pointer to defaults (when window is not active)."""
+    SPI_SETCURSORS = 0x0057 # reload all system cursors from the registry
+    try:
+        user32.SystemParametersInfoW(SPI_SETCURSORS, 0, None, 0)
+    except Exception:
+        pass
+
+
+def _hide_pointer() -> None:
+    """Hide mouse pointer (when window is active)."""
+    def _blank_cursor():
+        """Fully transparent 32x32 cursor (hides the pointer)."""
+        and_mask = (ctypes.c_ubyte * 128)(*([0xFF] * 128))  # keep background
+        xor_mask = (ctypes.c_ubyte * 128)(*([0x00] * 128))  # draw nothing
+        return user32.CreateCursor(None, 0, 0, 32, 32, and_mask, xor_mask)
+
+    def _from_file(path):
+        return user32.LoadCursorFromFileW(path) # .cur or .ani
+
+    def replace_pointer(path=None):
+        """Replace the arrow and I-beam. path=None hides the pointer."""
+        OCR_NORMAL = 32512      # arrow
+        OCR_IBEAM = 32513       # text cursor (some terminals use it over text)
+
+        for ocr in (OCR_NORMAL, OCR_IBEAM):
+            # SetSystemCursor destroys the handle it's given,
+            # so create a fresh one for each call.
+            h = _blank_cursor() if path is None else _from_file(path)
+            user32.SetSystemCursor(h, ocr)
+
+    replace_pointer()
+    atexit.register(restore_pointer)
+
+
+def set_syspointer() -> None:
+    """Hide mouse pointer if Stαuνor is active."""
+    user32.LoadCursorFromFileW.restype = wintypes.HANDLE
+    user32.LoadCursorFromFileW.argtypes = [wintypes.LPCWSTR]
+    user32.CreateCursor.restype = wintypes.HANDLE
+    user32.SetSystemCursor.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+
+    if window_is_active():
+        _hide_pointer()
+    else:
+        restore_pointer()
+
+
+# Text cursor
+def hide_cursor() -> None:
+    sys.stdout.write('\033[?25l')
+    sys.stdout.flush()
+
+
+def restore_cursor() -> None:
+    sys.stdout.write('\033[?25h')
+    sys.stdout.flush()
+
+
+# Environment
+def set_sysdefaults() -> None:
+    restore_pointer()
+    restore_cursor()
+
+
+def set_sysenvironment() -> None:
+    set_syspointer()
+
+
+def end_stanvor() -> None:
+    """End Stαuνor session."""
+    set_sysdefaults()
+    sys.exit()

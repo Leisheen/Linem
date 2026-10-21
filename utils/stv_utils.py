@@ -11,8 +11,8 @@ import webbrowser # for manage_command
 from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
-import core.keys as key
 from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
+import core.keys as key
 from core.def_paths import EXCLUDED
 from core.keys import BACK, MUSSELAITH, PAD
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
