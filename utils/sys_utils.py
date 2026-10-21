@@ -6,6 +6,7 @@ import platform
 import psutil
 import re
 import subprocess
+import sys
 
 from ctypes import wintypes
 from screeninfo import get_monitors
@@ -44,7 +45,7 @@ def window_is_active():
 
 
 # -- CURSOR --
-def restore_cursor():
+def restore_pointer():
     """Restore mouse pointer to defaults (when window is not active)."""
     SPI_SETCURSORS = 0x0057 # reload all system cursors from the registry
     try:
@@ -53,7 +54,7 @@ def restore_cursor():
         pass
 
 
-def _hide_cursor() -> None:
+def _hide_pointer() -> None:
     """Hide mouse pointer (when window is active)."""
     def _blank_cursor():
         """Fully transparent 32x32 cursor (hides the pointer)."""
@@ -62,9 +63,9 @@ def _hide_cursor() -> None:
         return user32.CreateCursor(None, 0, 0, 32, 32, and_mask, xor_mask)
 
     def _from_file(path):
-        return user32.LoadCursorFromFileW(path)             # .cur or .ani
+        return user32.LoadCursorFromFileW(path) # .cur or .ani
 
-    def replace_cursor(path=None):
+    def replace_pointer(path=None):
         """Replace the arrow and I-beam. path=None hides the pointer."""
         OCR_NORMAL = 32512      # arrow
         OCR_IBEAM = 32513       # text cursor (some terminals use it over text)
@@ -75,11 +76,11 @@ def _hide_cursor() -> None:
             h = _blank_cursor() if path is None else _from_file(path)
             user32.SetSystemCursor(h, ocr)
 
-    replace_cursor()
-    atexit.register(restore_cursor)
+    replace_pointer()
+    atexit.register(restore_pointer)
 
 
-def set_syscursor() -> None:
+def set_syspointer() -> None:
     """Hide mouse pointer if Stαuνor is active."""
     user32.LoadCursorFromFileW.restype = wintypes.HANDLE
     user32.LoadCursorFromFileW.argtypes = [wintypes.LPCWSTR]
@@ -87,9 +88,29 @@ def set_syscursor() -> None:
     user32.SetSystemCursor.argtypes = [wintypes.HANDLE, wintypes.DWORD]
 
     if window_is_active():
-        _hide_cursor()
+        _hide_pointer()
     else:
-        restore_cursor()
+        restore_pointer()
+
+
+def hide_cursor() -> None:
+    sys.stdout.write('\033[?25l')
+    sys.stdout.flush()
+
+
+def restore_cursor() -> None:
+    sys.stdout.write('\033[?25h')
+    sys.stdout.flush()
+
+
+def set_sysdefaults() -> None:
+    restore_pointer()
+    restore_cursor()
+
+
+def end_stanvor() -> None:
+    set_sysdefaults()
+    sys.exit()
 
 
 # -- INFO --

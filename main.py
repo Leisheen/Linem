@@ -18,13 +18,12 @@ Roadmap:
 # Standard libraries
 import time
 import curses
-import sys
 
 # Locals
 from core import sentam as sn
 from core.stvlog import start_consolelog, stναδeut, catch_crash
 from operations.operator import run_interface
-from utils.sys_utils import restore_cursor
+from utils.sys_utils import hide_cursor, end_stanvor
 
 
 def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
@@ -53,7 +52,7 @@ def _prepare_terminal(lanter: sn.Lanter) -> None:
         curses.init_pair(pair_id, fg, bg)
 
     curses.curs_set(False)
-    sys.stdout.write('\033[?25l')
+    hide_cursor()
     lanter.stdscr.nodelay(True)
 
 
@@ -78,5 +77,4 @@ if __name__ == '__main__':
         catch_crash(e)
         raise
     finally:
-        restore_cursor()
-        sys.exit()
+        end_stanvor()

@@ -83,10 +83,8 @@ def _select_input_mode(lanter) -> str:
             return ''
         if key == NUM1:
             return 'Key'
-        elif key == NUM2:
+        if key == NUM2:
             return 'Code'
-        else:
-            continue
 
 
 def _get_key(key: int, char: Char) -> None:

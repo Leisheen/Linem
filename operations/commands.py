@@ -38,7 +38,7 @@ uprav_funcs = {
 stv_actions = {
     ESC:          lambda stanvor: reset(stanvor),
     SHF_PADMINUS: lambda stanvor: reset(stanvor),
-    SHF_PADENTER: lambda _:       restart_stanvor(),
+    SHF_PADENTER: lambda stanvor: restart_stanvor(stanvor),
     CTL_PADSLASH: lambda stanvor: set_search(stanvor),
     ALT_PADSLASH: lambda stanvor: switch_search(stanvor.srch),
     PADPLUS:      lambda stanvor: logreutαg('Eudαμl', stanvor),

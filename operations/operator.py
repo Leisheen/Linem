@@ -9,7 +9,7 @@ from typing import Callable
 import core.def_paths as dfp
 import core.keys as key
 
-from core.audio import set_audio, drive_audio
+from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.filesystem import log, logvals
 from core.keys import (
@@ -33,9 +33,9 @@ from utils.info import sys_eudyαt
 from utils.logren import open_pyside, open_video
 from utils.session_manager import open_cmd
 from utils.stv_utils import (
-    HNAV, open_point_command, manage_command, set_ilog, play_alarm
+    HNAV, open_point_command, manage_command, manage_drivers, set_ilog
 )
-from utils.sys_utils import wifi_status, show_vars, set_syscursor
+from utils.sys_utils import wifi_status, show_vars, set_syspointer
 
 
 web_chnls = {key.ALT_R: 'E', key.ALT_P: 'P', key.ALT_M: 'M', key.ALT_L: 'L'}
@@ -51,6 +51,9 @@ media_drivers = {
 class StanvorManager:
     """The object that contains both graphical and input interfaces."""
     def run(self, stanvor: Stanvor) -> None:
+        set_syspointer()   
+        set_filedata(stanvor)
+        manage_drivers(stanvor)
         lestαq(stanvor)
         _process_input(stanvor)
         stvrefresh(stanvor.lanter.stdscr)
@@ -374,12 +377,6 @@ def _process_input(stanvor: Stanvor) -> None:
         raise
 
 
-def _manage_drivers(stanvor: Stanvor) -> None:
-    """Manage audio and alarm drivers."""
-    set_audio(stanvor.audio)
-    stanvor.prompt.stvl.stlαg = play_alarm(stanvor.alarm)
-
-
 def run_interface(stanvor: Stanvor) -> None:
     """Main loop for the Stαuνor interface."""
     stvmng = StanvorManager()
@@ -392,7 +389,4 @@ def run_interface(stanvor: Stanvor) -> None:
     stνlαt(STANVOR, root, 'Iuνor')
 
     while stanvor.on:
-        set_syscursor()   
-        set_filedata(stanvor)
-        _manage_drivers(stanvor)
         stvmng.run(stanvor)

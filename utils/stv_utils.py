@@ -12,7 +12,7 @@ from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
 import core.keys as key
-from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, drive_audio
+from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
 from core.def_paths import EXCLUDED
 from core.keys import BACK, MUSSELAITH, PAD
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
@@ -195,6 +195,12 @@ def manage_command(command: str, operations: Dict[str, Callable],
         os.startfile(f'"{command}"')
 
     return f'{command}', 0
+
+
+def manage_drivers(stanvor: Stanvor) -> None:
+    """Manage audio and alarm drivers."""
+    set_audio(stanvor.audio)
+    stanvor.prompt.stvl.stlαg = play_alarm(stanvor.alarm)
 
 
 # Filter point command
