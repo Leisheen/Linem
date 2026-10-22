@@ -284,7 +284,7 @@ def reset(stanvor: Stanvor) -> None:
     stanvor.logαm.nlog = 0
 
 
-def process_handlers(handlers: tuple, *args, **kwargs) -> None:
+def process_handlers(handlers: tuple, *args, **kwargs) -> bool:
     """
     TEMPORAL
     This is the original process_handlers function,
@@ -294,17 +294,20 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> None:
 
     for matches, process in handlers:
         if args:
+            print('args')
             if matches(): # Maybe add args when refactor
                 process(args)
-                break
+                return True
         if kwargs:
             if matches(kwargs['key']):
                 process(kwargs['args'])
-                break
+                return True
         else:
             if matches():
                 process()
-
+                return True
+    else:
+        return False
 
 def stop_stanvor(stanvor: Stanvor) -> None:
     """Stop Stauνor."""

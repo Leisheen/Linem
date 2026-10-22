@@ -190,9 +190,10 @@ def manage_command(command: str, operations: Dict[str, Callable],
     if any(ext in exts for exts in operations):
         operations[next(exts for exts in operations if ext in exts)](command, stanvor)
 
-    # Open other file types
-    elif command not in ('.', '..'):
+    # Open other file types       
+    else:
         os.startfile(f'"{command}"')
+
 
     return f'{command}', 0
 

@@ -13,7 +13,7 @@ from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.filesystem import log, logvals
 from core.keys import (
-    ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END, SEND, PAD_KEYS
+    ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END, SEND, PAD_KEYS, POINT
 )
 from core.search import SEARCH
 from core.sentam import STANVOR, Stanvor, Lαmseut, File
@@ -223,10 +223,10 @@ def _process_send(stanvor: Stanvor) -> None:
         (lambda: os.path.isdir(cmd), lambda: _go_todir(cmd, stanvor)),
     )):
         msg, _ = manage_command(cmd, media_drivers, stanvor)
+        stanvor.prompt.stvl.clear()
         stνlαt(STANVOR, msg)
 
     stanvor.ιdeu = STANVOR
-    stanvor.prompt.stvl.clear()
     stanvor.logαm.nlog = 0
     stvl.log = '❯ ' if stvl.prαν else ''
 
@@ -344,7 +344,7 @@ def _process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
             process(cmd)
             stanvor.ιdeu = STANVOR
             stanvor.handlers = _set_stanvor_handlers(stanvor)
-            break
+            return
     else:
         stanvor.prompt.sent = tαg(cmd, stanvor)
 
