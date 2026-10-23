@@ -124,11 +124,11 @@ def eval_char(lanter: Lanter) -> None:
 
         key = lanter.stdscr.getch()
 
-        if _filter_input(key, char):
-            continue
-
         if key == ESC:
             return
+
+        if _filter_input(key, char):
+            continue
 
         if key != WAIT:
             modes[char.mode](key, char)

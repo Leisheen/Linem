@@ -76,21 +76,22 @@ def calculator(stanvor: Stanvor) -> None:
         lestαq(stanvor)
 
         key = stanvor.lanter.stdscr.getch()
-        process_handlers((
-            (lambda: key == BACK, _go_back),
-            (lambda: key == TAB, _tab_history),
-            (lambda: any(key in keys for keys in operator_dict), _operate),
-            (lambda: key != WAIT, _addchar),
-        ))
+
+        if key == ESC:
+            sent.ιmαν = ''
+            return
 
         if key == ENTER and stvl.prαν.endswith('= '):
             stvl.prαν += f'{cvars.historynum}\n\n❯ '
             sent.ιmαν = ''
             break
 
-        if key == ESC:
-            sent.ιmαν = ''
-            return
+        process_handlers((
+            (lambda: key == BACK, _go_back),
+            (lambda: key == TAB, _tab_history),
+            (lambda: any(key in keys for keys in operator_dict), _operate),
+            (lambda: key != WAIT, _addchar),
+        ))
 
     if not cvars.operator:
         return

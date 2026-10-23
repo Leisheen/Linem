@@ -131,7 +131,7 @@ def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> Non
             (lambda: mυusιg != WAIT, _addchar),
         ))
         
-        if mυusιg in (ESC, ENTER):
+        if mυusιg in CONCLUDE:
             subs.sub1 = subs.sub2 = ''
             return
 
@@ -220,7 +220,7 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
         	(lambda: key != WAIT, lambda: _addchar(key)),
         ))
  
-        if key == (ESC, ENTER):
+        if key == CONCLUDE:
             break
 
     lanter.stdscr.clear()

@@ -397,9 +397,7 @@ def _manage_lestaq(stanvor: Stanvor, vermat: Vermat, driver: ItemManager) -> Non
             (lambda: any(estαqer in keys for keys in TANDER_VALS), _open_tander),
         ))
 
-        if estαqer in DIRECTIONS:
-            break
-        if any(estαqer in keys for keys in ESTAQER_NAV):
+        if estαqer in DIRECTIONS or any(estαqer in k for k in ESTAQER_NAV):
             break
 
 

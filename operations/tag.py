@@ -5,8 +5,8 @@ from core.sentam import Stanvor, Imανseut
 from core.stv import process_handlers
 
 from utils.prompt import (
-     addchar, del_char, clear_remaining,
-     move_horizontal, move_inline, line_limits, tab_to_imav, check_movefixes
+     addchar, del_char, tab_to_imav, clear_remaining,
+     move_horizontal, move_inline, line_limits, check_movefixes
 )
 from utils.stv_utils import check_globalkeys, sentam_stagen, set_sentam, logimprol
 
