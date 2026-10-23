@@ -35,6 +35,7 @@ QUESTION        = 63        # ?
 
 # UPPER ALPHA
 UPPER_A         = 65        # ord('A')
+UPPER_B         = 66        # ord('B')
 UPPER_D         = 68        # ord('D')
 UPPER_M         = 77        # ord('M')
 UPPER_O         = 79        # ord('M')
@@ -48,6 +49,7 @@ UNDERSCORE      = 95        # ord('_')
 
 # LOWER ALPHA
 LOWER_A         = 97        # ord('a')
+LOWER_B         = 98        # ord('b')
 LOWER_D         = 100       # ord('d')
 LOWER_M         = 109       # ord('m')
 LOWER_O         = 111       # ord('q')
@@ -232,6 +234,7 @@ PROMPT          = 10095     # ord('❯')
 
 VERTICAL        = (UP, DOWN)
 HORIZONTAL      = (LEFT, RIGHT)
+ARROWS          = (*VERTICAL, *HORIZONTAL)
 SEND            = (ENTER, PADENTER)
 ESCAPE          = (ESC, PADMINUS)
 COMPARE         = (LESS, GREATER)

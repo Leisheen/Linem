@@ -23,6 +23,7 @@ import datetime
 import os
 import psutil
 import time
+from typing import Any
 
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut
@@ -294,7 +295,6 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> bool:
 
     for matches, process in handlers:
         if args:
-            print('args')
             if matches(): # Maybe add args when refactor
                 process(args)
                 return True
@@ -302,10 +302,9 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> bool:
             if matches(kwargs['key']):
                 process(kwargs['args'])
                 return True
-        else:
-            if matches():
-                process()
-                return True
+        if matches():
+            process()
+            return True
     else:
         return False
 

@@ -31,7 +31,7 @@ from operations.tag import tαg
 
 from utils.info import sys_eudyαt
 from utils.logren import open_pyside, open_video
-from utils.session_manager import open_cmd
+from utils.session import open_cmd
 from utils.stv_utils import (
     HNAV, open_point_command, manage_command, manage_drivers, set_ilog
 )
@@ -64,6 +64,13 @@ def _stamp_stvlat(function: Callable, cmd: str) -> Callable:
         function(cmd)
         stνlαt(STANVOR, f'❯ {cmd}')
     return wrapper
+
+
+def _set_environment(stanvor: Stanvor) -> None:
+    """Set Stαuνor environment."""
+    manage_drivers(stanvor) # Drivers
+    set_filedata(stanvor)   # Filesystem
+    set_sysenvironment()    # Set environment
 
 
 def _check_dots(cmd: str) -> bool:
@@ -388,10 +395,3 @@ def run_interface(stanvor: Stanvor) -> None:
 
     while stanvor.on:
         stvmng.run(stanvor)
-
-
-def _set_environment(stanvor: Stanvor) -> None:
-    """Set Stαuνor environment."""
-    manage_drivers(stanvor) # Drivers
-    set_filedata(stanvor)   # Filesystem
-    set_sysenvironment()    # Set environment

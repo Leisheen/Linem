@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from core.def_paths import INVASH, YOGA
 from core.keys import *
 from core.sentam import Stanvor, Lanter
-from core.stv import stvrefresh, mαιteu
+from core.stv import stvrefresh, mαιteu, process_handlers
 from core.stvlog import stνlαt, stναδeut
 from logren.tαuder import tαuder
 from logren.vermat import νermαt
@@ -19,6 +19,8 @@ from utils import web_utils
 from utils.stv_utils import logimprol
 
 ENV_PATH = rf'{INVASH}\Euναrt\Euναrt.txt'
+
+ORDERNUMLIST = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 
 ENVART_KEYS = {TAB: 1, VSEP: -1}
 
@@ -38,6 +40,11 @@ ENV_EDIT = {
     ALT_I: r'"Euναrt\Izeu Teνuα.txt"',
 }
 
+envart_ext = {
+    9:  lambda: os.startfile(YOGA),
+    11: lambda: os.system('start whatsapp:'),
+    12: lambda: webbrowser.open('calendar.google.com'),
+}
 
 @dataclass
 class Envart:
@@ -48,11 +55,10 @@ class Envart:
     αδqαιt: str = ''
     section: str = ''
     item: str = ''
+    valtositem: int = 0
     selectlines: list = field(default_factory=list)
     ordernum: int = -1 # Num for ordernumlist
     cal_stat: bool = False
-
-ORDERNUMLIST = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 
 
 def _set_envart(lanter: Lanter, grid, stlαg: str, euναrt: str) -> None:
@@ -186,6 +192,21 @@ def _set_dicts(Y: int) -> tuple[dict, dict, tuple]:
     return LOC_LINES, ENVART_DIRECTIONS, ENVART_KEYS, ENVART_ACCIONS
 
 
+def _reset_endyat(envart) -> None:
+    stνlαt('Euναrt', '❯ Euναrt')
+    envart.label, envart.section = '', envart.αδqαιt
+
+def _select_vorsal(envart) -> None:
+    envart.padselect, envart.selectitem, envart.ordernum = 1, 22, 5
+
+def _move_to_next_area(envart) -> None:
+    envart.ordernum, envart.selectitem = _tab_toitem(envart.ordernum, key)
+
+def _place_item(envart) -> None:
+    envart_ext[envart.selectitem]()
+    envart.valtositem = 0
+
+
 def _select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
     """ This function selects an activity from the list.
     It sets the 4 variables based on selectitem in LOC_LINES.
@@ -193,30 +214,22 @@ def _select_eudyαt(key: int, envart: Envart, lanter: Lanter) -> None:
 
     LOC_LINES, ENV_DIRECTIONS, ENV_KEYS, _ = _set_dicts(lanter.ylen)
 
-    envart_ext = {
-        9: lambda: os.startfile(YOGA),
-        11: lambda: os.system('start whatsapp:'),
-        12: lambda: webbrowser.open('calendar.google.com'),
-    }
-
-    if key == ORD_O:
-        stνlαt('Euναrt', '❯ Euναrt')
-        envart.label, envart.section = '', envart.αδqαιt
-    elif key in (UPPER_V, LOWER_V):
-        envart.padselect, envart.selectitem, envart.ordernum = 1, 22, 5
-    elif key in ENV_DIRECTIONS:       # Set for Arrow Keys
+    def _set_direction() -> None:
         envart.padselect += ENV_DIRECTIONS[key][0]
-        valtositem = ENV_DIRECTIONS[key][1]
-    elif key in ENV_KEYS:             # Set for Tab / Shift Tab
-        envart.ordernum, envart.selectitem = _tab_toitem(envart.ordernum, key)
-    elif envart.selectitem in envart_ext:
-        envart_ext[envart.selectitem]()
-        valtositem = 0
-    else:                               # Set for 10
-        envart.padselect, valtositem = LOC_LINES.get(envart.selectitem, (1, 0))
+        envart.valtositem = ENV_DIRECTIONS[key][1]
+
+    if not process_handlers((
+        (lambda: key == ORD_O, lambda: _reset_endyat(envart)),
+        (lambda: key in (UPPER_V, LOWER_V), lambda: _select_vorsal(envart)),
+        (lambda: key in ENV_DIRECTIONS, _set_direction), # Arrow Keys
+        (lambda: key in ENV_KEYS, _move_to_next_area(envart)), # Tab / Shift Tab
+        (lambda: envart.selectitem in envart_ext, _place_item(envart))
+    )): # Set for ENTER
+        padselect, valtositem = LOC_LINES.get(envart.selectitem, (1, 0))
+        envart.padselect, envart.valtositem = padselect, valtositem
 
     if key not in (ORD_O, UPPER_V, LOWER_V, *ENV_KEYS):
-        envart.selectitem += valtositem if envart.selectitem > 0 else 0
+        envart.selectitem += envart.valtositem if envart.selectitem > 0 else 0
         envart.ordernum += 1 if envart.selectitem in (6, 22) else 0
 
     if envart.padselect > 4:

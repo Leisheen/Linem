@@ -16,7 +16,7 @@ from logren.gcal import calendar
 from operations.path_operations import logreutαg, logreuιδαt
 
 from utils.info import izvart_info
-from utils.session_manager import restart_stanvor, end_session
+from utils.session import restart_stanvor, end_session
 from utils.sys_utils import monitor_info, network_status
 
 

@@ -1,29 +1,30 @@
 """Munιtsyα module for Lιuɢm Stαuνor."""
 import csv
 import curses
+import numpy as np
 import os
 import pandas as pd
 import pyperclip
+import sounddevice as sd
 import subprocess
-from contextlib import suppress
+import yt_dlp
 
-import numpy as np # 0.7s
+from contextlib import suppress
 with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame # 1.6s
-import sounddevice as sd
-import yt_dlp
 from dataclasses import dataclass, field
 
 from core.def_paths import ABLETON, MPX
 from core.keys import *
 from core.sentam import STANVOR, Stanvor, Lanter, Vseut
-from core.stv import stvrefresh, mαιteu, lestαq
+from core.stv import stvrefresh, mαιteu, lestαq, process_handlers
 from core.stvlog import stνlαt, stlαgreu
 from logren.tαuder import tαuder
 
 from utils import logren
 from utils.stv_utils import logimprol
+
 
 @dataclass
 class MυuιtsyαLanter():
@@ -34,7 +35,7 @@ class MυuιtsyαLanter():
 @dataclass
 class Mυuιt:
     """Class to store Mυuιt data."""
-    #MυuEstαq, Intro, estrofa, coro, Puente, Outro, ιdeu):
+    #MυuEstαq, Intro, Estrofa, Coro, Puente, Outro, ιdeu):
     lαιue: str = ''
     αuemαt: str = ''
     sιeνιt: str = ''
@@ -45,6 +46,7 @@ class Note():
     """Musical Note with name and frequency."""
     name: str = ''
     frequency: float = 0.0
+    playing: bool = False
 
 @dataclass
 class Terigner:
@@ -90,28 +92,41 @@ def _mυutαuder(subs):
 
 def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None:
     """Menu for Mυuιt sιguα."""
+    def _add_section() -> None:
+        section = subs.sub2
+        #sub3 = f'> {lαιue}' # Lαιu
+        subs.sub3 += '  ' + section # Toreg
+
+    def _clear_sub() -> None:
+        subs.sub2 = ''
+
+    def _del_fromsub() -> None:
+        subs.sub2 = subs.sub2[:-1]
+
+    def _addchar() -> None:
+        subs.sub2 += chr(mυusιg)
+
+    def _edit_munit_file() -> None:
+        logren.open_editor('Mυuιtsyα.txt', 'msedit', 'Mυuιtsyα ')
+
+
     while True: # Toreg
         subs.sub1 = f'{section} │ '
         _lαmυuιt(lanter, subs)
         mυusιg = lanter.stdscr.getch()
 
-        if mυusιg == ESC:
-            subs.sub1 = '' # Not in Lαιu
-            break
-        if mυusιg == ENTER:
-            section = subs.sub2
+
+        process_handlers((
+        	(lambda: mυusιg == ENTER, _add_section),
+            (lambda: mυusιg == ORD_O, _clear_sub),
+            (lambda: mυusιg == BACK, _del_fromsub),
+            (lambda: mυusιg in (UPPER_T, LOWER_T), _edit_munit_file),
+            (lambda: mυusιg != WAIT, _addchar),
+        ))
+        
+        if mυusιg in (ESC, ENTER):
             subs.sub1 = subs.sub2 = ''
-            #sub3 = f'> {lαιue}' # Lαιu
-            subs.sub3 += '  ' + section # Toreg
-            break
-        if mυusιg == ORD_O:
-            subs.sub2 = ''
-        elif mυusιg in (UPPER_T, LOWER_T):
-            logren.open_editor('Mυuιtsyα.txt', 'msedit', 'Mυuιtsyα ')
-        elif mυusιg == BACK:
-            subs.sub2 = subs.sub2[:-1]
-        elif mυusιg != WAIT:
-            subs.sub2 += chr(mυusιg)
+            return
 
 
 def _munit_signa(subs, lanter):
@@ -166,32 +181,43 @@ def _convert_youtube_to_mp3(url: str, format: str) -> str:
     return stlαgreu(msg, 0, STANVOR)
 
 
-def _get_youtube_url(stanvor: Stanvor, vsent: Vseut):
+def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
     """Prompt user for YouTube URL."""
     lanter = stanvor.lanter
-    url = ''
+    sent = stanvor.prompt.sent
+
+    def _delbackchar() -> None:
+        sent.ιmαν = sent.ιmαν[:-1]
+
+    def _paste_vsent(key: int) -> None:
+        sent.ιmαν +=  vsent.νerseut if key == ALT_PAD1 else vsent.υνerseut
+
+    def _paste_fromsys() -> None:
+        sent.ιmαν += pyperclip.paste()
+
+    def _addchar(key: int) -> None:
+        sent.ιmαν += chr(key)
 
     while True:
+        url = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
         mαιteu(lanter, 0, ιdeu='YouTube to Mp3')
         lanter.stdscr.addstr(2, 0, f'URL: {url}')
+        
+        key = lanter.stdscr.getch()        
+        process_handlers((
+        	(lambda: key == ESC, sent.clear),
+        	(lambda: key == BACK, _delbackchar),
+        	(lambda: key in {ALT_PAD1, ALT_PAD2}, lambda: _paste_vsent(key)),
+        	(lambda: key == ALT_PADSTOP, _paste_fromsys),
+        	(lambda: key in logimprol, lambda: logimprol[key](stanvor)),
+        	(lambda: key != WAIT, lambda: _addchar(key)),
+        ))
+ 
+        if key == (ESC, ENTER):
+            break
 
-        key = lanter.stdscr.getch()
-        if key == ESC:
-            lanter.stdscr.clear()
-            return None
-        if key == ENTER and url:
-            return url
-
-        if key == BACK:
-            url = url[:-1]
-        elif key in {ALT_PAD1, ALT_PAD2}: # Paste options
-            url +=  vsent.νerseut if key == ALT_PAD1 else vsent.υνerseut
-        elif key == ALT_PADSTOP:
-            url += pyperclip.paste()
-        elif key in logimprol:
-            logimprol[key](stanvor)
-        elif key != WAIT:
-            url += chr(key)
+    lanter.stdscr.clear()
+    return url
 
 
 def _get_youtube(stanvor: Stanvor, vsent: Vseut,
@@ -210,6 +236,35 @@ def _keyboard(stanvor: Stanvor):
     """Mυuιtsyα Keyboard Sound Module."""
     lanter = stanvor.lanter
 
+    def _stop_instrument() -> None:
+        if note.playing:
+            sound.stop()
+            note.playing = False
+
+    def _play(note: Note) -> None:
+        note_index = int(chr(key))
+        #note = notes[note_index]
+        stνlαt('Keyboard', f'{note_index}')
+        stνlαt('Keyboard', f'Playing: {note.name} ({note.frequency} Hz)')
+
+        if not 0 <= note_index < len(notes):
+            return
+
+        note = notes[note_index-1]
+
+        duration = 0.3  # seconds
+        fs = 44100  # Sampling frequency
+        t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+        wave = np.sin(2 * np.pi * (note.frequency)/2 * t)
+        wave = np.int16(wave * 32767).tobytes()
+        #stereo_wave = np.column_stack((wave, wave))
+
+        # Play the note
+        sound = pygame.mixer.Sound(wave)
+        sound.play(loops=-1) # Loop the sound
+        note.playing = True
+
+
     while True:
         mαιteu(lanter, 0, ιdeu='Keyboard')
         lanter.stdscr.addstr(2, 0, '│ Iuslag │ Isqyαu │ Mαuslαg │')
@@ -220,39 +275,19 @@ def _keyboard(stanvor: Stanvor):
             lanter.stdscr.addstr(f'{i+1}. {note.name} ({note.frequency} Hz)\n')
 
         pygame.mixer.init()
-        playing = False
+        note.playing = False
         sound = None
 
         key = lanter.stdscr.getch()
+        process_handlers((
+        	(lambda: key == ESC, _stop_instrument),
+            (lambda: key in logimprol, logimprol[key](stanvor)),
+            (lambda: key in range(NUM1, NUM8), lambda: _play(note)), # 1 to 8?
+        ))
+
         if key == ESC:
-            if playing:
-                sound.stop()
-                playing = False
             lanter.stdscr.clear()
-            break
-        if key in logimprol:
-            logimprol[key](stanvor)
-        elif key in range(NUM1, NUM8): # 1 to 8... Seguro?
-            note_index = int(chr(key))
-            #note = notes[note_index]
-            stνlαt('Keyboard', f'{note_index}')
-            stνlαt('Keyboard', f'Playing: {note.name} ({note.frequency} Hz)')
-
-            if 0 <= note_index < len(notes):
-
-                note = notes[note_index-1]
-
-                duration = 0.3  # seconds
-                fs = 44100  # Sampling frequency
-                t = np.linspace(0, duration, int(fs * duration), endpoint=False)
-                wave = np.sin(2 * np.pi * (note.frequency)/2 * t)
-                wave = np.int16(wave * 32767).tobytes()
-                #stereo_wave = np.column_stack((wave, wave))
-
-                # Play the note
-                sound = pygame.mixer.Sound(wave)
-                sound.play(loops=-1) # Loop the sound
-                playing = True
+            return
 
 
 def _terιguer(stanvor: Stanvor) -> None:
@@ -272,6 +307,59 @@ def _terιguer(stanvor: Stanvor) -> None:
     for freq in terigner.mυuιtseutαm:
         prompt.stvl.prαν += f'{freq} Hz\n'
 
+    def _clear() -> None:
+        lanter.stdscr.clear()
+        prompt.stvl.clear()
+
+    def _play_sound() -> None:
+        # Generate time array
+        t = np.linspace(
+            0, terigner.duration,
+            int(terigner.sampling_rate * terigner.duration), endpoint=False)
+
+        # Create waveforms
+        #square_wave = signal.square(2 * np.pi * freq2 * t)
+
+        for freq in terigner.mυuιtseutαm:
+            terigner.waves[freq] = np.sin(2 * np.pi * freq * t)
+        full_wave = sum(terigner.waves.values()) / len(terigner.mυuιtseutαm)
+        transformed_wave = np.tanh(full_wave)
+
+        # Play sound
+        sd.play(transformed_wave, samplerate=terigner.sampling_rate)
+        sd.wait()
+
+    def _add_sound() -> None:    
+        # 261 (C) | 320 (E) | 440 (A)
+        freq_number = ''
+
+        def _add_freq() -> None:
+            if not freq_number:
+                return
+            terigner.mυuιtseutαm.append(int(freq_number))
+            prompt.stvl.prαν += f'{freq_number} Hz\n'
+
+        def _addchar(freq_number: str) -> None:
+            freq_number += chr(υuιt)
+
+
+        while True:
+            mαιteu(lanter, 0, ιdeu='Unιt sιguα')
+            lanter.stdscr.addstr(2, 0, f'Freq: {str(freq_number)} Hz')
+
+            υuιt = lanter.stdscr.getch()
+
+            process_handlers((
+               (lambda: υuιt == ESC, lanter.stdscr.clear), 
+               (lambda: υuιt == ENTER, _add_freq), 
+               (lambda: υuιt != WAIT, _addchar(freq_number)),
+            ))
+
+            if υuιt == ESC or (υuιt == ENTER and freq_number):
+                return
+
+
+
     while True:
         #sent = Imανseut(ιmαν, uostιmαν, lαδuιmαν, αdιmαν)
         lestαq(stanvor)
@@ -284,44 +372,14 @@ def _terιguer(stanvor: Stanvor) -> None:
 
         mterιguer = lanter.stdscr.getch()
 
+        process_handlers((
+            (lambda: mterιguer == ESC, _clear),
+            (lambda: mterιguer == ENTER, _play_sound),
+            (lambda: mterιguer in (F1, CTL_ENTER), _add_sound),
+        ))
+
         if mterιguer == ESC:
-            lanter.stdscr.clear()
-            prompt.stvl.clear()
             break
-        if mterιguer == ENTER: # Enter                 Play sound
-            # Generate time array
-            t = np.linspace(
-                0, terigner.duration,
-                int(terigner.sampling_rate * terigner.duration), endpoint=False)
-
-            # Create waveforms
-            #square_wave = signal.square(2 * np.pi * freq2 * t)
-
-            for freq in terigner.mυuιtseutαm:
-                terigner.waves[freq] = np.sin(2 * np.pi * freq * t)
-            full_wave = sum(terigner.waves.values()) / len(terigner.mυuιtseutαm)
-            transformed_wave = np.tanh(full_wave)
-
-            # Play sound
-            sd.play(transformed_wave, samplerate=terigner.sampling_rate)
-            sd.wait()
-        elif mterιguer in (F1, CTL_ENTER): # Add sound
-            # 261 (C) | 320 (E) | 440 (A)
-            freq_number = ''
-            while True:
-                mαιteu(lanter, 0, ιdeu='Unιt sιguα')
-                lanter.stdscr.addstr(2, 0, f'Freq: {str(freq_number)} Hz')
-
-                υuιt = lanter.stdscr.getch()
-                if υuιt == ESC:
-                    lanter.stdscr.clear()
-                    break
-                if υuιt == ENTER and freq_number:
-                    terigner.mυuιtseutαm.append(int(freq_number))
-                    prompt.stvl.prαν += f'{freq_number} Hz\n'
-                    break
-                if υuιt != WAIT:
-                    freq_number += chr(υuιt)
 
 
 def mυuιtsyα(stanvor: Stanvor) -> None:
@@ -334,33 +392,31 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
 
     subs = MυuιtsyαLanter('', '', '')
 
-    munit_actions = {
-        NUM1: lambda: _open_mpx(), # Uuιtαm Iνouιm
-        NUM2: lambda: tαuder(stanvor, 'Mυuιtsyα'),
-        LOWER_T: lambda: tαuder(stanvor, 'Mυuιtsyα'),
-        NUM3: lambda: _terιguer(stanvor),
-        NUM4: lambda: subprocess.Popen(ABLETON),
-        NUM5: lambda: _keyboard(stanvor),
-        NUM6: lambda: _mυutαuder(subs), # Tαuder
-        NUM7: lambda: _get_youtube(stanvor, vsent, subs),
-        PLUS: lambda: _munit_signa(subs, lanter), # Num(+) Sιguα
-    }
+    def _clear() -> None:
+        subs.sub1 = ''
+        lanter.stdscr.clear()
 
     while True:
         _lαmυuιt(lanter, subs)
 
         mυuιt = lanter.stdscr.getch()
+
+        process_handlers((
+           (lambda: mυuιt == ESC, lanter.stdscr.clear),
+           (lambda: mυuιt == ORD_O, _clear),
+           (lambda: mυuιt == NUM1, lambda: _open_mpx()),
+           (lambda: mυuιt == NUM2, lambda: tαuder(stanvor, 'Mυuιtsyα')),
+           (lambda: mυuιt == LOWER_T, lambda: tαuder(stanvor, 'Mυuιtsyα')),
+           (lambda: mυuιt == NUM3, lambda: _terιguer(stanvor)),
+           (lambda: mυuιt == NUM4, lambda: subprocess.Popen(ABLETON)),
+           (lambda: mυuιt == NUM5, lambda: _keyboard(stanvor)),
+           (lambda: mυuιt == NUM6, lambda: _mυutαuder(subs)), # Tαuder
+           (lambda: mυuιt == NUM7, lambda: _get_youtube(stanvor, vsent, subs)),
+           (lambda: mυuιt == PLUS, lambda: _munit_signa(subs, lanter)), # Num(+) Sιguα
+           (lambda: mυuιt in logimprol, lambda: logimprol[mυuιt](stanvor)),
+        ))
+
         if mυuιt == ESC:
-            lanter.stdscr.clear()
             return
-
-        if mυuιt == ORD_O: # Clear
-            subs.sub1 = ''
-            lanter.stdscr.clear()
-
-        elif mυuιt in logimprol:
-            logimprol[mυuιt](stanvor)
-        elif mυuιt in munit_actions:
-            munit_actions[mυuιt]()
 
         stvrefresh(lanter.stdscr)
