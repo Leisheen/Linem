@@ -10,10 +10,10 @@ from core.stvlog import stνlαt
 class CalculatorVars:
     num1: int = 0
     num2: int = 0
+    operator: str = ''
     result: int = 0
     history: str = ''
     historynum: str = ''
-    operator: str = ''
 
 
 operator_dict = {
@@ -50,7 +50,7 @@ def operate_nums(num1: str, num2: str, operator: str) -> str:
 def calculator(stanvor: Stanvor) -> None:
     """Calculator."""
     cvars = CalculatorVars()
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
 
     def _go_back() -> None:
         sent.ιmαν, stvl.prαν = (sent.ιmαν[:-1], stvl.prαν) if sent.ιmαν else ('', '❯ ')
@@ -80,7 +80,7 @@ def calculator(stanvor: Stanvor) -> None:
             (lambda: key == BACK, _go_back),
             (lambda: key == TAB, _tab_history),
             (lambda: any(key in keys for keys in operator_dict), _operate),
-            (lambda: key != -1, _addchar),
+            (lambda: key != WAIT, _addchar),
         ))
 
         if key == ENTER and stvl.prαν.endswith('= '):

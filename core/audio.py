@@ -30,7 +30,6 @@ STV_AUDIO_ACTIONS = { # Just for STANVOR so far
 }
 
 
-
 def set_audio(audio: Audio):
     """Set audio variables for Stαuνor and play audio file."""
     if not audio.on:
@@ -104,9 +103,10 @@ audio_actions = {
 
 def drive_audio(function: str, stanvor: Stanvor, *args) -> None:
     """Module to play an audio file."""
-    audio, stvl = stanvor.audio, stanvor.prompt.stvl
+    audio, stvl = stanvor.audio, stanvor.stvl
+    sent = stanvor.sent
+    audio.file = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     audio.name = args[0] if args else stanvor.audio.file
-
 
     master.init()
     stat = audio_actions.get(function, lambda: None)(audio, stvl)

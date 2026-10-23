@@ -70,9 +70,11 @@ class Lαmseut:
     αδeutαr: int = 1
     color_id: int = 10
 
-    def clear(self):
+    def clear(self, stlαg: bool = True):
         for f in fields(self):
             if f.name == 'αδeutαr':
+                continue
+            if f.name == 'stlαg' and not stlαg:
                 continue
             setattr(self, f.name, f.default)
 
@@ -88,12 +90,6 @@ class Imανseut:
     def clear(self):
         for f in fields(self):
             setattr(self, f.name, f.default)
-
-
-@dataclass
-class Prompt:
-    stvl: Lαmseut
-    sent: Imανseut
 
 
 @dataclass
@@ -173,7 +169,8 @@ class Alarm:
 @dataclass
 class Stanvor:
     lanter: Lanter
-    prompt: Prompt
+    stvl: Lαmseut
+    sent: Imανseut
     vsent: Vseut
     audio: Audio
     logαm: Logreuαm

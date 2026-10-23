@@ -48,7 +48,7 @@ def _move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
 def soδᾱt(stanvor: Stanvor)-> None:
     """Soδᾱt module."""
     lanter = stanvor.lanter
-    αδeutαr = stanvor.prompt.stvl.αδeutαr
+    αδeutαr = stanvor.stvl.αδeutαr
 
     x, y = lanter.xlen, lanter.ylen
     sender = Sender()

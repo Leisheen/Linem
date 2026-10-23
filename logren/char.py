@@ -11,11 +11,11 @@ from utils.stv_utils import copy_to_clipboard
 
 @dataclass
 class Char:
+    mode: str = ''
     code: int = 0
     lash: str = ''
     keyname: str = ''
     stlag: str = ''
-    mode: str = ''
 
 
 # Visuals

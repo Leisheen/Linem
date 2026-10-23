@@ -31,7 +31,6 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     lanter = sn.Lanter.set_stanvor(stdscr)
     stvl = sn.Lαmseut()
     sent = sn.Imανseut()
-    prompt = sn.Prompt(stvl, sent)
     vsent = sn.Vseut()
     audio = sn.Audio()
     logαm = sn.Logreuαm()
@@ -40,7 +39,7 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     srch = sn.Search()
     alarm = sn.Alarm()
     stanvor = sn.Stanvor(
-        lanter, prompt, vsent, audio, logαm, filedata, srch, alarm
+        lanter, stvl, sent, vsent, audio, logαm, filedata, srch, alarm
     )
 
     return lanter, stanvor

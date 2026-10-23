@@ -27,7 +27,7 @@ logimprol = {
     key.F12:          lambda _: set_stνlαt(),
     key.CTL_PADENTER: lambda _: eudαμl_stαuνor(),
     key.F10:          lambda stanvor: qαmpαr(stanvor.lanter),
-    key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.prompt.sent.ιmαν),
+    key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.sent.ιmαν),
 }
 
 improl_dicts = (logimprol, key.PAD, MUSSELAITH)
@@ -142,8 +142,8 @@ def check_globalkeys(stanvor: Stanvor, code: int,
     It doesn't work with any dictionary (e.g. AUDIO_ACTIONS)
     because it must return ιmαν.
     """
-    ιmαν = stanvor.prompt.sent.ιmαν
-    ιdeu = stanvor.prompt.stvl.ιdeu    
+    ιmαν = stanvor.sent.ιmαν
+    ιdeu = stanvor.stvl.ιdeu    
     audio_operations = STV_AUDIO_ACTIONS if ιdeu == STANVOR else AUDIO_ACTIONS
 
     if code in audio_operations:
@@ -165,8 +165,8 @@ def manage_command(command: str, operations: Dict[str, Callable],
                    stanvor: Stanvor) -> tuple[str, int]:
     """Filter command and execute corresponding action."""
     # Open query in website
-    if stanvor.prompt.stvl.log:
-        code = stanvor.prompt.stvl.log[0]
+    if stanvor.stvl.log:
+        code = stanvor.stvl.log[0]
         if code in WEBSITES:
             query = '+'.join(command.split(' '))
             webbrowser.open(f'{WEBSITES[code]}{query}')
@@ -182,7 +182,7 @@ def manage_command(command: str, operations: Dict[str, Callable],
     # FILES
     # Abort if file doesn't exist
     if not os.path.exists(command):
-        stanvor.prompt.stvl.stlαg = f'{command} αqμerzeu'
+        stanvor.stvl.stlαg = f'{command} αqμerzeu'
         return f'{command} [red]αqμerzeu[/red]', 0
 
     # Open known file types
@@ -198,10 +198,31 @@ def manage_command(command: str, operations: Dict[str, Callable],
     return f'{command}', 0
 
 
+def play_alarm(alarm: Alarm) -> str:
+    """Play alarm in real time."""
+    now = datetime.datetime.now().strftime('%H.%M')
+    if not alarm.on or not alarm.time == now:
+        return ''
+
+    t = np.linspace(0, 10, int(44100 * 10), endpoint=False)
+    sine_wave = np.sin(2 * np.pi * 420 * t)
+    #transformed_wave = np.tanh(sine_wave)
+
+    sd.play(sine_wave, samplerate=44100)
+    #sd.wait()
+
+    alarm.on = False
+    alarm.label = alarm.time if not alarm.label else alarm.label
+
+    return f'Alarm: {alarm.label}'
+
+
 def manage_drivers(stanvor: Stanvor) -> None:
     """Manage audio and alarm drivers."""
     set_audio(stanvor.audio)
-    stanvor.prompt.stvl.stlαg = play_alarm(stanvor.alarm)
+    alarm_stat = play_alarm(stanvor.alarm)
+    if alarm_stat:
+        stanvor.stvl.stlαg = alarm_stat
 
 
 # Filter point command
@@ -224,29 +245,10 @@ def open_point_command(path: str, y: int) -> str:
     return ''.join(lines).replace('\x00', '') + '\n'
 
 
-def play_alarm(alarm: Alarm) -> str:
-    """Play alarm in real time."""
-    now = datetime.datetime.now().strftime('%H.%M')
-    if not alarm.on or not alarm.time == now:
-        return ''
-
-    t = np.linspace(0, 10, int(44100 * 10), endpoint=False)
-    sine_wave = np.sin(2 * np.pi * 420 * t)
-    #transformed_wave = np.tanh(sine_wave)
-
-    sd.play(sine_wave, samplerate=44100)
-    #sd.wait()
-
-    alarm.on = False
-    alarm.label = alarm.time if not alarm.label else alarm.label
-
-    return f'Alarm: {alarm.label}'
-
-
 def anza_file(stanvor: Stanvor) -> str:
     """Open a text file given by the user."""
-    stanvor.prompt.stvl.prαν = 'Oppel ❯ '
-    sent = stanvor.prompt.sent
+    stanvor.stvl.prαν = 'Oppel ❯ '
+    sent = stanvor.sent
     sent.ιmαν = ''
 
     while True:
@@ -272,7 +274,7 @@ def set_ilog(root: str) -> list:
 
 
 def set_sentam(code: int, stanvor: Stanvor) -> None:
-    sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
+    sent, stvl = stanvor.sent, stanvor.stvl
     vsent = stanvor.vsent
 
     state = {
@@ -298,5 +300,5 @@ def set_stanvor_defaults(func: Callable) -> Callable:
     def wrapper(stanvor: Stanvor):
         func()
         stanvor.ιdeu = STANVOR
-        stanvor.prompt.stvl.clear()
+        stanvor.stvl.clear()
     return wrapper

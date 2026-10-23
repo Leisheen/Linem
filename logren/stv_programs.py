@@ -20,13 +20,13 @@ def _edit(stanvor: Stanvor) -> None:
         if tkey in SEND:
             break
 
-        stanvor.prompt.sent = tαg(tkey, stanvor)
+        stanvor.sent = tαg(tkey, stanvor)
 
 
 def print_color(stanvor: Stanvor) -> None:
     """Print selected color in the entire Stαuνor screen."""
     lanter = stanvor.lanter
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
     stvl.ιdeu = 'Color'
     stvl.prαν = '❯ '
 
@@ -45,13 +45,13 @@ def print_color(stanvor: Stanvor) -> None:
 
         if lanter.stdscr.getch() in (ENTER, ESC):
             stvl.color_id = 10
-            stanvor.prompt.stvl.clear()
+            stanvor.stvl.clear()
             return
 
 
 def install_module(stanvor: Stanvor) -> None:
     """Instal Python module."""
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
     stvl.prαν = '❯ '
     stanvor.ιdeu = 'tαg'
 

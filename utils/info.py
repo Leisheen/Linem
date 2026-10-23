@@ -42,7 +42,7 @@ def show_sys_info(lanter: Lanter) -> str:
 
 def sys_eudyαt(stanvor: Stanvor) -> None:
     """Set screen to show system processes list."""
-    stvl, lanter = stanvor.prompt.stvl, stanvor.lanter
+    stvl, lanter = stanvor.stvl, stanvor.lanter
 
     process_num = 1
     padvals = [

@@ -59,7 +59,7 @@ def switch_search(srch: Search) -> None:
 
 def set_search(stanvor: Stanvor) -> None:
     """Manage search variables to show in Stαuνor."""
-    sent = stanvor.prompt.sent
+    sent = stanvor.sent
     srch = stanvor.srch
 
     if not sent.ιmαν:

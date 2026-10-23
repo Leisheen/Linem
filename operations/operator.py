@@ -13,7 +13,7 @@ from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.filesystem import log, logvals
 from core.keys import (
-    ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END, SEND, PAD_KEYS, POINT
+    ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END, SEND, PAD_KEYS
 )
 from core.search import SEARCH
 from core.sentam import STANVOR, Stanvor, Lαmseut, File
@@ -21,7 +21,7 @@ from core.stv import (
     stvrefresh, lestαq, set_filedata, reset, set_invash, process_handlers
 )
 from core.stvlog import (
-    ASHENTARS, set_ashentar_mode, stνlαt, stναδeut, clear_log, set_αδeutαr
+    ASHENTARS, pull_αδeutαr, stνlαt, stναδeut, clear_log, get_αδeutαr
 )
 from logren.tαuder import tαuder
 
@@ -44,7 +44,7 @@ media_drivers = {
     dfp.VIDEO_EXT: lambda file, _:        open_video(file),
     dfp.IMG_EXT:   lambda file, _:        open_pyside(file),
     dfp.TEXT_EXT:  lambda file, stanvor: tαuder(stanvor, file),
-    dfp.AUDIO_EXT: lambda file, stanvor: drive_audio('play', stanvor, file),
+    dfp.AUDIO_EXT: lambda _, stanvor: drive_audio('play', stanvor),
 }
 
 
@@ -57,9 +57,10 @@ class StanvorManager:
         stvrefresh(stanvor.lanter.stdscr)
 
 
-# This decorator is not in use
+# -- SETTINGS --
 def _stamp_stvlat(function: Callable, cmd: str) -> Callable:
     """Decorate the operation with a stamp in stvlαt."""
+    # This decorator is not in use
     def wrapper():
         function(cmd)
         stνlαt(STANVOR, f'❯ {cmd}')
@@ -73,16 +74,27 @@ def _set_environment(stanvor: Stanvor) -> None:
     set_sysenvironment()    # Set environment
 
 
-def _check_dots(cmd: str) -> bool:
-    """Check if the commmand is not just points, but ends with one."""
-    return cmd not in ('.', '..') and cmd.endswith('.')
+def _set_intor(command: str, stanvor: Stanvor) -> None:
+    """Set directory."""
+    stvl, sent = stanvor.stvl, stanvor.sent
+    stvl.log, sent.ιmαν = main_paths[command]
 
 
-def _look_twodots(cmd: str) -> bool:
-    """Check if the command ends with two dots."""
-    return cmd != '..' and cmd.endswith('..') and os.path.isfile(cmd)
+def _set_uprav(command, stanvor) -> None:
+    """Set υprαν."""
+    stanvor.stvl.υprαν = uprav_funcs[command](stanvor)
 
 
+def _set_ashent(stvl: Lαmseut, *args) -> None:
+    """Set αδeutαr."""
+    if args:
+        command = args[0]
+        stvl.αδeutαr, stvl.stlαg = get_αδeutαr(command)
+    else:
+        stvl.αδeutαr, stvl.stlαg = pull_αδeutαr(stvl.αδeutαr)
+
+
+# -- PATH OPERATIONS --
 def _go_todir(dir: str, stanvor) -> None:
     """Change the current working directory to the specified path."""
     os.chdir(dir)
@@ -99,22 +111,7 @@ def _open_file(file: str) -> None:
     stνlαt(STANVOR, f'{file}')
 
 
-def _log_stamp(command: Callable) -> None:
-    """Make stamp based on command."""
-    if command not in intlogren.values():
-        return
-    
-    comname = command.__name__
-
-    if comname in ('ιuνor', '<lambda>'):
-        return
-
-    unique_letters = { 'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'}
-    stamp = comname.translate(str.maketrans(unique_letters))
-    stamp = stamp.replace('cn', 'cu').upper()
-    stνlαt(STANVOR, f'<{stamp}>')
-
-
+# -- OPEN --
 def _open(command: Callable, stanvor: Stanvor) -> None:
     """App launcher module.
     1. Clear the screen.
@@ -122,91 +119,101 @@ def _open(command: Callable, stanvor: Stanvor) -> None:
     3. Launch the app.
     4. Clear sent and srch.flist.
     5. Print the list of files at the end if needed.
-    Must set a handler for when logrenam doesn't work, maybe cuz a env.
+    Must set a handler for when logrenam doesn't work, maybe cuz an env.
     """
+
+    def _log_stamp() -> None:
+        """Make stamp based on command."""
+        if command not in intlogren.values():
+            return
+        
+        comname = command.__name__
+
+        if comname in ('ιuνor', '<lambda>'):
+            return
+
+        unique_letters = { 'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'}
+        stamp = comname.translate(str.maketrans(unique_letters))
+        stamp = stamp.replace('cn', 'cu').upper()
+        stνlαt(STANVOR, f'<{stamp}>')
 
     stanvor.lanter.stdscr.clear()
 
-    _log_stamp(command)
+    _log_stamp()
 
     command(stanvor)
 
     stanvor.srch.flist = []
-    stanvor.prompt.sent.clear()
+    stanvor.sent.clear()
     stanvor.ιdeu = STANVOR
 
     if stanvor.logαm.stat:
         log(stanvor)
 
 
+def _runext(command: str, stanvor: Stanvor) -> None:
+    """Run external programs."""
+    ext_progs.get(command, lambda: None)()
+    stνlαt(STANVOR, f'❯ {command}')
+    stanvor.stvl.clear()
+
+
+# -- INFO --
+def _show_file(command, stanvor) -> None:
+    """Show file."""
+    stvl = stanvor.stvl
+    stvl.prαν = open_point_command(command, stanvor.lanter.ylen)
+    stvl.ιdeu, stvl.log = command[:-1], '❯ '
+
+
 def _show_wifi(stanvor) -> None:
     """Show wifi info."""
-    stanvor.wifi_on, stanvor.prompt.stvl.υprαν = wifi_status(stanvor.wifi_on)
+    stanvor.wifi_on, stanvor.stvl.υprαν = wifi_status(stanvor.wifi_on)
+
+
+def _show_today(stanvor) -> None:
+    """Show the current day."""
+    date2 = datetime.date.today().strftime('%w.%#e%#m%y | %j')
+    stanvor.stvl.prαν = f'Mαtιν \u276f  {date2}\n'
+
+
+def _show_vars(command: str, stanvor: Stanvor) -> None:
+    """Show variables."""
+    stvl = stanvor.stvl
+    all_values = {'.locals': locals(), '.globals': globals()}
+    stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
+    stvl.υprαν = show_vars(all_values[command])
 
 
 def _show_log(stanvor: Stanvor) -> None:
     """Show the log."""
-    stvl = stanvor.prompt.stvl
+    stvl = stanvor.stvl
     stvl.ιdeu = 'Log'
     stvl.prαν = open_point_command(str(LOG_FILE), stanvor.lanter.ylen)
 
 
 def _clear_log(stanvor: Stanvor) -> None:
     """Clear the log."""
-    stanvor.prompt.stvl.stlαg = clear_log()
+    stanvor.stvl.stlαg = clear_log()
 
 
-def _show_today(stanvor) -> None:
-    """Show the current day."""
-    date2 = datetime.date.today().strftime('%w.%#e%#m%y | %j')
-    stanvor.prompt.stvl.prαν = f'Mαtιν \u276f  {date2}\n'
+# -- CHECK --
+def _check_dots(cmd: str) -> bool:
+    """Check if the commmand is not just points, but ends with one."""
+    return cmd not in ('.', '..') and cmd.endswith('.')
 
 
-def _show_vars(command: str, stanvor: Stanvor) -> None:
-    """Show variables."""
-    stvl = stanvor.prompt.stvl
-    all_values = {'.locals': locals(), '.globals': globals()}
-    stvl.ιdeu  = f'{command.strip(".").capitalize()} Seutαm'
-    stvl.υprαν = show_vars(all_values[command])
+def _look_twodots(cmd: str) -> bool:
+    """Check if the command ends with two dots."""
+    return cmd != '..' and cmd.endswith('..') and os.path.isfile(cmd)
 
 
-def _runext(command: str, stanvor: Stanvor) -> None:
-    """Run external programs."""
-    ext_progs.get(command, lambda: None)()
-    stνlαt(STANVOR, f'❯ {command}')
-    stanvor.prompt.stvl.clear()
-
-
-def _show_file(command, stanvor) -> None:
-    """Show file."""
-    stvl = stanvor.prompt.stvl
-    stvl.prαν = open_point_command(command, stanvor.lanter.ylen)
-    stvl.ιdeu, stvl.log = command[:-1], '❯ '
-
-
-def _set_intor(command: str, stanvor: Stanvor) -> None:
-    """Set directory."""
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
-    stvl.log, sent.ιmαν = main_paths[command]
-
-
-def _set_uprav(command, stanvor) -> None:
-    """Set υprαν."""
-    stanvor.prompt.stvl.υprαν = uprav_funcs[command](stanvor)
-
-
-def _set_ashent(command: str, stanvor: Stanvor) -> None:
-    """Set αδeutαr."""
-    stvl = stanvor.prompt.stvl
-    stvl.αδeutαr, stvl.stlαg = set_αδeutαr(command)
-
-
+# -- PROCESS --
 def _process_send(stanvor: Stanvor) -> None:
     """Process input when the Enter key is pressed."""
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
     cmd = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
 
-    sent.clear()
     stanvor.lanter.stdscr.clrtoeol()
     stvl.stlαg = stanvor.srch.path = ''
     rprompts = ('.stlam', 'DOS')
@@ -222,7 +229,7 @@ def _process_send(stanvor: Stanvor) -> None:
         (lambda: cmd in stvars,      lambda: _show_vars(cmd, stanvor)),
         (lambda: cmd in main_paths,  lambda: _set_intor(cmd, stanvor)),
         (lambda: cmd in uprav_funcs, lambda: _set_uprav(cmd, stanvor)),
-        (lambda: cmd in ASHENTARS,   lambda: _set_ashent(cmd, stanvor)),
+        (lambda: cmd in ASHENTARS,   lambda: _set_ashent(stanvor.stvl, cmd)),
         (lambda: cmd in rprompts,    lambda: open_cmd(cmd, stanvor.lanter)),
         (lambda: cmd in strlogren,   lambda: _open(strlogren[cmd], stanvor)),
         (lambda: _look_twodots(cmd), lambda: _open_file(cmd)),
@@ -230,17 +237,13 @@ def _process_send(stanvor: Stanvor) -> None:
         (lambda: os.path.isdir(cmd), lambda: _go_todir(cmd, stanvor)),
     )):
         msg, _ = manage_command(cmd, media_drivers, stanvor)
-        stanvor.prompt.stvl.clear()
+        stanvor.stvl.clear(stlαg=False)
         stνlαt(STANVOR, msg)
 
+    sent.clear()
     stanvor.ιdeu = STANVOR
     stanvor.logαm.nlog = 0
     stvl.log = '❯ ' if stvl.prαν else ''
-
-
-def _set_ashentar(stvl: Lαmseut) -> None:
-    """Set ashentar mode variables."""
-    setattr(stvl, 'αδeutαr', set_ashentar_mode(stvl))
 
 
 def _add_path_marker(sent) -> None:
@@ -259,7 +262,7 @@ def _set_cwdir(sent, stvl) -> None:
 def _show_dirlist(stanvor: Stanvor) -> None:
     """Show dirlist."""
     log(stanvor)
-    setattr(stanvor.prompt.stvl, 'stlαg', '')
+    setattr(stanvor.stvl, 'stlαg', '')
 
 
 def _switch_fileon(filedata: File) -> None:
@@ -283,7 +286,7 @@ def _nav_xaxis(cmd, sent) -> None:
 
 def _locpad(code: int, stanvor: Stanvor) -> None:
     """Jump to a specific path based on its numkey index."""
-    sent, logαm = stanvor.prompt.sent, stanvor.logαm
+    sent, logαm = stanvor.sent, stanvor.logαm
     if code in key.PAD:
         logαm.nlog = min(len(logαm.ιlog)-1, key.PAD[code][1])
     elif code in key.LOGPAD:
@@ -300,7 +303,7 @@ def _set_webchns(cmd: int, stvl: Lαmseut) -> None:
 
 def _search(stanvor: Stanvor, cmd: int) -> None:
     """Manage search actions."""
-    sent = stanvor.prompt.sent
+    sent = stanvor.sent
     setattr(sent, 'ιmαν', SEARCH[cmd](sent, stanvor.srch))
 
 
@@ -316,11 +319,11 @@ def _mnglvs(cmd: int, stanvor: Stanvor) -> None:
 
 def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
     """Dispatch one key cmd to its corresponding input handler."""
-    sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
+    sent, stvl = stanvor.sent, stanvor.stvl
     filedata = stanvor.filedata
 
     stanvor_handlers = (
-        (lambda cmd: cmd == ALT_F12,     lambda _: _set_ashentar(stvl)),
+        (lambda cmd: cmd == ALT_F12,     lambda _: _set_ashent(stvl)),
         (lambda cmd: cmd == ALT_END,     lambda _: _add_path_marker(sent)),
         (lambda cmd: cmd == ORD_A,       lambda _: _set_cwdir(sent, stvl)),
         (lambda cmd: cmd == CTL_ENTER,   lambda _: _switch_fileon(filedata)),
@@ -353,12 +356,12 @@ def _process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
             stanvor.handlers = _set_stanvor_handlers(stanvor)
             return
     else:
-        stanvor.prompt.sent = tαg(cmd, stanvor)
+        stanvor.sent = tαg(cmd, stanvor)
 
 
 def _process_input(stanvor: Stanvor) -> None:
     """Read and process one input event, then refresh the screen."""
-    sent, stvl = stanvor.prompt.sent, stanvor.prompt.stvl
+    sent, stvl = stanvor.sent, stanvor.stvl
 
     try:
         cmd = stanvor.lanter.stdscr.getch()
@@ -386,7 +389,7 @@ def run_interface(stanvor: Stanvor) -> None:
     """Main loop for the Stαuνor interface."""
     stvmng = StanvorManager()
     stanvor.handlers = _set_stanvor_handlers(stanvor)
-    stvl, logαm = stanvor.prompt.stvl, stanvor.logαm
+    stvl, logαm = stanvor.stvl, stanvor.logαm
 
     root = set_invash(stvl)
     logαm.ιlog = set_ilog(root)

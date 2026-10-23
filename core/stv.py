@@ -23,7 +23,6 @@ import datetime
 import os
 import psutil
 import time
-from typing import Any
 
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut
@@ -105,8 +104,8 @@ def set_filedata(stanvor: Stanvor) -> None:
         stv_log (str): Current log string from Stαuνor.
     """
     filedata = stanvor.filedata
-    file_path = stanvor.prompt.sent.ιmαν
-    stv_log = stanvor.prompt.stvl.log
+    file_path = stanvor.sent.ιmαν
+    stv_log = stanvor.stvl.log
 
     def stamp_size() -> str:
         def filedata_decpos() -> int:
@@ -208,7 +207,7 @@ def lestαq(stanvor: Stanvor) -> None:
     event, instead of coupling every worker loop to this function.
     """
 
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
     lanter, audio = stanvor.lanter, stanvor.audio
     stdscr = lanter.stdscr
 
@@ -277,8 +276,8 @@ def reset(stanvor: Stanvor) -> None:
     """
 
     stanvor.ιdeu = STANVOR
-    stanvor.prompt.sent.clear()
-    stanvor.prompt.stvl.clear()
+    stanvor.sent.clear()
+    stanvor.stvl.clear()
     stanvor.filedata.clear()
     stanvor.logαm.stat = False
     stanvor.srch.on = False
@@ -307,6 +306,7 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> bool:
             return True
     else:
         return False
+
 
 def stop_stanvor(stanvor: Stanvor) -> None:
     """Stop Stauνor."""

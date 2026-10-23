@@ -57,7 +57,7 @@ class VermatObjects:
     vsent: Vseut
     vermat: Vermat
     driver: ItemManager
-#vermat_vals = VermatObjects(prompt.stvl, prompt.sent, vsent, vermat, driver)
+#vermat_vals = VermatObjects(stvl, sent, vsent, vermat, driver)
 
 
 XAXIS_KEYS = {
@@ -199,10 +199,10 @@ def _select_item(key: Optional[int], driver: ItemManager,
             driver.numero = driver.numero + 1 if driver.numero < len(lines) else 0
 
         driver.strnum = driver.numero # strnum is for interface, always update
-        stanvor.prompt.sent.ιmαν = lines[driver.numero - 1].rstrip('\n')
+        stanvor.sent.ιmαν = lines[driver.numero - 1].rstrip('\n')
         driver.item = read_lines[driver.numero - 1]
     except FileNotFoundError:
-        stanvor.prompt.stvl.stlαg = stlαgreu('Toreg αqμerzeu')
+        stanvor.stvl.stlαg = stlαgreu('Toreg αqμerzeu')
     except IndexError:
         pass
 
@@ -225,7 +225,7 @@ def _select_toreg(driver: ItemManager, vermat: Vermat, stvl: Lαmseut, stdscr: c
 def _select_vermat(driver: ItemManager, vermat: Vermat,
                   stanvor: Stanvor, stdscr: curses.window) -> None:
     """Toreg and item selection."""
-    _select_toreg(driver, vermat, stanvor.prompt.stvl, stdscr)
+    _select_toreg(driver, vermat, stanvor.stvl, stdscr)
     _select_item(None, driver, stanvor, vermat)
 
 
@@ -349,8 +349,8 @@ def _ιuαq(lines: list, driver: ItemManager, vermat: Vermat,
 
 
 def _manage_lestaq(stanvor: Stanvor, vermat: Vermat, driver: ItemManager) -> None:
-    lanter, stvl = stanvor.lanter, stanvor.prompt.stvl
-    bar_space = lanter.xlen - len(stanvor.prompt.stvl.stlαg)
+    lanter, stvl = stanvor.lanter, stanvor.stvl
+    bar_space = lanter.xlen - len(stanvor.stvl.stlαg)
 
     if not os.path.exists(vermat.νιdeu):
         driver.tselect = 1
@@ -408,8 +408,8 @@ def _lαmνmαt(function: str, lanter: Lanter, stanvor: Stanvor,
             vsent: Vseut, vermat, driver) -> None:
     """Set up Vermαt interface, and display data based on function."""
     vprompt = ''
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
-    bar_space = lanter.xlen - len(stanvor.prompt.stvl.stlαg)
+    stvl, sent = stanvor.stvl, stanvor.sent
+    bar_space = lanter.xlen - len(stanvor.stvl.stlαg)
 
     # Bar
     mαιteu(lanter, stvl.clean, 'Vermαt')
@@ -482,8 +482,7 @@ def _lαmνmαt(function: str, lanter: Lanter, stanvor: Stanvor,
 def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
                vsent: Vseut, vermat: Vermat, driver) -> None:
     """Menu for ιδαt function."""
-    prompt = stanvor.prompt
-    prompt.stvl.clean = 0
+    stanvor.stvl.clean = 0
 
     def _clear() -> None:
         driver.numero = 0
@@ -529,7 +528,7 @@ def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
 def _set_section(function: str, stanvor: Stanvor, lanter: Lanter,
                 vsent: Vseut, vermat: Vermat, driver) -> str:
     """Set given section interface."""
-    stvl, sent = stanvor.prompt.stvl, stanvor.prompt.sent
+    stvl, sent = stanvor.stvl, stanvor.sent
     stvl.clean = 0
 
     def _reset() -> None:
@@ -643,40 +642,40 @@ def _set_section(function: str, stanvor: Stanvor, lanter: Lanter,
 def _sιguα(stanvor: Stanvor, lanter: Lanter, vsent: Vseut,
           vermat: Vermat, driver: ItemManager) -> None:
     """Add item to Vermαt."""
-    prompt = stanvor.prompt
-    prompt.sent.ιmαν = ''
+    stvl, sent = stanvor.stvl, stanvor.sent
+    sent.ιmαν = ''
 
     item = _set_section('Sιguα', stanvor, lanter, vsent, vermat, driver)
 
     if not item:
         return
 
-    itemvals = _add_item(item, vermat, driver.strnum, prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = itemvals
+    itemvals = _add_item(item, vermat, driver.strnum, stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stvl.stlαg = itemvals
 
 
 def _move_inside(driver: ItemManager, vermat: Vermat,
                  stanvor: Stanvor) -> None:
     """Move item to a new position in the list inside a specific toreg."""
     vermat.lines.pop(driver.numero)
-    vermat.lines.insert(driver.position, stanvor.prompt.sent.ιmαν + '\n')
+    vermat.lines.insert(driver.position, stanvor.sent.ιmαν + '\n')
 
     with open(vermat.νιdeu, 'w', encoding='utf8') as oppel:
         oppel.truncate(0)
         oppel.write(''.join(vermat.lines))
 
-    stanvor.prompt.sent.ιmαν = driver.pointer = ''
+    stanvor.sent.ιmαν = driver.pointer = ''
     driver.toreg = ''
     driver.strnum = driver.position = 0
 
-    vtup = _geuδ(vermat.νιdeu, driver.strnum, stanvor.prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, stanvor.prompt.stvl.stlαg = vtup
+    vtup = _geuδ(vermat.νιdeu, driver.strnum, stanvor.stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stanvor.stvl.stlαg = vtup
 
 
 def _move_outside(driver: ItemManager,
         vermat: Vermat, stanvor: Stanvor) -> None:
     """Move item to another toreg."""
-    prompt = stanvor.prompt
+    stvl, sent = stanvor.stvl, stanvor.sent
     vermat.lines.pop(driver.numero)
 
     with open(vermat.νιdeu, 'w', encoding='utf8') as oppel:
@@ -690,14 +689,14 @@ def _move_outside(driver: ItemManager,
 
     stνlαt('Verse', f' {driver.item} →{driver.toreg} ', 'Vermαt')
 
-    driver.item = prompt.sent.ιmαν.rstrip('\n')
-    prompt.sent.ιmαν = driver.pointer = driver.toreg = prompt.sent.αdιmαν = ''
+    driver.item = sent.ιmαν.rstrip('\n')
+    sent.ιmαν = driver.pointer = driver.toreg = sent.αdιmαν = ''
 
     vermat.νqseut = False
     driver.strnum = driver.numero = 0
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = vermat_tuple
+    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
     _select_item(0, driver, stanvor, vermat)
 
@@ -712,11 +711,11 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
     driver.pointer = '  ❯'
     driver.tnum = driver.tselect
     driver.item = driver.item.rstrip('│').rstrip() # Trace where item takes this '|'
-    prompt = stanvor.prompt
-    prompt.stvl.clean = 0
+    stvl, sent = stanvor.stvl, stanvor.sent
+    stvl.clean = 0
 
     def _reset() -> None:
-        prompt.sent.ιmαν = driver.pointer = driver.toreg = ''
+        sent.ιmαν = driver.pointer = driver.toreg = ''
         driver.position = driver.strnum = 0
 
     def _select_position() -> None:
@@ -765,7 +764,7 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
         if eudαμl in SEND:
             break
 
-    prompt.stvl.clean = 0
+    stvl.clean = 0
 
     while True:
         _lαmνmαt('Verse', lanter, stanvor, vsent, vermat, driver)
@@ -791,7 +790,7 @@ def _νerqom(stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
     """Modifies the line."""
     vermat.νqseut = True
 
-    prompt = stanvor.prompt
+    stvl, sent = stanvor.stvl, stanvor.sent
     item = _set_section('Verqom', stanvor, lanter, vsent, vermat, driver)
 
     if not vermat.νqseut:
@@ -799,32 +798,32 @@ def _νerqom(stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
 
     _fix_item(item, vermat, vermat.lines, driver.numero)
 
-    vprompt = f'{prompt.sent.ιmαν}{prompt.sent.uostιmαν}{prompt.sent.αdιmαν}'
+    vprompt = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     stνlαt('Verqom', vprompt, 'Vermαt')
 
     driver.numero = driver.strnum = 0
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = vermat_tuple
+    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
     _select_item(0, driver, stanvor, vermat)
 
-    prompt.sent.ιmαν = prompt.sent.uostιmαν = prompt.sent.αdιmαν = ''
+    sent.ιmαν = sent.uostιmαν = sent.αdιmαν = ''
     vermat.νqseut = False
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = vermat_tuple
+    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
 
 def _ιδαt(function: str, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
          driver: ItemManager, lanter: Lanter, toregαm: list) -> None:
     """Main Vermαt function handler."""
-    prompt = stanvor.prompt
+    stvl, sent = stanvor.stvl, stanvor.sent
 
     functions = {
         'Verqom': lambda: _νerqom(stanvor, vsent, vermat, lanter, driver),
         'Verse': lambda: _νerse(stanvor, vermat, driver, vsent, toregαm, lanter),
-        'Iuαq': lambda: _ιuαq(vermat.lines, driver, vermat, prompt.stvl, prompt.sent),
+        'Iuαq': lambda: _ιuαq(vermat.lines, driver, vermat, stvl, sent),
     }
 
     try:
@@ -833,8 +832,8 @@ def _ιδαt(function: str, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
     except FileNotFoundError:
         stamp = '[blue]Toreg  │[/blue] '
         message = f'[cyan]{vermat.νlαιu}[/cyan][red]toreg αqtαgeu[/red]'
-        msg = stναδeut(prompt.stvl.αδeutαr, stamp + message, f'{function:8}')
-        prompt.stvl.stlαg = msg
+        msg = stναδeut(stvl.αδeutαr, stamp + message, f'{function:8}')
+        stvl.stlαg = msg
 
     _select_item(0, driver, stanvor, vermat)
 
@@ -853,7 +852,7 @@ def νermαt(stanvor: Stanvor) -> None:
     vermat = Vermat()
     driver = ItemManager()
 
-    prompt = stanvor.prompt
+    stvl, sent = stanvor.stvl, stanvor.sent
     lanter = stanvor.lanter
     vsent = stanvor.vsent
     logαm = stanvor.logαm
@@ -871,13 +870,13 @@ def νermαt(stanvor: Stanvor) -> None:
     vermat.νbar = ' ' + '   '.join(toregαm)
 
     if not os.path.isfile(vermat.νιdeu):
-        prompt.stvl.stlαg = stlαgreu('Vermαt αqyēν')
+        stvl.stlαg = stlαgreu('Vermαt αqyēν')
         return
 
     # Iδαt
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, prompt.stvl.αδeutαr)
-    vermat.lines, vermat.read, driver.strnum, prompt.stvl.stlαg = vermat_tuple
-    prompt.stvl.clean = 0
+    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
+    stvl.clean = 0
     dyeναm = dyeνlines = ''
 
     vermat_keys = {
@@ -900,7 +899,7 @@ def νermαt(stanvor: Stanvor) -> None:
         lanter.stdscr.clear()
         vermat.νιdeu = VIDEN
         logαm.stat = False
-        prompt.stvl.stlαg = ''
+        stvl.stlαg = ''
 
     def _move_xaxis() -> None:
         driver.strnum = 0 if driver.strnum > len(vermat.lines) else driver.strnum
@@ -914,19 +913,19 @@ def νermαt(stanvor: Stanvor) -> None:
         _select_item(0, driver, stanvor, vermat)
 
     def _clear_prompt() -> None:    
-        driver.numero = prompt.stvl.clean = 0
+        driver.numero = stvl.clean = 0
         vermat.cal_stat = False
         _select_item(0, driver, stanvor, vermat)
 
     def _set_dyevast() -> None:
         if vermat.cal_stat:
-            vermat.cal_stat, prompt.stvl.clean = False, 0
+            vermat.cal_stat, stvl.clean = False, 0
         else:
-            vermat.cal_stat, prompt.stvl.clean = True, 1
+            vermat.cal_stat, stvl.clean = True, 1
             dyeναm = calendar(
                 True,
                 stanvor.gcal_creds,
-                prompt.stvl.αδeutαr
+                stvl.αδeutαr
                 ).split('\n')
 
     def _set_vermat() -> None:
