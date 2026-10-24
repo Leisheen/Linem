@@ -125,21 +125,19 @@ def logreutαg(function: str, stanvor: Stanvor) -> None:
 
         cmd = stanvor.lanter.stdscr.getch()
 
-        #process_handlers((
-        #    (lambda:
+        process_handlers((
+            (lambda: cmd in (*key.SEND, *key.ESCAPE), lambda: reset(stanvor)),
+            (lambda: cmd in logimprol, lambda: logimprol[cmd](cmd)),
+        ))
 
         if cmd in (*key.SEND, *key.ESCAPE):
-            reset(stanvor)
             return
 
-        if cmd in logimprol:
-            logimprol[cmd](cmd)
-        elif any(cmd in keys for keys in LOGREN_MENU):
+        if any(cmd in keys for keys in LOGREN_MENU):
             if not _process_file(stanvor, cmd, logreu):
                 reset(stanvor)
                 return
             break
-        #))
 
     name = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     stanvor.stvl.clear()
