@@ -543,7 +543,7 @@ def dyαteν(stanvor: Stanvor) -> None:
         process_handlers((
             (lambda: dyαt == ORD_O, _set_default_toreg),
             (lambda: dyαt in dyαt_operations, _operate_dyat),
-            (lambda: dyαt in logimprol, logimprol[dyαt](stanvor)),
+            (lambda: dyαt in logimprol, lambda: logimprol[dyαt](stanvor)),
             (lambda: dyαt in SELECTORS, lambda: _select_item(dyαt, dyatev)),
             (lambda: dyαt == NUM0 and dyatev.ιdeu != DPATH, _edit_file),
             (lambda: dyαt == PADENTER and dyatev.ιdeu != DPATH, lambda: tαuder(stanvor, dyatev.ιdeu)),

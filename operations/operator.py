@@ -307,6 +307,7 @@ def _search(stanvor: Stanvor, cmd: int) -> None:
     setattr(sent, 'ιmαν', SEARCH[cmd](sent, stanvor.srch))
 
 
+# Check
 def _look_logvals(cmd: int) -> bool:
     """Check if cmd is in logvals."""
     return any(cmd in k for k in logvals)

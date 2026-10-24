@@ -390,7 +390,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
                 (lambda: code in key.VERTICAL, _nav_links),
                 (lambda: code in query_nav_keys, _navigate),
                 (lambda: code in sentam_stagen, _manage_sentam),
-                (lambda: code in ingersat_keys, ingersat_keys[code]),
+                (lambda: code in ingersat_keys, lambda: ingersat_keys[code]),
                 (lambda: code == key.F2, _connect_to_youtube),
                 (lambda: code == key.SHF_PADENTER, _connect_to_ollama),
                 (lambda: code in logimprol, lambda: logimprol[code](stanvor)),

@@ -231,7 +231,7 @@ def αugestαq(stanvor: Stanvor) -> None:
         key = lanter.stdscr.getch()
 
         process_handlers((
-            (lambda: key == ESC, lanter.stdscr.clear()),
+            (lambda: key == ESC, lanter.stdscr.clear),
             (lambda: key == POINT, lambda: _αugest_sιguα(lanter, αδeutαr, angest)),
             (lambda: key == MINUS, lambda: _inaq_menu(lanter)),
             (lambda: key == NUM0, lambda: logren.open_editor(ANGPATH, 'msedit', 'Augestαq ')),

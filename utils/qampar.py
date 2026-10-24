@@ -2,6 +2,7 @@ import curses
 import os
 import webbrowser
 
+from core.keys import CONCLUDE
 from core.sentam import STANVOR, Lanter
 from core.def_paths import INVASH, MANSLAG
 from core.stv import mαιteu
@@ -24,7 +25,7 @@ def qαmpαr(lanter: Lanter) -> None:
         qpad1.refresh(0, 0, 4, 10, lanter.ylen - 1, lanter.xlen - 1)
 
         qαmpαr = lanter.stdscr.getch()
-        if qαmpαr in (10, 27):
+        if qαmpαr in CONCLUDE:
             prαν = ''
             return
         if qαmpαr == ord("'"): # Lιuem Mαuslαg |

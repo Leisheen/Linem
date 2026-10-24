@@ -15,8 +15,6 @@ Roadmap:
     this project as an application only after defining a stable OS interface.
 """
 
-# Standard libraries
-import time
 import curses
 
 # Locals
@@ -35,7 +33,6 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     audio = sn.Audio()
     logαm = sn.Logreuαm()
     filedata = sn.File()
-
     srch = sn.Search()
     alarm = sn.Alarm()
     stanvor = sn.Stanvor(
