@@ -13,10 +13,7 @@ from screeninfo import get_monitors
 from typing import Any
 
 from core.sentam import Lanter
-
-
-user32 = ctypes.windll.user32
-kernel32 = ctypes.windll.kernel32
+from core.win import kernel32, user32
 
 
 # -- INFO --

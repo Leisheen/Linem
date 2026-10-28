@@ -426,5 +426,3 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
 
         if mυuιt == ESC:
             return
-
-        stvrefresh(lanter.stdscr)

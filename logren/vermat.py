@@ -509,6 +509,10 @@ def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
         _lαmνmαt(function, lanter, stanvor, vsent, vermat, driver)
 
         νsnum = lanter.stdscr.getch()
+
+        if νsnum in (ENTER, PADENTER):
+            return
+
         process_handlers((
             (lambda: νsnum == ESC, _clear),
             (lambda: νsnum == CTL_PAD1, _copy_toversent),
@@ -518,9 +522,6 @@ def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
             (lambda: νsnum in (BACK, ORD_O), _reset),
             (lambda: νsnum != WAIT, _add)
         ))
-
-        if νsnum in (ENTER, PADENTER):
-            return
 
 
 def _set_section(function: str, stanvor: Stanvor, lanter: Lanter,

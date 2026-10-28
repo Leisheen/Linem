@@ -5,7 +5,7 @@ import time
 import core.stvlog as stvlog
 from core.keys import ESC, ENTER, LOWER_Q, NUM1, NUM2, NUM3, NUM4
 from core.sentam import STANVOR, Stanvor, Lanter, Alarm
-from core.stv import stvrefresh, mαιteu
+from core.stv import mαιteu
 from operations.tag import tαg
 
 
@@ -40,8 +40,6 @@ def _set_titlebar(function: str, stlαg: str, lanter: Lanter) -> None:
         key = lanter.stdscr.getch()
         if key in (LOWER_Q, ESC):
             return
-
-        stvrefresh(lanter.stdscr)
 
 
 def _count_time(function: str, lanter: Lanter, stanvor: Stanvor, alarm: Alarm) -> None:

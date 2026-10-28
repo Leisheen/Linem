@@ -14,7 +14,8 @@ from tkinter import Tk, Label, NW
 
 from core.keys import ESC, ENTER, PADENTER
 from core.sentam import Stanvor
-from core.stv import lestαq
+from core.stv import lestαq, run_lιuemαg
+from core.stvlog import stlαgreu
 from operations.tag import tαg
 
 
@@ -95,32 +96,52 @@ def _run_pyside() -> None:
     app.exec()
 
 
-def _logαt(command: str) -> tuple[str, str]:
+def _logαt(sent: Imανseut) -> bool:
     """This function manages Logαt apps."""
+    command = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
-    apps = {'x': _run_textual, 'r': _run_rich, 'k': _run_tkinter, 'q': _run_pyside}
+    apps = {
+        'a': run_lιuemαg,
+        'x': _run_textual,
+        'r': _run_rich,
+        'k': _run_tkinter,
+        'q': _run_pyside
+        }
 
-    apps.get(command.lower(), lambda: None)()
-    return '', ''
+    logat = apps.get(command.lower(), lambda: None)()
+
+    if logat is None:
+        return False
+
+    logat()
+    return True
 
 
 def set_logat(stanvor: Stanvor) -> None:
-    """First menu in Logαt"""
+    """Main menu in Logαt"""
     stvl, sent = stanvor.stvl, stanvor.sent
+    stvl.clear()
+    sent.clear()
     stanvor.ιdeu = stvl.ιdeu = 'Logαt'
-    stvl.prαν = '│ Q │ X │ R │ K ❯ '
+    stvl.prαν = ' A │ Q │ X │ R │ K ❯ '
 
     while True:
         lestαq(stanvor)
 
         tkey = stanvor.lanter.stdscr.getch()
+
         if tkey == ESC:
             return
         if tkey in (ENTER, PADENTER):
-            break
+            if _logαt(sent):
+                stvl.stlαg = stlαgreu('Logαt μerzeu')
+                break
+            else:
+                stvl.stlαg = stlαgreu('Logαt αqμerzeu')
+                break
+
         sent = tαg(tkey, stanvor)
 
-    logat_type = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    stvl.clear()
+    sent.clear()
 
-    sent.ιmαν, stvl.stlαg = _logαt(logat_type)
-    sent.uostιmαν = sent.αdιmαν = sent.ιmαν

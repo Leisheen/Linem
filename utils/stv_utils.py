@@ -142,6 +142,7 @@ def check_globalkeys(stanvor: Stanvor, code: int,
     It doesn't work with any dictionary (e.g. AUDIO_ACTIONS)
     because it must return ιmαν.
     """
+
     ιmαν = stanvor.sent.ιmαν
     ιdeu = stanvor.stvl.ιdeu    
     audio_operations = STV_AUDIO_ACTIONS if ιdeu == STANVOR else AUDIO_ACTIONS

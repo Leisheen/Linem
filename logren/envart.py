@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from core.def_paths import INVASH, YOGA
 from core.keys import *
 from core.sentam import Stanvor, Lanter
-from core.stv import stvrefresh, mαιteu, process_handlers
+from core.stv import mαιteu, process_handlers
 from core.stvlog import stνlαt, stναδeut
 from logren.tαuder import tαuder
 from logren.vermat import νermαt

@@ -22,7 +22,11 @@ import curses
 import datetime
 import os
 import psutil
+import sys
 import time
+
+from core import posix
+from core import win
 
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut
@@ -311,3 +315,115 @@ def process_handlers(handlers: tuple, *args, **kwargs) -> bool:
 def stop_stanvor(stanvor: Stanvor) -> None:
     """Stop Stauνor."""
     stanvor.on = False
+
+
+# -- ASHEN INTERFACE --
+IS_WINDOWS = (os.name == 'nt')
+
+class RawTerminal:
+    """Context manager to handle raw input and screen cleanup safely."""
+    def __init__(self):
+        self.old_setiings = None
+    
+    def __enter__(self) -> "RawTerminal":
+        if IS_WINDOWS:
+            win.enable_ansi()
+
+        # Hide cursor (\x1b[?25l) and clear screen (\x1b[2J)
+        sys.stdout.write("\x1b[?25l\x1b[2J")
+        sys.stdout.flush()
+
+        if not IS_WINDOWS:
+            posix.set_ansi(self)
+
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Restore cursor (\x1b[?25h), reset colors (\x1b[0m), and move home (\x1b[H)"""
+        sys.stdout.write("\x1b[?25h\x1b[0m\x1b[H")
+        sys.stdout.flush()
+
+        if not IS_WINDOWS:
+            posix.restore_terminal(self)
+
+    def getch(self, timeout=0.05) -> None | int:
+        """Non-blocking key reader."""
+        tmout = timeout
+        return win.getkey() if IS_WINDOWS else posix.getkey(tmout)
+
+
+class ScreenBuffer:
+    """A 2D memory-grid manager with dirty-cell features to avoid flicker."""
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.buffer = [[" " for _ in range(width)] for _ in range(height)]
+        self.old_buffer = [[" " for _ in range(width)] for _ in range(height)]
+
+    def clear(self):
+        self.buffer = [[" " for _ in range(self.width)] for _ in range(self.height)]
+
+    def set_cell(self, x, y, char):
+        if 0 <= x < self.width and 0 <= y <= self.height:
+            self.buffer[y][x] = char
+
+    def render(self):
+        output = []
+        for y in range(self.height):
+            for x in range(self.width):
+                # Only write cells that changed since the last frame
+                if self.buffer[y][x] != self.old_buffer[y][x]:
+                    # ANSI escape to move cursor to (row, col) - 1-indexed: \x1b[y;xH
+                    output.append(f"\x1b[{y+1};{x+1}H{self.buffer[y][x]}")
+
+        if output:
+            sys.stdout.write("".join(output))
+            sys.stdout.flush()
+
+        # Update the reference frame
+        self.old_buffer = [row[:] for row in self.buffer]
+
+
+def run_lιuemαg() -> None:
+    # Detect terminal dimensions
+    curses.endwin()
+
+    try:
+        size = os.get_terminal_size()
+        width, height = size.columns, size.lines
+    except OSError:
+        width, height = 80, 24
+
+    screen = ScreenBuffer(width, height)
+
+    # Initialize raw terminal environment
+    with RawTerminal() as term:
+        #x, y = width // 2, height // 2
+        x, y, = 0, 0
+        running = True
+        
+        while running:
+            screen.clear()
+
+            # Draw something simple in the buffer
+            screen.set_cell(x, y, "STANVOR")
+            screen.set_cell(x, y, "❯ ")
+            screen.render()
+
+            key = term.getch()
+            
+            if key:
+                if key.lower() == 'q':
+                    running = False
+                elif key == 'UP':
+                    y = max(0, y - 1)
+                elif key == 'DOWN':
+                    y = min(height - 1, y + 1)
+                elif key == 'LEFT':
+                    x = max(0, x - 1)
+                elif key == 'RIGHT':
+                    x = min(width - 1, x + 1)
+                else:
+                    screen.set_cell(x, y, "ASHEN LINEMAG STANVOR")
+
+
