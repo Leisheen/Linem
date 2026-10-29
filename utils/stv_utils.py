@@ -1,6 +1,5 @@
 """Simple functions for Stαuνor."""
 import os # askaq, show_sys_info
-import curses # askaq, show_sys_info
 import datetime # for play_alarm
 import numpy as np
 import pyperclip # for copy_to_clipboard, char
@@ -16,7 +15,7 @@ import core.keys as key
 from core.def_paths import EXCLUDED
 from core.keys import BACK, MUSSELAITH, PAD
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
-from core.stv import lestαq
+from core.stv import lestαq, hide_cursor
 from core.stvlog import stνlαt, stlαgreu, set_stνlαt
 
 from utils.qampar import qαmpαr
@@ -88,7 +87,7 @@ def _start_cmd(command: str) -> str:
     else:
         os.system(command)
 
-    curses.curs_set(False)
+    hide_cursor()
 
     return f'DOS: {command}'
 

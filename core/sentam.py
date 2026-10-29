@@ -3,26 +3,61 @@ import curses
 import os
 from dataclasses import dataclass, field, fields
 
-
 STANVOR = 'Stαuνor'
 
 # Must reorder colors to make sense
 COLORS = ( # Foreground | Background
-    (1,  curses.COLOR_BLUE,    curses.COLOR_BLACK), # xbar, log
-    (2,  curses.COLOR_CYAN,    curses.COLOR_BLACK),
-    (3,  curses.COLOR_GREEN,   curses.COLOR_BLACK),
-    (4,  curses.COLOR_RED,     curses.COLOR_BLACK),
-    (5,  curses.COLOR_WHITE,   curses.COLOR_BLUE), # Lαδuιmαν
-    (6,  curses.COLOR_BLACK,   curses.COLOR_CYAN),
-    (7,  curses.COLOR_MAGENTA, curses.COLOR_BLACK),
-    (8,  curses.COLOR_YELLOW,  curses.COLOR_BLACK),
-    (9,  curses.COLOR_CYAN,    curses.COLOR_BLUE),
-    (10, curses.COLOR_WHITE,   curses.COLOR_BLACK),
-    (11, curses.COLOR_BLACK,   curses.COLOR_RED),
-    (12, curses.COLOR_BLACK,   curses.COLOR_WHITE),
-    (13, curses.COLOR_BLUE,    curses.COLOR_CYAN),
-    (14, curses.COLOR_BLACK,   curses.COLOR_BLUE), # Doesn't work
-    (15, curses.COLOR_WHITE,   curses.COLOR_CYAN), # Doesn't work
+    # BLACK = 0
+    # BLUE = 1
+    # GREEN = 2
+    # CYAN = 3
+    # RED = 4
+    # MAGENTA = 5
+    # YELLOW = 6
+    # WHITE = 7
+
+    (1,  1, 0), # xbar, log
+    (2,  3, 0),
+    (3,  2, 0),
+    (4,  4, 0),
+    (5,  7, 1), # Lαδuιmαν
+    (6,  0, 3),
+    (7,  5, 0),
+    (8,  6, 0),
+    (9,  3, 1),
+    (10, 7, 0),
+    (11, 0, 4),
+    (12, 0, 7),
+    (13, 1, 3),
+    (14, 0, 1), # Doesn't work
+    (15, 7, 3), # Doesn't work
+
+
+    # REDDISH_THEME
+    # BLACK = 0
+    # RED = 1
+    # GREEN = 2
+    # YELLOW = 3
+    # BLUE = 4
+    # MAGENTA = 5
+    # CYAN = 6
+    # WHITE = 7
+
+    #(1,  4, 0), # xbar, log
+    #(2,  6, 0),
+    #(3,  2, 0),
+    #(4,  1, 0),
+    #(5,  7, 4), # Lαδuιmαν
+    #(6,  0, 6),
+    #(7,  5, 0),
+    #(8,  3, 0),
+    #(9,  6, 4),
+    #(10, 7, 0),
+    #(11, 0, 1),
+    #(12, 0, 7),
+    #(13, 4, 6),
+    #(14, 0, 4), # Doesn't work
+    #(15, 7, 6), # Doesn't work
 )
 
 def _get_screen(stdscr):
@@ -55,6 +90,13 @@ class Lanter:
             '\u2500'*xlen,
             '\u2502'
         )
+
+
+@dataclass
+class Battery:
+    on: bool = False
+    percent: int = 0
+
 
 
 @dataclass
@@ -169,6 +211,7 @@ class Alarm:
 @dataclass
 class Stanvor:
     lanter: Lanter
+    battery: Battery
     stvl: Lαmseut
     sent: Imανseut
     vsent: Vseut

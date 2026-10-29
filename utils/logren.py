@@ -1,4 +1,3 @@
-import curses
 import keyboard
 import os
 import subprocess
@@ -12,6 +11,7 @@ from PySide6.QtGui import QKeySequence, QPixmap, QShortcut
 from PySide6.QtWidgets import QApplication, QGraphicsScene, QGraphicsView
 
 from core.sentam import STANVOR
+from core.stv import hide_cursor
 from core.stvlog import stνlαt
 
 
@@ -20,7 +20,7 @@ def open_editor(file: str, editor: str, lag: str) -> None:
     """Open file in selected editor."""
     command = f'edit "{file}"' if editor == 'msedit' else file
     os.system(f'"{command}"')
-    curses.curs_set(0)
+    hide_cursor()
 
     if lag:
         stνlαt(lag, '❯ Lαg')

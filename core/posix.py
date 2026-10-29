@@ -1,14 +1,24 @@
-#import sys
-#import termios
-#import tty
+import sys
+
+try:
+    import select
+    import termios
+    import tty
+except ImportError:
+    select = None
+    termios = None
+    tty = None
 
 
 # -- STDOUT --
 def set_ansi(self):
     """Save terminal settings and switch to raw (cbreak) mode."""
-    #self.fd = sys.stdin.fileno()
-    #self.old_settings = termios.tcgetattr(self.fd)
-    #tty.setcbreak(self.fd)
+    if termios is None or tty is None or not hasattr(sys.stdin, "fileno"):
+        return self
+
+    self.fd = sys.stdin.fileno()
+    self.old_settings = termios.tcgetattr(self.fd)
+    tty.setcbreak(self.fd)
 
     return self
 
@@ -16,13 +26,17 @@ def set_ansi(self):
 # -- STDIN --
 def restore_terminal(self):
     """Restore Linux/macOS terminal settings."""
-    #termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
+    if termios is not None and hasattr(self, "fd") and hasattr(self, "old_settings"):
+        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
 
- 
+
 def getkey(timeout):
     # POSIX non-blocking read using select
     # Must be converted to int
-    """dr, _, _ = select.select([sys.stdin], [], [], timeout)
+    if select is None or not hasattr(sys.stdin, "read"):
+        return None
+
+    dr, _, _ = select.select([sys.stdin], [], [], timeout)
     if dr:
         ch = sys.stdin.read(1)
         # Handle ANSI escape sequences for arrows (e.g., \x1b[A)
@@ -34,5 +48,5 @@ def getkey(timeout):
                 if seq == '[B': return 'DOWN'
                 if seq == '[C': return 'RIGHT'
                 if seq == '[D': return 'LEFT'
-        return ch"""
+        return ch
     return None

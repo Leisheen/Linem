@@ -1,5 +1,4 @@
 """Search module."""
-import curses
 import os
 
 from core.keys import CTL_UP, CTL_DOWN
@@ -47,7 +46,7 @@ def _searchlog(logreu: str) -> tuple[str, list, int]:
     align = len(str(len(search_results)))
     for index, result in enumerate(search_results, start=1):
         search_prompt += f'{index:{align}d} │  {result}\n'
-        stνlαt(STANVOR, f'   {result}', curses.color_pair(5))
+        stνlαt(STANVOR, f'   {result}')
 
     return search_prompt, search_results, 0
 

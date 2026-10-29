@@ -28,8 +28,10 @@ import time
 from core import posix
 from core import win
 
+from core.keys import HSEP, VSEP, ESC
+from core.colors import WHITE, RED, NAVY, GREEN, GRAY, CYAN, MAGENTA
 from core.def_paths import INVASH, LOG_FILE
-from core.sentam import STANVOR, Lαmseut, Stanvor, Lanter, Vseut
+from core.sentam import STANVOR, Battery, Lαmseut, Stanvor, Lanter, Vseut
 from core.stvlog import stναδeut
 
 
@@ -71,11 +73,11 @@ def check_battery() -> tuple[bool, int]:
     return battery.power_plugged, battery.percent
 
 
-def _batpercent(lanter: Lanter, dayfix: int, xlen: int) -> None:
+def _batpercent(lanter: Lanter, dayfix: int) -> None:
     """Print battery percentage."""
     bat_on, bat_percent = check_battery()
     batnum = 3 if bat_on else 4
-    xfix = xlen - dayfix
+    xfix = lanter.xlen - dayfix
     batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
 
     lanter.stdscr.addstr(0, xfix - 4, '·', curses.color_pair(batnum))
@@ -89,6 +91,22 @@ def _batpercent(lanter: Lanter, dayfix: int, xlen: int) -> None:
         lanter.stdscr.addstr(0, xfix - x2, lanter.ybar, curses.color_pair(2))
 
         return
+
+
+def _set_battery(battery: Battery) -> tuple[int, int, int]:
+    """Print battery percentage."""
+    battery.on, battery.percent = check_battery()
+    batstate = 1 if battery.on else 0
+    batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
+
+    for key, values in batvals.items():
+        if battery.percent < key:
+            continue
+
+        percent_space, sep_space = values
+        return percent_space, sep_space, batstate
+    else:
+        return 5, 7, batstate
 
 
 # Info
@@ -162,7 +180,7 @@ def mαιteu(lanter: Lanter, clearnum: int, ιdeu: str) -> None:
     stdscr.addstr(0, 0, ιdeu)
     stdscr.clrtoeol()
     # BATTERY
-    _batpercent(lanter, ιstegfix, lanter.xlen)
+    _batpercent(lanter, ιstegfix)
     # DATE
     stdscr.addstr(0, prompt_space, date)
     stdscr.addstr(0, prompt_space - 2, lanter.ybar, curses.color_pair(2))
@@ -317,23 +335,51 @@ def stop_stanvor(stanvor: Stanvor) -> None:
     stanvor.on = False
 
 
-# -- ASHEN INTERFACE --
-IS_WINDOWS = (os.name == 'nt')
+# -- CONFIG --
+# Text cursor
+def hide_cursor() -> None:
+    sys.stdout.write('\033[?25l')
+    sys.stdout.flush()
 
+
+def restore_cursor() -> None:
+    sys.stdout.write('\033[?25h')
+    sys.stdout.flush()
+
+
+# Environment
+def set_sysdefaults() -> None:
+    if win.IS_WINDOWS:
+        win.restore_pointer()
+    restore_cursor()
+
+
+def set_sysenvironment() -> None:
+    win.set_syspointer()
+
+
+def end_stanvor() -> None:
+    """End Stαuνor session."""
+    set_sysdefaults()
+    sys.exit()
+
+
+
+# -- ASHEN INTERFACE --
 class RawTerminal:
     """Context manager to handle raw input and screen cleanup safely."""
     def __init__(self):
-        self.old_setiings = None
+        self.old_settings = None
     
     def __enter__(self) -> "RawTerminal":
-        if IS_WINDOWS:
+        if win.IS_WINDOWS:
             win.enable_ansi()
 
         # Hide cursor (\x1b[?25l) and clear screen (\x1b[2J)
         sys.stdout.write("\x1b[?25l\x1b[2J")
         sys.stdout.flush()
 
-        if not IS_WINDOWS:
+        if not win.IS_WINDOWS:
             posix.set_ansi(self)
 
         return self
@@ -343,13 +389,13 @@ class RawTerminal:
         sys.stdout.write("\x1b[?25h\x1b[0m\x1b[H")
         sys.stdout.flush()
 
-        if not IS_WINDOWS:
+        if not win.IS_WINDOWS:
             posix.restore_terminal(self)
 
-    def getch(self, timeout=0.05) -> None | int:
+    def getch(self, timeout=0.05) -> int | None:
         """Non-blocking key reader."""
         tmout = timeout
-        return win.getkey() if IS_WINDOWS else posix.getkey(tmout)
+        return win.getkey() if win.IS_WINDOWS else posix.getkey(tmout)
 
 
 class ScreenBuffer:
@@ -357,73 +403,222 @@ class ScreenBuffer:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.buffer = [[" " for _ in range(width)] for _ in range(height)]
-        self.old_buffer = [[" " for _ in range(width)] for _ in range(height)]
+        self.pointer: list = [0, 0]
+        self.buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
+        self.old_buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
 
     def clear(self):
-        self.buffer = [[" " for _ in range(self.width)] for _ in range(self.height)]
+        self.buffer = [[(" ", None, None) for _ in range(self.width)] for _ in range(self.height)]
+        self.pointer = [0, 0]
 
-    def set_cell(self, x, y, char):
-        if 0 <= x < self.width and 0 <= y <= self.height:
-            self.buffer[y][x] = char
+    def move(self, x, y):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            self.pointer = [x, y]
+
+    def insert(self, *args, **kwargs):
+        """Write text at the cursor, or at an explicit (x, y) position."""
+        fg, bg = None, None
+
+        if kwargs:
+            if 'fg' in kwargs:
+                fg = kwargs['fg']
+            if 'bg' in kwargs:
+                bg = kwargs['bg']
+
+        if isinstance(args[0], int):
+            if len(args) == 3:
+                x, y, val = args
+
+            if not (0 <= x < self.width and 0 <= y < self.height):
+                return
+
+            prompt = val if isinstance(val, str) else chr(val)
+            self.pointer = [x, y]
+        else:
+            prompt = args[0]
+            if prompt is None:
+                return
+
+            if not isinstance(prompt, str):
+                prompt = str(prompt)
+
+        if not prompt:
+            return
+
+        x, y = self.pointer
+
+        for char in prompt:
+            if 0 <= x < self.width and 0 <= y < self.height:
+                self.buffer[y][x] = (char, fg, bg)
+                x += 1
+
+                if x >= self.width:
+                    x = 0
+                    y += 1
+
+            if y >= self.height:
+                y = self.height - 1
+                x = 0
+
+        self.pointer = [x, y]
+
+
 
     def render(self):
         output = []
+        # Sentinel values force an explicit foreground/background reset on the
+        # first changed cell, so terminal state left by a previous render can
+        # never turn a foreground-only character into a colored square.
+        _unset = object()
+        current_fg, current_bg = _unset, _unset
+
         for y in range(self.height):
             for x in range(self.width):
+                new_cell = self.buffer[y][x]
                 # Only write cells that changed since the last frame
-                if self.buffer[y][x] != self.old_buffer[y][x]:
-                    # ANSI escape to move cursor to (row, col) - 1-indexed: \x1b[y;xH
-                    output.append(f"\x1b[{y+1};{x+1}H{self.buffer[y][x]}")
+                if new_cell != self.old_buffer[y][x]:
+                    char, fg, bg = new_cell
 
+                    # 1. Move cursor to position
+                    output.append(f"\x1b[{y+1};{x+1}H")
+
+                    # 2. Update Foreground color if it changed
+                    if fg != current_fg:
+                        if fg:
+                            # Set Foreground RGB: \x1b[38;2;{r};{g};{b}m
+                            output.append(f"\x1b[38;2;{fg[0]};{fg[1]};{fg[2]}m")
+                        else:
+                            output.append("\x1b[39m") # Reset foreground
+                        current_fg = fg
+
+                    # 3. Update Background color if it changed
+                    if bg != current_bg:
+                        if bg:
+                            # Set Background RGB: \x1b[48;2;{r};{g};{b}m
+                            output.append(f"\x1b[48;2;{bg[0]};{bg[1]};{bg[2]}m")
+                        else:
+                            output.append("\x1b[49m") # Reset background
+                        current_bg = bg
+
+                    # 4. Print the actual character
+                    output.append(char)
+        
         if output:
+            # Reset All Styles: \x1b[0m
+            # Always append a style reset at the end of a flush batch
+            # to prevent color bleeding
+            output.append("\x1b[0m")
             sys.stdout.write("".join(output))
             sys.stdout.flush()
 
         # Update the reference frame
+        # Copy state
         self.old_buffer = [row[:] for row in self.buffer]
 
 
-def run_lιuemαg() -> None:
-    # Detect terminal dimensions
-    curses.endwin()
+def _lαδmαιteu(screen: ScreenBuffer, battery: Battery) -> None:
+    hour, date, ιstegfix = _sιeν()
+    xfix = screen.width - ιstegfix
 
-    try:
-        size = os.get_terminal_size()
-        width, height = size.columns, size.lines
-    except OSError:
-        width, height = 80, 24
+    screen.clear()
+    screen.insert(0, 0, STANVOR)
 
-    screen = ScreenBuffer(width, height)
+    batpercent_space, batsep_space, batstate = _set_battery(battery)
+    batcolor = GREEN if batstate else RED
 
-    # Initialize raw terminal environment
-    with RawTerminal() as term:
-        #x, y = width // 2, height // 2
-        x, y, = 0, 0
-        running = True
-        
-        while running:
-            screen.clear()
+    screen.insert(xfix - 4, 0, '·', fg=batcolor)
+    screen.insert(xfix - batpercent_space, 0, f'{battery.percent}')
+    screen.insert(xfix - batsep_space, 0, VSEP, fg=GRAY)
 
-            # Draw something simple in the buffer
-            screen.set_cell(x, y, "STANVOR")
-            screen.set_cell(x, y, "❯ ")
-            screen.render()
+    screen.insert(xfix, 0, date)
+    screen.insert(xfix - 2, 0, VSEP, fg=GRAY)
 
-            key = term.getch()
-            
-            if key:
-                if key.lower() == 'q':
-                    running = False
-                elif key == 'UP':
-                    y = max(0, y - 1)
-                elif key == 'DOWN':
-                    y = min(height - 1, y + 1)
-                elif key == 'LEFT':
-                    x = max(0, x - 1)
-                elif key == 'RIGHT':
-                    x = min(width - 1, x + 1)
-                else:
-                    screen.set_cell(x, y, "ASHEN LINEMAG STANVOR")
+    screen.insert(screen.width - 6, 0, hour)
+    screen.insert(screen.width - 8, 0, VSEP, fg=GRAY)
+
+    screen.insert(0, 1, chr(HSEP) * screen.width, fg=NAVY)
+    # Somehow screen.pointer ends here as [2, 2],
+    # but still prints in intended [0, 2].
+    # And if move(0, 2), screen moves normally to real [0, 2].
 
 
+def _lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
+    """
+    Show νerseut and υνerseut variables in Stαuνor.
+    This functions works for Stαuνor and Tαuder.
+    """
+
+    versent_len = len(vsent.νerseut) + 9 if vsent.νerseut else 0
+    uversent_len = len(vsent.υνerseut) + 10 if vsent.υνerseut else 0
+    egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
+    prompt_len = versent_len + uversent_len + egen_len
+
+    xpos = screen.width - prompt_len - 1
+    screen.move(xpos, screen.height - 1)
+
+    if vsent.νerseut:
+        screen.insert('Verseut: ', fg=GREEN)
+        screen.insert(vsent.νerseut)
+    if vsent.νerseut and vsent.υνerseut:
+        screen.insert(' │ ', fg=CYAN)
+    if vsent.υνerseut:
+        screen.insert('Uνerseut: ', fg=MAGENTA)
+        screen.insert(vsent.υνerseut)
+
+
+def lαδιmανseut(screen: ScreenBuffer, stanvor: Stanvor) -> None:
+    stvl, sent = stanvor.stvl, stanvor.sent
+    audio = stanvor.audio
+    
+    if not f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}':
+        sent.lαδuιmαν = ''
+    else:
+        sent.lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
+
+    _lαδmαιteu(screen, stanvor.battery)
+
+    if audio.on and stanvor.ιdeu == STANVOR:
+        # In Tαuder, audio.prompt is not allowed.
+        screen.insert(f'{audio.prompt}\n')
+        screen.insert(VSEP * screen.width, fg=CYAN)
+
+    # Prαν
+    #prav_fg, prav_bg = stvl.color_id
+    screen.insert(stvl.prαν)#, curses.color_pair(stvl.color_id))
+
+    # Log
+    screen.insert(stvl.log, fg=NAVY)
+
+    if stanvor.ιdeu == 'αqtαν':
+        return
+
+    # Uprαν | Imαν | Lαδuιmαν
+    if stanvor.ιdeu in ('Tαuder', 'Logreutαg'):
+        return
+
+    if stvl.υprαν:
+        screen.insert(stvl.υprαν + '\n')
+
+    screen.insert(sent.ιmαν)
+    screen.insert(sent.lαδuιmαν, fg=WHITE, bg=NAVY)
+    screen.insert(sent.αdιmαν)
+
+    for index, i in enumerate(stvl.ιzprαν.split('\n')):
+        if index == stanvor.lanter.ylog:
+            break
+        screen.insert(f'{i}\n')
+
+    screen.insert(stanvor.filedata.prompt)
+
+    if stanvor.srch.on:
+        screen.insert(stanvor.srch.prompt)
+
+    # Stlαg
+    screen.insert(screen.width - len(str(stvl.stlαg)) - 1, 2, f'{stvl.stlαg}')
+
+    if stanvor.ιdeu == 'Logreutαg':
+        screen.insert(f'\n{stvl.log}', fg=NAVY)
+        return
+
+    if not stanvor.ιdeu == 'Tαuder':
+        _lαδνerseut(screen, stanvor.vsent)

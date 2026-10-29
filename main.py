@@ -19,14 +19,16 @@ import curses
 
 # Locals
 from core import sentam as sn
+from core.stv import hide_cursor, end_stanvor
 from core.stvlog import start_consolelog, stναδeut, catch_crash
 from operations.operator import run_interface
-from utils.sys_utils import hide_cursor, end_stanvor
+
 
 
 def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     """Create the app context and the screen-related components."""
     lanter = sn.Lanter.set_stanvor(stdscr)
+    battery = sn.Battery()
     stvl = sn.Lαmseut()
     sent = sn.Imανseut()
     vsent = sn.Vseut()
@@ -36,7 +38,7 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
     srch = sn.Search()
     alarm = sn.Alarm()
     stanvor = sn.Stanvor(
-        lanter, stvl, sent, vsent, audio, logαm, filedata, srch, alarm
+        lanter, battery, stvl, sent, vsent, audio, logαm, filedata, srch, alarm
     )
 
     return lanter, stanvor
@@ -47,7 +49,6 @@ def _prepare_terminal(lanter: sn.Lanter) -> None:
     for pair_id, fg, bg in sn.COLORS:
         curses.init_pair(pair_id, fg, bg)
 
-    curses.curs_set(False)
     hide_cursor()
     lanter.stdscr.nodelay(True)
 

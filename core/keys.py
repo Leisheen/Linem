@@ -2,6 +2,9 @@
 # Name    |  Code point  |  Other 
 WAIT            = -1
 NULL            = 0         # ord('\0')
+SOH             = 1         # ord('\1') Start of heading
+STX             = 2         # ord('\2') Start of text
+ETX             = 3         # ord('\3') End of text
 CTL_C           = 3
 
 # SPECIAL KEYS
@@ -68,17 +71,17 @@ UPPER_CED       = 199       # ord('Ç')
 LOWER_CED       = 231       # ord('ç')
 
 # ARROWS
-DOWN            = 258       # curses.KEY_DOWN
-UP              = 259       # curses.KEY_UP
-LEFT            = 260       # curses.KEY_LEFT
-RIGHT           = 261       # curses.KEY_RIGHT
+DOWN            = 258       # KEY_DOWN
+UP              = 259       # KEY_UP
+LEFT            = 260       # KEY_LEFT
+RIGHT           = 261       # KEY_RIGHT
 
-HOME            = 262       # ord('Ć') / curses.KEY_HOME
-END             = 358       # ord('Ŧ') / curses.KEY_END
+HOME            = 262       # ord('Ć') / KEY_HOME
+END             = 358       # ord('Ŧ') / KEY_END
 # ↳ NO IDEA WHAT KEY IS THIS BUT RETURNS ' → ' IN VERMAT
 
 # FUNCTION
-F1              = 265       # curses.KEY_F1
+F1              = 265       # KEY_F1
 F2              = 266       # ..
 F3              = 267
 F4              = 268
@@ -90,31 +93,31 @@ F9              = 273
 F10             = 274
 F11             = 275
 F12             = 276
-SHF_F1          = 277       # ord('ĕ') / curses.KEY_F13
+SHF_F1          = 277       # ord('ĕ') / KEY_F13
 SHF_F2          = 278       # ord('Ė')
 SHF_F3          = 279       # ord('ė')
 SHF_F4          = 280       # ord('Ę')
 SHF_F12         = 288
 
 # ALT FUNCTION
-ALT_F1          = 301       # ord('ĭ') / curses.KEY_F37
+ALT_F1          = 301       # ord('ĭ') / KEY_F37
 ALT_F2          = 302       # ord('Į')
 ALT_F3          = 303       # ord('į')
 ALT_F5          = 305       # ord('ı')
 ALT_F6          = 306       # ord('Ĳ')
 ALT_F12         = 312
 
-DEL             = 330       # curses.KEY_DC
+DEL             = 330       # KEY_DC
 
 # NAV PAGES
 NPAGE           = 338       # ord('Œ')
 PPAGE           = 339       # ord('œ')
 
 SHF_TAB         = 351       # ord('ş')
-SLEFT           = 391       # ord('Ƈ') / curses.KEY_SLEFT
-SRIGHT          = 400       # ord('Ɛ') / curses.KEY_SRIGHT
-FN_I            = 331       # ord('ŋ') / curses.KEY_IC
-SHF_END         = 384       # ord('ƀ') / curses.KEY_SEND
+SLEFT           = 391       # ord('Ƈ') / KEY_SLEFT
+SRIGHT          = 400       # ord('Ɛ') / KEY_SRIGHT
+FN_I            = 331       # ord('ŋ') / KEY_IC
+SHF_END         = 384       # ord('ƀ') / KEY_SEND
 SHF_NEXT        = 394       # ord('Ɗ')
 SHF_PREVIOUS    = 396       # ord('ƌ')
 
@@ -145,15 +148,15 @@ CTL_PGUP        = 445       # ord('ƽ')
 CTL_PGDOWN      = 446       # ord('ƾ')
 
 # PAD
-PAD7            = 449       # ord('ǁ') / curses.KEY_A1
-PAD8            = 450       # ord('ǂ') / curses.KEY_A2
-PAD9            = 451       # ord('ǃ') / curses.KEY_A3
-PAD4            = 452       # ord('Ǆ') / curses.KEY_B1
-PAD5            = 453       # ord('ǅ') / curses.KEY_B2
-PAD6            = 454       # ord('ǆ') / curses.KEY_B3
-PAD1            = 455       # ord('Ǉ') / curses.KEY_C1
-PAD2            = 456       # ord('ǈ') / curses.KEY_C2
-PAD3            = 457       # ord('ǉ') / curses.KEY_C3
+PAD7            = 449       # ord('ǁ') / KEY_A1
+PAD8            = 450       # ord('ǂ') / KEY_A2
+PAD9            = 451       # ord('ǃ') / KEY_A3
+PAD4            = 452       # ord('Ǆ') / KEY_B1
+PAD5            = 453       # ord('ǅ') / KEY_B2
+PAD6            = 454       # ord('ǆ') / KEY_B3
+PAD1            = 455       # ord('Ǉ') / KEY_C1
+PAD2            = 456       # ord('ǈ') / KEY_C2
+PAD3            = 457       # ord('ǉ') / KEY_C3
 PADSLASH        = 458       # ord('Ǌ')
 PADENTER        = 459       # ord('ǋ')
 CTL_PADENTER    = 460
@@ -220,16 +223,16 @@ SHF_PADSTAR     = 532
 SHF_PADPLUS     = 533
 SHF_PADMINUS    = 534
 
-SUP             = 547       # ord('ȣ') / curses.KEY_SUP
-SDOWN           = 547       # ord('Ȥ') / curses.KEY_SDOWN
+SUP             = 547       # ord('ȣ') / KEY_SUP
+SDOWN           = 547       # ord('Ȥ') / KEY_SDOWN
 
 MAC_GREEKU      = 8191      # ord('ῡ')
 
 LEFT_ARROW      = 8594      # ord('→')
 
 # SEPARATORS
-HSEP            = 9472      # ord('─') / '\u2500' / curses.HORIZONTAL_SEP ?
-VSEP            = 9474      # ord('│') / '\u2505' / curses.VERTICAL_SEP ?
+HSEP            = 9472      # ord('─') / '\u2500' / HORIZONTAL_SEP ?
+VSEP            = 9474      # ord('│') / '\u2505' / VERTICAL_SEP ?
 
 PROMPT          = 10095     # ord('❯')
 
