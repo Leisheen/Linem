@@ -9,7 +9,7 @@ import os
 from core.sentam import STANVOR, Stanvor, Lanter
 from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
 from core.filesystem import log
-from core.keys import NUM0, F1, F2, F3, F4, NUM1, NUM2, NUM3, NUM4
+from core.curseskeys import NUM0, F1, F2, F3, F4, NUM1, NUM2, NUM3, NUM4
 from core.stv import mαιteu
 from core.stvlog import stνlαt
 

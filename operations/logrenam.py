@@ -7,7 +7,7 @@ from core.def_paths import (
     SAGET, MNCOMMANDER, PROSERV, PIANO, CITIES, VERKLAIT, FINALE,
     DAVINCI, DATASET, VSCODE, GDRIVE, GCAL, NOTION, MUSDEV
 )
-from core.keys import (
+from core.curseskeys import (
     F1, F2, F3, F4, F5, F6, F7, F8, F9, ALT_F1, SHF_PADSLASH, ALT_BSLASH 
 )
 
@@ -26,7 +26,6 @@ from logren.soshat import soδᾱt as soshat
 from logren.stv_programs import print_color, install_module
 from logren.tαuder import tαuder
 from logren.vermat import νermαt
-
 from utils.info import show_sys_info
 
 

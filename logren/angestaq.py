@@ -7,7 +7,7 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from core.keys import (
+from core.curseskeys import (
     WAIT, ESC, ENTER, BACK, NUM0, POINT, MINUS, CONCLUDE,
     UPPER_M, LOWER_M, UPPER_O, LOWER_O, LOWER_I
 )

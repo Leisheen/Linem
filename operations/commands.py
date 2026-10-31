@@ -3,7 +3,7 @@ import os
 
 from core.def_paths import INVASH, GCAL, GMAPS
 from core.filesystem import logreu_select
-from core.keys import (
+from core.curseskeys import (
     UP, DOWN, ESC, UPPER_D, LOWER_D, UPPER_Q, LOWER_Q, SHF_F12, CTL_PADSTOP,
     PADPLUS, PADMINUS, PADSTAR, PADSLASH, SHF_PADPLUS, PADMINUS, SHF_PADMINUS,
     SHF_PADENTER, CTL_PADSLASH, ALT_PADSLASH

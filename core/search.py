@@ -1,7 +1,7 @@
 """Search module."""
 import os
 
-from core.keys import CTL_UP, CTL_DOWN
+from core.curseskeys import CTL_UP, CTL_DOWN
 from core.sentam import STANVOR, Stanvor, Search
 from core.stvlog import stνlαt
 

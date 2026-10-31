@@ -1,7 +1,7 @@
 import curses
 from dataclasses import dataclass
 
-from core.keys import ESC, ENTER, UPPER_A, LOWER_A, UPPER_B, LOWER_B, ORD_O
+from core.curseskeys import ESC, ENTER, UPPER_A, LOWER_A, UPPER_B, LOWER_B, ORD_O
 from core.stv import mαιteu, process_handlers
 from core.sentam import Stanvor, Lanter
 

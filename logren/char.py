@@ -3,7 +3,7 @@ import curses
 import pyperclip
 from dataclasses import dataclass
 
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import Lanter
 from core.stv import mαιteu
 from utils.stv_utils import copy_to_clipboard

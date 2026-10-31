@@ -6,7 +6,7 @@ import webbrowser
 from dataclasses import dataclass, field
 
 from core.def_paths import INVASH, YOGA
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import Stanvor, Lanter
 from core.stv import mαιteu, process_handlers
 from core.stvlog import stνlαt, stναδeut

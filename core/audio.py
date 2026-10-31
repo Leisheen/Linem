@@ -4,7 +4,7 @@ with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame
 
-from core.keys import (
+from core.curseskeys import (
     LESS, GREATER, SHF_F2, SHF_F3, QUESTION, ALT_F1, ALT_F2, SHF_F2, SHF_F3
 )
 from core.sentam import STANVOR, Stanvor, Audio, Lαmseut

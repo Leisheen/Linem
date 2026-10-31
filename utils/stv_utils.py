@@ -11,9 +11,9 @@ from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
 from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
-import core.keys as key
+import core.curseskeys as key
 from core.def_paths import EXCLUDED
-from core.keys import BACK, MUSSELAITH, PAD
+from core.curseskeys import BACK, MUSSELAITH, PAD
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
 from core.stv import lestαq, hide_cursor
 from core.stvlog import stνlαt, stlαgreu, set_stνlαt

@@ -2,7 +2,7 @@ import curses
 import os
 import webbrowser
 
-from core.keys import CONCLUDE, F12
+from core.curseskeys import CONCLUDE, F12
 from core.sentam import STANVOR, Lanter
 from core.def_paths import INVASH, MANSLAG
 from core.stv import mαιteu

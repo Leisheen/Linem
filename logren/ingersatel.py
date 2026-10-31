@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from googlesearch import search
 from ollama_call import call_ollama
 
-import core.keys as key
+import core.curseskeys as key
 from core.stv import mαιteu, lαmνerseut, process_handlers
 from core.def_paths import AI
 from core.sentam import Stanvor, Imανseut, Logreuαm

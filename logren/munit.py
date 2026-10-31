@@ -16,7 +16,7 @@ import pygame # 1.6s
 from dataclasses import dataclass, field
 
 from core.def_paths import ABLETON, MPX, FINALE
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import stvrefresh, mαιteu, lestαq, process_handlers
 from core.stvlog import stνlαt, stlαgreu

@@ -3,7 +3,7 @@ import curses
 import os
 
 from core.def_paths import LINEMAG
-from core.keys import ESC, ENTER
+from core.curseskeys import ESC, ENTER
 from core.sentam import STANVOR, Stanvor, Lanter
 from core.stv import mαιteu, stop_stanvor, set_sysdefaults, restore_cursor, hide_cursor
 from core.stvlog import stνlαt, lαmlιuem, set_log

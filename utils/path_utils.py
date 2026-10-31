@@ -7,7 +7,7 @@ from dataclasses import dataclass, field, fields
 from typing import List, Callable
 
 from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
-from core.keys import (
+from core.curseskeys import (
     COMPARE, ESC, ENTER, SEND, UP, DOWN, VERTICAL, F1, F2, F3, TAB, SHF_TAB
     )
 from core.sentam import STANVOR, Imανseut, Lanter, Stanvor, Logreuαm

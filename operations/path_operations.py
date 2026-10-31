@@ -1,7 +1,7 @@
 """Path operations for Lιuemαg Stαuνor."""
 import os
 
-import core.keys as key
+import core.curseskeys as key
 import utils.stv_utils as sutils
 
 from core.stv import lestαq, process_handlers, reset

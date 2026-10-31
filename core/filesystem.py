@@ -2,7 +2,7 @@
 import os
 
 from core.def_paths import EXCLUDED
-from core.keys import NPAGE, PPAGE, TAB, SHF_TAB
+from core.curseskeys import NPAGE, PPAGE, TAB, SHF_TAB
 from core.sentam import STANVOR, Stanvor
 from core.stvlog import stναδeut
 

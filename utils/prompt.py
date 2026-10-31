@@ -1,5 +1,5 @@
 """Prompt utils for Stαuνor. Maybe can go to core."""
-from core.keys import (
+from core.curseskeys import (
     UP, DOWN, LEFT, RIGHT, HOME, END,
     SLEFT, SRIGHT, CTL_LEFT, CTL_RIGHT, ALT_LEFT, ALT_RIGHT
 )

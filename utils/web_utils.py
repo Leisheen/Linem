@@ -1,7 +1,7 @@
 import webbrowser
 from dataclasses import dataclass
 
-from core.keys import ESC, ENTER, BACK, WAIT
+from core.curseskeys import ESC, ENTER, BACK, WAIT
 from core.sentam import Lanter
 from core.stv import mαιteu, process_handlers
 from core.stvlog import stνlαt

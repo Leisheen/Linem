@@ -1,6 +1,7 @@
 import webbrowser
 
-from core.keys import CTL_ENTER, TAB, DEL, ALT_DEL, HORIZONTAL, SPECIAL
+import core.keys as nk
+from core.curseskeys import CTL_ENTER, TAB, DEL, ALT_DEL, HORIZONTAL, SPECIAL
 from core.sentam import Stanvor, Imανseut
 from core.stv import process_handlers
 
@@ -25,6 +26,27 @@ def tαg(key: int, stanvor: Stanvor) -> Imανseut:
         (lambda: check_movefixes(key), lambda: move_inline(key, sent)),
         (lambda: key in sentam_stagen, lambda: set_sentam(key, stanvor)),
         (lambda: key in HORIZONTAL,    lambda: move_horizontal(key, sent)),
+        (lambda: key == CTL_ENTER,     lambda: webbrowser.open(sent.ιmαν)),
+        (lambda: key not in SPECIAL,   lambda: addchar(key, sent))
+    ))
+
+    return sent
+
+
+def native_tαg(key: int, stanvor: Stanvor) -> Imανseut:
+    """Global input manager."""
+    sent = stanvor.sent
+
+    sent.ιmαν, key = check_globalkeys(stanvor, key, logimprol)
+
+    process_handlers((
+        (lambda: key == nk.TAB,           lambda: tab_to_imav(sent)),
+        (lambda: key == nk.DEL,           lambda: del_char(stanvor.sent)),
+        #(lambda: key == nk.ALT_DEL,       lambda: clear_remaining(stanvor)),
+        (lambda: key in line_limits,   lambda: line_limits[key](sent)),
+        (lambda: check_movefixes(key), lambda: move_inline(key, sent)),
+        (lambda: key in sentam_stagen, lambda: set_sentam(key, stanvor)),
+        (lambda: key in nk.HORIZONTAL,    lambda: move_horizontal(key, sent)),
         (lambda: key == CTL_ENTER,     lambda: webbrowser.open(sent.ιmαν)),
         (lambda: key not in SPECIAL,   lambda: addchar(key, sent))
     ))

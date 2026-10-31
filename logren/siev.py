@@ -3,7 +3,7 @@ import curses
 import time
 
 import core.stvlog as stvlog
-from core.keys import ESC, ENTER, LOWER_Q, NUM1, NUM2, NUM3, NUM4
+from core.curseskeys import ESC, ENTER, LOWER_Q, NUM1, NUM2, NUM3, NUM4
 from core.sentam import STANVOR, Stanvor, Lanter, Alarm
 from core.stv import mαιteu
 from operations.tag import tαg

@@ -6,7 +6,7 @@ import os
 from dataclasses import dataclass, field, fields
 
 from core.def_paths import SAGET
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import STANVOR, Stanvor, Lanter, Vseut
 from core.stv import lestαq, process_handlers
 from core.stvlog import stνlαt, stναδeut, stlαgreu

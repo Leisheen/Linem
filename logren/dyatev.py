@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from tabulate import tabulate
 
 from core.def_paths import INVASH
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import Stanvor, Lanter, Lαmseut
 from core.stv import mαιteu, process_handlers
 from core.stvlog import stνlαt, stναδeut

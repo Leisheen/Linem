@@ -16,16 +16,17 @@ Roadmap:
 """
 
 import curses
+import sys
 
 # Locals
 from core import sentam as sn
 from core.stv import hide_cursor, end_stanvor
-from core.stvlog import start_consolelog, stναδeut, catch_crash
+from core.stvlog import stναδeut, catch_crash
 from operations.operator import run_interface
 
 
 
-def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
+def _build_stanvor(stdscr: curses.window) -> sn.Stanvor:
     """Create the app context and the screen-related components."""
     lanter = sn.Lanter.set_stanvor(stdscr)
     battery = sn.Battery()
@@ -41,7 +42,7 @@ def _build_stanvor(stdscr: curses.window) -> tuple[sn.Lanter, sn.Stanvor]:
         lanter, battery, stvl, sent, vsent, audio, logαm, filedata, srch, alarm
     )
 
-    return lanter, stanvor
+    return stanvor
 
 
 def _prepare_terminal(lanter: sn.Lanter) -> None:
@@ -55,10 +56,8 @@ def _prepare_terminal(lanter: sn.Lanter) -> None:
 
 def main(stdscr: curses.window) -> None:
     """Core of the Stαuνor."""
-    lanter, stanvor = _build_stanvor(stdscr)
+    stanvor = _build_stanvor(stdscr)
     _prepare_terminal(stanvor.lanter)
-    start_consolelog(lanter)
-
     run_interface(stanvor)
 
 

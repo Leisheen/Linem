@@ -6,7 +6,7 @@ import numpy as np
 from dataclasses import dataclass
 from typing import List
 
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import Stanvor
 from core.stv import mαιteu
 from core.stvlog import stναδeut

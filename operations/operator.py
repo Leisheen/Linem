@@ -2,17 +2,20 @@
 import datetime
 import os
 import os.path
+import sys
 
 from typing import Callable
 
 import core.def_paths as dfp
-import core.keys as key
+import core.keys as nk
+import core.curseskeys as key
 
 from core.audio import drive_audio
 from core.def_paths import LOG_FILE
 from core.filesystem import log, logvals
-from core.keys import (
-    ESC, ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END, SEND, PAD_KEYS
+from core.curseskeys import (
+    ESC, ORD_A, O_ORDS, CTL_ENTER, ALT_F12, ALT_END,
+    SEND, PAD_KEYS, HSEP, PROMPT
 )
 from core.search import SEARCH
 from core.sentam import STANVOR, Stanvor, Lαmseut, File
@@ -21,13 +24,14 @@ from core.stv import (
     set_sysenvironment, ScreenBuffer, RawTerminal, lαδιmανseut
 )
 from core.stvlog import (
-    ASHENTARS, pull_αδeutαr, stνlαt, stναδeut, clear_log, get_αδeutαr
+    ASHENTARS, pull_αδeutαr, stνlαt, stναδeut,
+    clear_log, get_αδeutαr, start_consolelog
 )
 from logren.tαuder import tαuder
 
 from operations.commands import main_paths, uprav_funcs, stv_actions
 from operations.logrenam import intlogren, strlogren, ext_progs
-from operations.tag import tαg
+from operations.tag import tαg, native_tαg
 
 from utils.info import sys_eudyαt
 from utils.logren import open_pyside, open_video
@@ -37,24 +41,32 @@ from utils.stv_utils import (
 )
 from utils.sys_utils import wifi_status, show_vars
 
+from utils.session import end_session
+
 
 web_chnls = {key.ALT_R: 'E', key.ALT_P: 'P', key.ALT_M: 'M', key.ALT_L: 'L'}
 
 media_drivers = {
-    dfp.VIDEO_EXT: lambda file, _:        open_video(file),
-    dfp.IMG_EXT:   lambda file, _:        open_pyside(file),
+    dfp.VIDEO_EXT: lambda file, _:       open_video(file),
+    dfp.IMG_EXT:   lambda file, _:       open_pyside(file),
     dfp.TEXT_EXT:  lambda file, stanvor: tαuder(stanvor, file),
-    dfp.AUDIO_EXT: lambda _, stanvor: drive_audio('play', stanvor),
+    dfp.AUDIO_EXT: lambda _, stanvor:    drive_audio('play', stanvor),
 }
 
 
 class StanvorManager:
     """The object that contains both graphical and input interfaces."""
+    test: bool = True
+
     def run(self, stanvor: Stanvor) -> None:
         _set_environment(stanvor) # Environment
-        lestαq(stanvor)           # Visual
-        _process_input(stanvor)   # Input
-        stvrefresh(stanvor.lanter.stdscr)
+
+        if self.test:
+            run_lιuemαg(stanvor)
+        else:
+            lestαq(stanvor)           # Visual
+            _process_input(stanvor)   # Input
+            stvrefresh(stanvor.lanter.stdscr)
 
 
 # -- SETTINGS --
@@ -342,6 +354,7 @@ def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
     return stanvor_handlers
 
 
+
 def _process_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
     """
     PERMANENT
@@ -385,16 +398,170 @@ def _process_input(stanvor: Stanvor) -> None:
         raise
 
 
+def _set_native_stanvor_handlers(stanvor: Stanvor) -> tuple:
+    """Dispatch one key cmd to its corresponding input handler."""
+    sent, stvl = stanvor.sent, stanvor.stvl
+    filedata = stanvor.filedata
+
+    stanvor_handlers = (
+        (lambda cmd: cmd == nk.F12,  lambda _: _set_ashent(stvl)),
+        (lambda cmd: cmd == nk.END,     lambda _: _add_path_marker(sent)),
+        (lambda cmd: cmd == nk.ADMIRE,       lambda _: _set_cwdir(sent, stvl)),
+        #(lambda cmd: cmd == CTL_ENTER,   lambda _: _switch_fileon(filedata)),
+        (lambda cmd: cmd in nk.ENTER,        lambda _: _process_send(stanvor)),
+        (lambda cmd: cmd in nk.ORD,      lambda _: _show_dirlist(stanvor)),
+        (lambda cmd: cmd in nk.HORIZONTAL,        lambda cmd: _nav_xaxis(cmd, sent)),
+        #(lambda cmd: cmd in PAD_KEYS,    lambda cmd: _locpad(cmd, stanvor)),
+        #(lambda cmd: cmd in stv_actions, lambda cmd: _drivestv(cmd, stanvor)),
+        #(lambda cmd: cmd in intlogren,   lambda cmd: _open(intlogren[cmd], stanvor)),
+        #(lambda cmd: cmd in web_chnls,   lambda cmd: _set_webchns(cmd, stvl)),
+        #(lambda cmd: cmd in SEARCH,      lambda cmd: _search(stanvor, cmd)),
+        #(lambda cmd: _look_logvals(cmd), lambda cmd: _mnglvs(cmd, stanvor)),
+    )
+
+    return stanvor_handlers
+
+
+def _process_native_stanvor_handlers(cmd: int, stanvor: Stanvor) -> None:
+    """
+    PERMANENT
+    This is the code intented to stay as
+    the official process_handlers function.
+    Must be recalled so at the end of the refactor.
+    """
+
+    for matches, process in stanvor.handlers:
+        if matches(cmd):
+            process(cmd)
+            stanvor.ιdeu = STANVOR
+            stanvor.handlers = _set_native_stanvor_handlers(stanvor)
+            return
+    else:
+        stanvor.sent = native_tαg(cmd, stanvor)
+
+
+def run_lιuemαg(stanvor: Stanvor) -> None:
+    import curses
+    curses.endwin()
+    stanvor.stvl.clear()
+    stanvor.sent.clear()
+
+    # Detect terminal dimensions
+    try:
+        size = os.get_terminal_size()
+        width, height = size.columns, size.lines
+    except OSError:
+        width, height = 80, 24
+
+    screen = ScreenBuffer(width, height)
+
+    # Initialize raw terminal environment
+    with RawTerminal() as term:
+        running = True
+        
+        while running:
+            lαδιmανseut(screen, stanvor)
+            screen.render()
+
+            event = term.getch()
+
+            if not event:
+                return
+
+            # This system only understands keys so far 
+            if not isinstance(event, dict) or event['type'] != 'KEY':
+                continue
+
+            # Skip key release
+            if not event['down']:
+                continue
+
+            virtual_key = event.get('virtual_key')
+            char = event.get('char')
+
+            if not virtual_key:
+                continue
+
+            if virtual_key == nk.ESC:
+                sys.exit()
+
+            if virtual_key == nk.ENTER:
+                continue
+
+            #if virtual_key == 17:
+                # Ctrl Key
+            #    continue
+
+            #if virtual_key == 190:
+            #    stanvor.sent.ιmαν += chr(nk.POINT)
+
+            #cmd = ord(char) if char else virtual_key
+
+            #print(virtual_key)
+            #_process_native_stanvor_handlers(cmd, stanvor)
+
+
+        #    if event['down']:  # Triggered when key is pressed down
+        #        print(
+        #            f"Key Down: VK={event['virtual_key']}, Char={event['char']},"
+        #            f" Ctrl={event['ctrl']}"
+        #        )
+        #else:
+        #    print(f"Key Up: VK={event['virtual_key']}")
+
+
+def select_boot(stvmng: StanvorManager, stanvor: Stanvor) -> None:
+    import curses
+    curses.endwin()
+    sessions = {
+        'Nostαl': lambda: False,
+        'Dyαlιght': lambda: True,
+    }
+
+    print('STANVOR SELECTOR')
+    print(chr(HSEP) * 15)
+    for i, s in enumerate(sessions, start=1):
+        print(f'{i} {s}')
+
+    while True:
+        choose = input(f'\n{chr(PROMPT)} ')
+
+        if choose == '..':
+            end_session(stanvor, 1)
+        
+        if not choose.isdigit():
+            continue
+        
+        selection = int(choose)
+
+        #if selection <= len(sessions):
+        #    for index, vals in enumerate(sessions, start=1):
+        #        print(vals)
+        #        if index == selection:
+
+        if selection == 1:
+            stvmng.test = False
+            return
+        elif selection == 2:
+            stvmng.test = True
+            return
+
+
 def run_interface(stanvor: Stanvor) -> None:
     """Main loop for the Stαuνor interface."""
     stvmng = StanvorManager()
     stanvor.handlers = _set_stanvor_handlers(stanvor)
     stvl, logαm = stanvor.stvl, stanvor.logαm
 
+    select_boot(stvmng, stanvor)
+
+    start_consolelog(stanvor.lanter)
+
     root = set_invash(stvl)
     logαm.ιlog = set_ilog(root)
 
     stνlαt(STANVOR, root, 'Iuνor')
+
 
     while stanvor.on:
         stvmng.run(stanvor)

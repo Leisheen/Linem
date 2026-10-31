@@ -2,7 +2,7 @@
 import curses
 import os
 
-from core.keys import ENTER, SEND, ESC
+from core.curseskeys import ENTER, SEND, ESC
 from core.sentam import STANVOR, Stanvor
 from core.stv import mαιteu, lestαq, reset
 from core.stvlog import lαmlιuem, stναδeut, stνlαt

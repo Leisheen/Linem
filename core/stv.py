@@ -19,6 +19,7 @@ before the UI is redrawn.
 """
 
 import curses
+import ctypes
 import datetime
 import os
 import psutil
@@ -28,7 +29,7 @@ import time
 from core import posix
 from core import win
 
-from core.keys import HSEP, VSEP, ESC
+from core.curseskeys import HSEP, VSEP
 from core.colors import WHITE, RED, NAVY, GREEN, GRAY, CYAN, MAGENTA
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import STANVOR, Battery, Lαmseut, Stanvor, Lanter, Vseut
@@ -338,6 +339,7 @@ def stop_stanvor(stanvor: Stanvor) -> None:
 # -- CONFIG --
 # Text cursor
 def hide_cursor() -> None:
+    curses.curs_set(False)
     sys.stdout.write('\033[?25l')
     sys.stdout.flush()
 
@@ -369,11 +371,13 @@ def end_stanvor() -> None:
 class RawTerminal:
     """Context manager to handle raw input and screen cleanup safely."""
     def __init__(self):
-        self.old_settings = None
+        self.in_handle = None
+        self.old_in_mode = ctypes.c_ulong()
     
     def __enter__(self) -> "RawTerminal":
         if win.IS_WINDOWS:
             win.enable_ansi()
+            win.set_input(self)
 
         # Hide cursor (\x1b[?25l) and clear screen (\x1b[2J)
         sys.stdout.write("\x1b[?25l\x1b[2J")
@@ -389,13 +393,17 @@ class RawTerminal:
         sys.stdout.write("\x1b[?25h\x1b[0m\x1b[H")
         sys.stdout.flush()
 
-        if not win.IS_WINDOWS:
+        if win.IS_WINDOWS and self.in_handle:
+            kernel32 = ctypes.windll.kernel32
+            # Restore original console input mode
+            kernel32.SetConsoleMode(self.in_handle, self.old_in_mode)
+        else:
             posix.restore_terminal(self)
 
-    def getch(self, timeout=0.05) -> int | None:
+    def getch(self, timeout=0.05) -> int | dict | None:
         """Non-blocking key reader."""
         tmout = timeout
-        return win.getkey() if win.IS_WINDOWS else posix.getkey(tmout)
+        return win.getkey(self) if win.IS_WINDOWS else posix.getkey(tmout)
 
 
 class ScreenBuffer:
@@ -462,8 +470,6 @@ class ScreenBuffer:
 
         self.pointer = [x, y]
 
-
-
     def render(self):
         output = []
         # Sentinel values force an explicit foreground/background reset on the
@@ -472,9 +478,31 @@ class ScreenBuffer:
         _unset = object()
         current_fg, current_bg = _unset, _unset
 
+        def update_foreground(fg: object) -> object:
+            """Update foreground color if it changed."""
+            if fg != current_fg:
+                if fg:
+                    # Set Foreground RGB: \x1b[38;2;{r};{g};{b}m
+                    output.append(f"\x1b[38;2;{fg[0]};{fg[1]};{fg[2]}m")
+                else:
+                    output.append("\x1b[39m") # Reset foreground
+            return fg
+
+        def update_background(bg: object) -> object:
+            """Update Background color if it changed."""
+            if bg != current_bg:
+                if bg:
+                    # Set Background RGB: \x1b[48;2;{r};{g};{b}m
+                    output.append(f"\x1b[48;2;{bg[0]};{bg[1]};{bg[2]}m")
+                else:
+                    output.append("\x1b[49m") # Reset background
+            return bg
+
+
         for y in range(self.height):
             for x in range(self.width):
                 new_cell = self.buffer[y][x]
+
                 # Only write cells that changed since the last frame
                 if new_cell != self.old_buffer[y][x]:
                     char, fg, bg = new_cell
@@ -483,24 +511,12 @@ class ScreenBuffer:
                     output.append(f"\x1b[{y+1};{x+1}H")
 
                     # 2. Update Foreground color if it changed
-                    if fg != current_fg:
-                        if fg:
-                            # Set Foreground RGB: \x1b[38;2;{r};{g};{b}m
-                            output.append(f"\x1b[38;2;{fg[0]};{fg[1]};{fg[2]}m")
-                        else:
-                            output.append("\x1b[39m") # Reset foreground
-                        current_fg = fg
+                    current_fg = update_foreground(fg)
 
                     # 3. Update Background color if it changed
-                    if bg != current_bg:
-                        if bg:
-                            # Set Background RGB: \x1b[48;2;{r};{g};{b}m
-                            output.append(f"\x1b[48;2;{bg[0]};{bg[1]};{bg[2]}m")
-                        else:
-                            output.append("\x1b[49m") # Reset background
-                        current_bg = bg
+                    current_bg = update_background(bg)
 
-                    # 4. Print the actual character
+                    # 4. Append the actual character
                     output.append(char)
         
         if output:
@@ -508,11 +524,12 @@ class ScreenBuffer:
             # Always append a style reset at the end of a flush batch
             # to prevent color bleeding
             output.append("\x1b[0m")
+
+            # Print screen
             sys.stdout.write("".join(output))
             sys.stdout.flush()
 
         # Update the reference frame
-        # Copy state
         self.old_buffer = [row[:] for row in self.buffer]
 
 

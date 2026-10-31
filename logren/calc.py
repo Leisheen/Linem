@@ -1,7 +1,7 @@
 """Calculator for Lιuemαg Stαuνor"""
 from dataclasses import dataclass
 
-from core.keys import *
+from core.curseskeys import *
 from core.sentam import STANVOR, Stanvor
 from core.stv import lestαq, process_handlers
 from core.stvlog import stνlαt
