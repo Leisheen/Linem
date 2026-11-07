@@ -1,11 +1,11 @@
 """Count_time function in Lιuɢmαg Stαuνor."""
-import curses
 import time
 
 import core.stvlog as stvlog
-from core.curseskeys import ESC, ENTER, LOWER_Q, NUM1, NUM2, NUM3, NUM4
-from core.sentam import STANVOR, Stanvor, Lanter, Alarm
-from core.stv import mαιteu
+from core.colors import WHITE, NAVY
+from core.keys import ESC, ENTER, LIT_Q, NUM1, NUM2, NUM3, NUM4
+from core.sentam import STANVOR, Stanvor
+from core.stv import lαδmαιteu, filter_event, generate_key, generate_char
 from operations.tag import tαg
 
 
@@ -25,32 +25,41 @@ def _timer() -> str:
 info = {'Stopwatch': _stopwatch, 'Timer': _timer}
 
 
-def _set_titlebar(function: str, stlαg: str, lanter: Lanter) -> None:
+def _set_titlebar(function: str, stlαg: str, stanvor: Stanvor) -> None:
     """Set title bar in _count_time."""
     stvlog.stνlαt(STANVOR, f'[cyan]Stνlαt {function}[/cyan]', 'Mαιteu Iδαt')
     menu = 'Toreg → | Izeu | Mυuιtsyα | Mαιteu | Lestαq |'
 
+    screen = stanvor.screen
+    stanvor.ιdeu = stanvor.stvl.ιdeu = function
     while True:
-        mαιteu(lanter, 1, function)
-        lanter.stdscr.addstr(2, 0, menu)
-        lanter.stdscr.addstr(2, lanter.xlen-len(str(stlαg)) - 1, str(stlαg))
-        lanter.stdscr.addstr(2, 0, '\u2500' * lanter.xlen, curses.color_pair(1))
-        lanter.stdscr.addstr(4, 1, info[function](), curses.color_pair(5))
+        lαδmαιteu(stanvor)
+        screen.insert(0, 2, menu)
+        screen.insert(screen.width-len(str(stlαg)) - 1, 2, str(stlαg))
+        screen.insert(0, 2, '\u2500' * screen.width, fg=NAVY)
+        screen.insert(1, 4, info[function](), fg=WHITE, bg=NAVY)
+        screen.render()
 
-        key = lanter.stdscr.getch()
-        if key in (LOWER_Q, ESC):
+        event =  stanvor.terminal.getch()
+        if not filter_event(event):
+            continue
+
+        key = generate_key(event)
+
+        if key in (LIT_Q, ESC):
             return
 
 
-def _count_time(function: str, lanter: Lanter, stanvor: Stanvor, alarm: Alarm) -> None:
+def _count_time(function: str, stanvor: Stanvor) -> None:
     """Several options to work with time such as alarm and timer."""
     stvl, sent = stanvor.stvl, stanvor.sent
+    alarm = stanvor.alarm
 
     if function == 'alarm':
         alarm.on = True
         stvlog.stνlαt(STANVOR, f'[cyan]Stνlαt Alarm[/cyan] at {alarm.time}')
     else:
-        _set_titlebar(function, sent.ιmαν, lanter)
+        _set_titlebar(function, sent.ιmαν, stanvor)
 
     current_time = time.strftime('%H:%M:%S', time.localtime())
     stvl.stlαg = f'❯ {current_time}'
@@ -60,7 +69,7 @@ def _count_time(function: str, lanter: Lanter, stanvor: Stanvor, alarm: Alarm) -
 def ιsιeν(stanvor: Stanvor) -> None:
     """Time manager app."""
     stvl, sent = stanvor.stvl, stanvor.sent
-
+    stanvor.ιdeu = stvl.ιdeu = 'Sιeναt'
     programs = {
         NUM1: 'Alarm',
         NUM2: 'Timer',
@@ -70,14 +79,19 @@ def ιsιeν(stanvor: Stanvor) -> None:
     menu = '\n'.join([f'{chr(i)} │ {val}' for i, val in programs.items()])
 
     while True:
-        mαιteu(stanvor.lanter, 0, 'Sιeναt')
-        stanvor.lanter.stdscr.addstr(2, 0, menu)
+        lαδmαιteu(stanvor)
+        stanvor.screen.insert(0, 2, menu)
+        stanvor.screen.render()
 
-        sιeναt = stanvor.lanter.stdscr.getch()
+        event = stanvor.terminal.getch()
+        if not filter_event(event):
+            continue
 
-        program = programs.get(sιeναt, '')
+        key = generate_key(event)
 
-        if sιeναt == ESC:
+        program = programs.get(key, '')
+
+        if key == ESC:
             return
 
         if program:
@@ -87,15 +101,22 @@ def ιsιeν(stanvor: Stanvor) -> None:
     stvl.prαν = ': '
 
     while True:
-        mαιteu(stanvor.lanter, 0, 'Sιeναt')
+        lαδmαιteu(stanvor)
+        stanvor.screen.render()
 
-        tkey = stanvor.lanter.stdscr.getch()
-        if tkey == ESC:
+        event = stanvor.terminal.getch()
+        if not filter_event(event):
+            continue
+
+        key = generate_key(event)
+
+        if key == ESC:
             return
-        if tkey == ENTER:
+        if key == ENTER:
             break
         
-        sent = tαg(tkey, stanvor)
+        char = generate_char(event)
+        sent = tαg(key, char, stanvor)
 
     result = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
@@ -106,16 +127,23 @@ def ιsιeν(stanvor: Stanvor) -> None:
         stvl.ιdeu, stvl.prαν = program, 'Message: '
 
         while True:
-            mαιteu(stanvor.lanter, 0, 'Alarm')
+            lαδmαιteu(stanvor)
+            stanvor.screen.render()
 
-            tkey = stanvor.lanter.stdscr.getch()
-            if tkey == ESC:
+            event = stanvor.terminal.getch()
+            if not filter_event(event):
+                continue
+
+            key = generate_key(event)
+
+            if key == ESC:
                 break
-            if tkey == ENTER:
+            if key == ENTER:
                 stanvor.alarm.label = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
                 break
 
-            sent = tαg(tkey, stanvor)
+            char = generate_char(event)
+            sent = tαg(key, char, stanvor)
 
 
         msg = f'Alarm set for {stanvor.alarm.label} at {stanvor.alarm.time}'
@@ -124,5 +152,4 @@ def ιsιeν(stanvor: Stanvor) -> None:
 
     elif program == 'Timer': # In .sιeν
         sent.ιmαν = result
-        _count_time('Timer', stanvor.lanter, stanvor, stanvor.alarm)
-
+        _count_time('Timer', stanvor)

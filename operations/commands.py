@@ -1,13 +1,9 @@
 """Main commands for for Lιuemαg Stαuνor command line prompt."""
 import os
 
+import core.keys as nk
 from core.def_paths import INVASH, GCAL, GMAPS
 from core.filesystem import logreu_select
-from core.curseskeys import (
-    UP, DOWN, ESC, UPPER_D, LOWER_D, UPPER_Q, LOWER_Q, SHF_F12, CTL_PADSTOP,
-    PADPLUS, PADMINUS, PADSTAR, PADSLASH, SHF_PADPLUS, PADMINUS, SHF_PADMINUS,
-    SHF_PADENTER, CTL_PADSLASH, ALT_PADSLASH
-)
 from core.search import set_search, switch_search
 from core.stv import reset
 
@@ -21,8 +17,8 @@ from utils.sys_utils import monitor_info, network_status
 
 
 web_links = { # For euναrt and νermαt
-    (UPPER_D, LOWER_D): ('Dyeναstαq', GCAL),
-    (UPPER_Q, LOWER_Q): ('Qαmpαr', GMAPS),
+    nk.LIT_D: ('Dyeναstαq', GCAL),
+    nk.LIT_Q: ('Qαmpαr', GMAPS),
 }
 
 main_paths = {
@@ -42,18 +38,18 @@ uprav_funcs = {
 }
 
 stv_actions = {
-    ESC:          lambda stanvor: reset(stanvor),
-    SHF_PADMINUS: lambda stanvor: reset(stanvor),
-    SHF_PADENTER: lambda stanvor: restart_stanvor(stanvor),
-    CTL_PADSLASH: lambda stanvor: set_search(stanvor),
-    ALT_PADSLASH: lambda stanvor: switch_search(stanvor.srch),
-    PADPLUS:      lambda stanvor: logreutαg('Eudαμl', stanvor),
-    PADMINUS:     lambda stanvor: logreutαg('Aqeμr', stanvor),
-    SHF_PADPLUS:  lambda stanvor: logreuιδαt('Copy', stanvor),
-    PADSTAR:      lambda stanvor: logreuιδαt('Lαιue', stanvor),
-    PADSLASH:     lambda stanvor: logreuιδαt('Verse', stanvor),
-    UP:           lambda stanvor: logreu_select('up', stanvor),
-    DOWN:         lambda stanvor: logreu_select('down', stanvor),
-    SHF_F12:      lambda stanvor: end_session(stanvor, 0),
-    CTL_PADSTOP:  lambda stanvor: end_session(stanvor, 1),
+    nk.ESC:          lambda stanvor: reset(stanvor),
+    nk.SHF_PADMINUS: lambda stanvor: reset(stanvor),
+    nk.SHF_ENTER:    lambda stanvor: restart_stanvor(stanvor), # PADENTER..
+    nk.CTL_PADSLASH: lambda stanvor: set_search(stanvor),
+    nk.ALT_PADSLASH: lambda stanvor: switch_search(stanvor.srch),
+    nk.PADPLUS:      lambda stanvor: logreutαg('Eudαμl', stanvor),
+    nk.PADMINUS:     lambda stanvor: logreutαg('Aqeμr', stanvor),
+    nk.SHF_PADPLUS:  lambda stanvor: logreuιδαt('Copy', stanvor),
+    nk.PADSTAR:      lambda stanvor: logreuιδαt('Lαιue', stanvor),
+    nk.PADSLASH:     lambda stanvor: logreuιδαt('Verse', stanvor),
+    nk.UP:           lambda stanvor: logreu_select('up', stanvor),
+    nk.DOWN:         lambda stanvor: logreu_select('down', stanvor),
+    nk.SHF_F12:      lambda stanvor: end_session(stanvor, 0),
+    nk.CTL_DEL:      lambda stanvor: end_session(stanvor, 1),
 }

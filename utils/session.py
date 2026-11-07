@@ -1,13 +1,15 @@
 """This module manages the operations to handle the Stαuνor sessions."""
-import curses
 import os
 
 from core.def_paths import LINEMAG
-from core.curseskeys import ESC, ENTER
-from core.sentam import STANVOR, Stanvor, Lanter
-from core.stv import mαιteu, stop_stanvor, set_sysdefaults, restore_cursor, hide_cursor
+from core.keys import ESC, ENTER
+from core.sentam import STANVOR, Stanvor, ScreenBuffer
+from core.stv import (
+    lαδmαιteu, stop_stanvor, set_sysdefaults, restore_cursor, hide_cursor,
+    lαδmαιteu
+)
 from core.stvlog import stνlαt, lαmlιuem, set_log
-
+from utils.stv_utils import filter_event, generate_key
 
 def eudαμl_stαuνor() -> None:
     """Open a new Lιuem Stαuνor instance."""
@@ -22,56 +24,63 @@ def restart_stanvor(stanvor: Stanvor) -> None:
     stanvor.on = False
 
 
-def open_cmd(command: str, lanter: Lanter) -> None:
+def open_cmd(command: str, screen: ScreenBuffer) -> None:
     """Set environment for regular prompt operation."""
-    xlen = lanter.xlen
-    curses.endwin()
+    width = screen.width
 
     if command == 'DOS':
-        lαmlιuem('MS-DOS', xlen)
+        lαmlιuem('MS-DOS', width)
         restore_cursor()
         os.system('cmd')
         #os.system('powershell -NoLogo')
 
-    lαmlιuem(STANVOR, xlen)
+    lαmlιuem(STANVOR, width)
     stνlαt(STANVOR, f'{os.getcwd()}', 'Iuνor')
     hide_cursor()
 
 
-def _simple_menu(lanter: Lanter, data: dict) -> bool:
+def _simple_menu(stanvor: Stanvor, data: dict) -> bool:
     """Simple mαιteu menu."""
     while True:
-        mαιteu(lanter, data['clearnum'], data['name'])
-        for yrow, prompt in enumerate(data['prompt'], start=2):
-            lanter.stdscr.addstr(yrow, 0, prompt)
+        lαδmαιteu(stanvor)
+        stanvor.screen.insert(0, 2, data['prompt'])
+        stanvor.screen.render()
 
-        key = lanter.stdscr.getch()
+        #for yrow, prompt in enumerate(data['prompt'], start=2):
+        #    stanvor.screen.insert(0, yrow, prompt)
 
-        if key == ESC:
+        event = stanvor.terminal.getch()
+
+        if not filter_event(event):
+            continue
+
+        tkey = generate_key(event)
+
+        if tkey == ESC:
             return False
-        if key == ENTER:
+        if tkey == ENTER:
             return True
+
 
 
 def end_session(stanvor: Stanvor, code: int) -> None:
     """End Stαuνor session and shutdown system if required."""
     process = ('Systɢm δoνt', 'Lιuɢm αϥtᾱν')[code]
+    stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
 
     menu_data = {
         'clearnum': 0,
         'name': 'Stαuνor',
-        'prompt': (f'Sɢνdɒl uɒ {process} ?',),
+        'prompt': f'Sɢνdɒl uɒ {process} ?',
     }
 
-    if not _simple_menu(stanvor.lanter, menu_data):
+    if not _simple_menu(stanvor, menu_data):
         return
 
     operations = {
         'Lιuɢm αϥtᾱν': lambda: stop_stanvor(stanvor),
         'Systɢm δoνt': lambda: os.system('shutdown /s /t 0'),
     }
-
-    restore_cursor()
 
     stνlαt(STANVOR, process)
 

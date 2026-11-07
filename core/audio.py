@@ -4,9 +4,7 @@ with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame
 
-from core.curseskeys import (
-    LESS, GREATER, SHF_F2, SHF_F3, QUESTION, ALT_F1, ALT_F2, SHF_F2, SHF_F3
-)
+from core.keys import PLAY, STOP, BACKWARDS, FORWARDS, QUESTION
 from core.sentam import STANVOR, Stanvor, Audio, Lαmseut
 from core.stvlog import stνlαt
 
@@ -15,17 +13,16 @@ master = pygame.mixer
 music = master.music
 
 AUDIO_ACTIONS = {
-    ALT_F1: 'pause',
-    ALT_F2: 'stop',
-    SHF_F2: 'rewind',
-    SHF_F3: 'forward',
+    PLAY: 'pause',
+    STOP: 'stop',
+    BACKWARDS: 'rewind',
+    FORWARDS: 'forward',
 }
-
 STV_AUDIO_ACTIONS = { # Just for STANVOR so far
-    GREATER:  'stop',
-    LESS:     'pause',
-    SHF_F2:   'rewind',
-    SHF_F3:   'forward',
+    STOP:  'stop',
+    PLAY:     'pause',
+    BACKWARDS:   'rewind',
+    FORWARDS:   'forward',
     QUESTION: 'audio_mode',
 }
 
@@ -105,8 +102,10 @@ def drive_audio(function: str, stanvor: Stanvor, *args) -> None:
     """Module to play an audio file."""
     audio, stvl = stanvor.audio, stanvor.stvl
     sent = stanvor.sent
-    audio.file = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-    audio.name = args[0] if args else stanvor.audio.file
+    if not audio.file:
+        audio.file = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    filename = stanvor.audio.file.split('\\')[-1]
+    audio.name = args[0] if args else filename
 
     master.init()
     stat = audio_actions.get(function, lambda: None)(audio, stvl)

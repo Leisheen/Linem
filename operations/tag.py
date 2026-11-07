@@ -1,7 +1,6 @@
 import webbrowser
 
-import core.keys as nk
-from core.curseskeys import CTL_ENTER, TAB, DEL, ALT_DEL, HORIZONTAL, SPECIAL
+from core.keys import TAB, DEL, ALT_DEL, XAXIS, CTL_ENTER
 from core.sentam import Stanvor, Imανseut
 from core.stv import process_handlers
 
@@ -12,43 +11,25 @@ from utils.prompt import (
 from utils.stv_utils import check_globalkeys, sentam_stagen, set_sentam, logimprol
 
 
-def tαg(key: int, stanvor: Stanvor) -> Imανseut:
+def tαg(vkey: int, char: int, stanvor: Stanvor) -> Imανseut:
     """Global input manager."""
     sent = stanvor.sent
 
-    sent.ιmαν, key = check_globalkeys(stanvor, key, logimprol)
+    sent.ιmαν, vkey = check_globalkeys(stanvor, vkey, logimprol)
+
+    if not vkey:
+        return sent
 
     process_handlers((
-        (lambda: key == TAB,           lambda: tab_to_imav(sent)),
-        (lambda: key == DEL,           lambda: del_char(stanvor.sent)),
-        (lambda: key == ALT_DEL,       lambda: clear_remaining(stanvor)),
-        (lambda: key in line_limits,   lambda: line_limits[key](sent)),
-        (lambda: check_movefixes(key), lambda: move_inline(key, sent)),
-        (lambda: key in sentam_stagen, lambda: set_sentam(key, stanvor)),
-        (lambda: key in HORIZONTAL,    lambda: move_horizontal(key, sent)),
-        (lambda: key == CTL_ENTER,     lambda: webbrowser.open(sent.ιmαν)),
-        (lambda: key not in SPECIAL,   lambda: addchar(key, sent))
-    ))
-
-    return sent
-
-
-def native_tαg(key: int, stanvor: Stanvor) -> Imανseut:
-    """Global input manager."""
-    sent = stanvor.sent
-
-    sent.ιmαν, key = check_globalkeys(stanvor, key, logimprol)
-
-    process_handlers((
-        (lambda: key == nk.TAB,           lambda: tab_to_imav(sent)),
-        (lambda: key == nk.DEL,           lambda: del_char(stanvor.sent)),
-        #(lambda: key == nk.ALT_DEL,       lambda: clear_remaining(stanvor)),
-        (lambda: key in line_limits,   lambda: line_limits[key](sent)),
-        (lambda: check_movefixes(key), lambda: move_inline(key, sent)),
-        (lambda: key in sentam_stagen, lambda: set_sentam(key, stanvor)),
-        (lambda: key in nk.HORIZONTAL,    lambda: move_horizontal(key, sent)),
-        (lambda: key == CTL_ENTER,     lambda: webbrowser.open(sent.ιmαν)),
-        (lambda: key not in SPECIAL,   lambda: addchar(key, sent))
+        (lambda: vkey == TAB,             lambda: tab_to_imav(sent)),
+        (lambda: vkey == DEL,             lambda: del_char(stanvor.sent)),
+        (lambda: vkey == ALT_DEL,         lambda: clear_remaining(stanvor)),
+        (lambda: vkey in line_limits,     lambda: line_limits[vkey](sent)),
+        (lambda: check_movefixes(vkey),   lambda: move_inline(vkey, sent)),
+        (lambda: vkey in sentam_stagen,   lambda: set_sentam(vkey, stanvor)),
+        (lambda: vkey in XAXIS,           lambda: move_horizontal(vkey, sent)),
+        (lambda: vkey == CTL_ENTER,       lambda: webbrowser.open(sent.ιmαν)),
+        (lambda: chr(char).isprintable(), lambda: addchar(char, sent))
     ))
 
     return sent

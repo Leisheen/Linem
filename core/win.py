@@ -1,11 +1,6 @@
-import atexit
 import ctypes
-import msvcrt
 import os
-import sys
 from ctypes import wintypes
-
-from core.curseskeys import UP, DOWN, LEFT, RIGHT
 
 
 IS_WINDOWS = (os.name == 'nt')
@@ -75,7 +70,7 @@ def _hide_pointer() -> None:
             user32.SetSystemCursor(h, ocr)
 
     replace_pointer()
-    atexit.register(restore_pointer)
+    #atexit.register(restore_pointer)
 
 
 def set_syspointer() -> None:
@@ -212,12 +207,17 @@ def getkey(self) -> dict:
             return {
                 "type": "KEY",
                 "down": bool(evt.bKeyDown),
-                "char": evt.uChar if evt.uChar else None,
-                "virtual_key": evt.wVirtualKeyCode,
+                "repeat_count": evt.wRepeatCount,
+                "char": evt.uChar if evt.uChar != "\x00" else None,  # All text, vowels, symbols
+                "virtual_key": evt.wVirtualKeyCode,  # Arrows, F-keys, Home, End, Enter, Backspace
+                "scan_code": evt.wVirtualScanCode,  # Physical hardware scan code
                 "ctrl": bool(state & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)),
                 "alt": bool(state & (LEFT_ALT_PRESSED | RIGHT_ALT_PRESSED)),
-                "shift": bool(state & SHIFT_PRESSED)
+                "shift": bool(state & SHIFT_PRESSED),
+                "caps_lock": bool(state & CAPSLOCK_ON),
+                "num_lock": bool(state & NUMLOCK_ON),
+                "enhanced": bool(
+                    state & ENHANCED_KEY
+                ),  # True if from the dedicated pad/navigation block
             }
-
-
-    return {}
+    return {"type": None}

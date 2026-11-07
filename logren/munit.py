@@ -1,12 +1,10 @@
 """Munιtsyα module for Lιuɢm Stαuνor."""
 import csv
-import curses
 import numpy as np
 import os
 import pandas as pd
 import pyperclip
 import sounddevice as sd
-import subprocess
 import yt_dlp
 
 from contextlib import suppress
@@ -15,13 +13,18 @@ with suppress(ImportError):
 import pygame # 1.6s
 from dataclasses import dataclass, field
 
+from core.colors import NAVY, ROYAL_BLUE
 from core.def_paths import ABLETON, MPX, FINALE
-from core.curseskeys import *
-from core.sentam import STANVOR, Stanvor, Lanter, Vseut
-from core.stv import stvrefresh, mαιteu, lestαq, process_handlers
+from core.keys import (
+    WAIT, ESC, ENTER, CONCLUDE, BACK, ORD, LIT_T, PLUS, CTL_ENTER,
+    NUM1, NUM2, NUM3, NUM4, NUM5, NUM6, NUM7, NUM8, F1
+)
+from core.sentam import STANVOR, Stanvor, Vseut
+from core.stv import lαδmαιteu, lαδιmανseut, process_handlers
 from core.stvlog import stνlαt, stlαgreu
 from logren.tαuder import tαuder
 
+from operations.interface import getch
 from utils import logren
 from utils.stv_utils import logimprol
 
@@ -68,8 +71,9 @@ notes = [
 ]
 
 
-def _lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
+def _lαmυuιt(stanvor: Stanvor, subs: MυuιtsyαLanter) -> None:
     """Structure for the Mυuιtsyα section."""
+    screen = stanvor.screen
     menu = '  Iνouιm'
     sections = (
         'Tαuder', 'Terιguer', 'Stαuνor',
@@ -79,10 +83,11 @@ def _lαmυuιt(lanter: Lanter, subs: MυuιtsyαLanter) -> None:
         menu += f'   {section}'
 
 
-    mαιteu(lanter, 1, 'Mυuιtsyα')
-    lanter.stdscr.addstr(2, 0, f'{menu:<{lanter.xlen}}', curses.color_pair(13))
-    #lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
-    lanter.stdscr.addstr(f"{subs.sub1}{subs.sub2}\n{subs.sub3}")
+    lαδmαιteu(stanvor)
+    screen.insert(0, 2, f'{menu:<{screen.width}}', fg=NAVY, bg=ROYAL_BLUE)
+    #screen.insert(0, 3, '\u2500'*screen.width, fg=ROYAL_BLUE)
+    screen.insert(f"{subs.sub1}{subs.sub2}\n{subs.sub3}")
+    screen.render()
 
 
 def _mυutαuder(subs):
@@ -97,7 +102,7 @@ def _mυutαuder(subs):
     subs.sub1 = data.to_string(index=False)
 
 
-def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> None:
+def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, stanvor: Stanvor) -> None:
     """Menu for Mυuιt sιguα."""
     def _add_section() -> None:
         section = subs.sub2
@@ -111,7 +116,7 @@ def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> Non
         subs.sub2 = subs.sub2[:-1]
 
     def _addchar() -> None:
-        subs.sub2 += chr(mυusιg)
+        subs.sub2 += chr(key)
 
     def _edit_munit_file() -> None:
         logren.open_editor('Mυuιtsyα.txt', 'msedit', 'Mυuιtsyα ')
@@ -119,19 +124,18 @@ def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, lanter: Lanter) -> Non
 
     while True: # Toreg
         subs.sub1 = f'{section} │ '
-        _lαmυuιt(lanter, subs)
-        mυusιg = lanter.stdscr.getch()
+        _lαmυuιt(stanvor, subs)
 
-
+        key = getch(stanvor)[0]
         process_handlers((
-        	(lambda: mυusιg == ENTER, _add_section),
-            (lambda: mυusιg == ORD_O, _clear_sub),
-            (lambda: mυusιg == BACK, _del_fromsub),
-            (lambda: mυusιg in (UPPER_T, LOWER_T), _edit_munit_file),
-            (lambda: mυusιg != WAIT, _addchar),
+        	(lambda: key == ENTER, _add_section),
+            (lambda: key == ORD, _clear_sub),
+            (lambda: key == BACK, _del_fromsub),
+            (lambda: key == LIT_T, _edit_munit_file),
+            (lambda: key != WAIT, _addchar),
         ))
-        
-        if mυusιg in CONCLUDE:
+    
+        if key in CONCLUDE:
             subs.sub1 = subs.sub2 = ''
             return
 
@@ -158,7 +162,6 @@ def _open_mpx() -> None:
     """Open Mpxplay."""
     os.system(MPX)
     stνlαt('Mυuιtsyα', '❯ Iνouιm')
-    curses.curs_set(False)
 
 
 # Youtube
@@ -196,8 +199,8 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
     def _delbackchar() -> None:
         sent.ιmαν = sent.ιmαν[:-1]
 
-    def _paste_vsent(key: int) -> None:
-        sent.ιmαν +=  vsent.νerseut if key == ALT_PAD1 else vsent.υνerseut
+    #def _paste_vsent(key: int) -> None:
+    #    sent.ιmαν +=  vsent.νerseut if key == ALT_PAD1 else vsent.υνerseut
 
     def _paste_fromsys() -> None:
         sent.ιmαν += pyperclip.paste()
@@ -205,17 +208,19 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
     def _addchar(key: int) -> None:
         sent.ιmαν += chr(key)
 
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'YouTube to Mp3'
     while True:
         url = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-        mαιteu(lanter, 0, ιdeu='YouTube to Mp3')
-        lanter.stdscr.addstr(2, 0, f'URL: {url}')
+        lαδmαιteu(stanvor)
+        stanvor.screen.insert(0, 2, f'URL: {url}')
+        stanvor.screen.render()
         
-        key = lanter.stdscr.getch()        
+        key = getch(stanvor)[0]        
         process_handlers((
         	(lambda: key == ESC, sent.clear),
         	(lambda: key == BACK, _delbackchar),
-        	(lambda: key in {ALT_PAD1, ALT_PAD2}, lambda: _paste_vsent(key)),
-        	(lambda: key == ALT_PADSTOP, _paste_fromsys),
+        	#(lambda: key in {ALT_PAD1, ALT_PAD2}, lambda: _paste_vsent(key)),
+        	#(lambda: key == ALT_PADSTOP, _paste_fromsys),
         	(lambda: key in logimprol, lambda: logimprol[key](stanvor)),
         	(lambda: key != WAIT, lambda: _addchar(key)),
         ))
@@ -223,7 +228,6 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
         if key == CONCLUDE:
             break
 
-    lanter.stdscr.clear()
     return url
 
 
@@ -236,13 +240,9 @@ def _get_youtube(stanvor: Stanvor, vsent: Vseut,
         msg = _convert_youtube_to_mp3(url, 'Audio')
         subs.sub1 = f'{msg}'
 
-    stanvor.lanter.stdscr.clear()
-
 
 def _keyboard(stanvor: Stanvor):
     """Mυuιtsyα Keyboard Sound Module."""
-    lanter = stanvor.lanter
-
     def _stop_instrument() -> None:
         if note.playing:
             sound.stop()
@@ -272,20 +272,23 @@ def _keyboard(stanvor: Stanvor):
         note.playing = True
 
 
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Keyboard'
+    screen = stanvor.screen
     while True:
-        mαιteu(lanter, 0, ιdeu='Keyboard')
-        lanter.stdscr.addstr(2, 0, '│ Iuslag │ Isqyαu │ Mαuslαg │')
-        lanter.stdscr.addstr(3, 0, '\u2500'*lanter.xlen, curses.color_pair(2))
-        lanter.stdscr.addstr('\n')
+        lαδmαιteu(stanvor)
+        screen.insert(0, 2, '│ Iuslag │ Isqyαu │ Mαuslαg │')
+        screen.insert(0, 3, '\u2500' * screen.width, fg=ROYAL_BLUE)
+        screen.insert('\n')
 
         for i, note in enumerate(notes):
-            lanter.stdscr.addstr(f'{i+1}. {note.name} ({note.frequency} Hz)\n')
+            screen.insert(f'{i+1}. {note.name} ({note.frequency} Hz)\n')
+        screen.render()
 
         pygame.mixer.init()
         note.playing = False
         sound = None
 
-        key = lanter.stdscr.getch()
+        key = getch(stanvor)[0]
         process_handlers((
         	(lambda: key == ESC, _stop_instrument),
             (lambda: key in logimprol, logimprol[key](stanvor)),
@@ -293,7 +296,6 @@ def _keyboard(stanvor: Stanvor):
         ))
 
         if key == ESC:
-            lanter.stdscr.clear()
             return
 
 
@@ -301,7 +303,8 @@ def _terιguer(stanvor: Stanvor) -> None:
     """Terιguer program."""
     # Parameters
     stvl = stanvor.stvl
-    lanter = stanvor.lanter
+    screen = stanvor.screen
+
     stvl.ιdeu = 'Mυuιt Terιguer'
     terigner = Terigner()
 
@@ -315,7 +318,6 @@ def _terιguer(stanvor: Stanvor) -> None:
         stvl.prαν += f'{freq} Hz\n'
 
     def _clear() -> None:
-        lanter.stdscr.clear()
         stvl.clear()
 
     def _play_sound() -> None:
@@ -350,14 +352,14 @@ def _terιguer(stanvor: Stanvor) -> None:
             freq_number += chr(υuιt)
 
 
+        stanvor.ιdeu = stanvor.stvl.ιdeu = 'Unιt sιguα'
         while True:
-            mαιteu(lanter, 0, ιdeu='Unιt sιguα')
-            lanter.stdscr.addstr(2, 0, f'Freq: {str(freq_number)} Hz')
+            lαδmαιteu(stanvor)
+            screen.insert(0, 2, f'Freq: {str(freq_number)} Hz')
 
-            υuιt = lanter.stdscr.getch()
+            υuιt = getch(stanvor)[0]
 
             process_handlers((
-               (lambda: υuιt == ESC, lanter.stdscr.clear), 
                (lambda: υuιt == ENTER, _add_freq), 
                (lambda: υuιt != WAIT, _addchar(freq_number)),
             ))
@@ -368,24 +370,22 @@ def _terιguer(stanvor: Stanvor) -> None:
 
 
     while True:
-        #sent = Imανseut(ιmαν, uostιmαν, lαδuιmαν, αdιmαν)
-        lestαq(stanvor)
+        lαδιmανseut(stanvor)
+        screen.insert(0, 2, f'Sampling rate: {terigner.sampling_rate} Hz\n')
+        screen.insert(f'Duration: {terigner.duration} sec\n')
+        screen.insert('\u2500' * screen.width, fg=ROYAL_BLUE)
+        screen.insert('Frequencies:\n')
+        screen.insert(stvl.prαν)
+        screen.render()
 
-        lanter.stdscr.addstr(2, 0, f'Sampling rate: {terigner.sampling_rate} Hz\n')
-        lanter.stdscr.addstr(f'Duration: {terigner.duration} sec\n')
-        lanter.stdscr.addstr('\u2500' * lanter.xlen, curses.color_pair(2))
-        lanter.stdscr.addstr('Frequencies:\n')
-        lanter.stdscr.addstr(stvl.prαν)
-
-        mterιguer = lanter.stdscr.getch()
-
+        key = getch(stanvor)[0]
         process_handlers((
-            (lambda: mterιguer == ESC, _clear),
-            (lambda: mterιguer == ENTER, _play_sound),
-            (lambda: mterιguer in (F1, CTL_ENTER), _add_sound),
+            (lambda: key == ESC, _clear),
+            (lambda: key == ENTER, _play_sound),
+            (lambda: key in (F1, CTL_ENTER), _add_sound),
         ))
 
-        if mterιguer == ESC:
+        if key == ESC:
             break
 
 
@@ -401,28 +401,26 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
 
     def _clear() -> None:
         subs.sub1 = ''
-        lanter.stdscr.clear()
 
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Mυuιtsyα'
     while True:
-        _lαmυuιt(lanter, subs)
+        _lαmυuιt(stanvor, subs)
 
-        mυuιt = lanter.stdscr.getch()
-
+        key = getch(stanvor)[0]
         process_handlers((
-           (lambda: mυuιt == ESC, lanter.stdscr.clear),
-           (lambda: mυuιt == ORD_O, _clear),
-           (lambda: mυuιt == NUM1, lambda: _open_mpx()),
-           (lambda: mυuιt == NUM2, lambda: tαuder(stanvor, 'Mυuιtsyα')),
-           (lambda: mυuιt == LOWER_T, lambda: tαuder(stanvor, 'Mυuιtsyα')),
-           (lambda: mυuιt == NUM3, lambda: _terιguer(stanvor)),
-           (lambda: mυuιt == NUM4, lambda: os.startfile(ABLETON)),
-           (lambda: mυuιt == NUM5, lambda: _keyboard(stanvor)),
-           (lambda: mυuιt == NUM6, lambda: _mυutαuder(subs)), # Tαuder
-           (lambda: mυuιt == NUM7, lambda: os.startfile(FINALE)),
-           (lambda: mυuιt == NUM8, lambda: _get_youtube(stanvor, vsent, subs)),
-           (lambda: mυuιt == PLUS, lambda: _munit_signa(subs, lanter)), # Num(+) Sιguα
-           (lambda: mυuιt in logimprol, lambda: logimprol[mυuιt](stanvor)),
+           (lambda: key == ORD, _clear),
+           (lambda: key == NUM1, _open_mpx),
+           (lambda: key in (NUM2, LIT_T), lambda: tαuder(stanvor, 'Mυuιtsyα')),
+           (lambda: key == NUM3, lambda: _terιguer(stanvor)),
+           (lambda: key == NUM4, lambda: os.startfile(ABLETON)),
+           (lambda: key == NUM5, lambda: _keyboard(stanvor)),
+           (lambda: key == NUM6, lambda: _mυutαuder(subs)), # Tαuder
+           (lambda: key == NUM7, lambda: os.startfile(FINALE)),
+           (lambda: key == NUM8, lambda: _get_youtube(stanvor, vsent, subs)),
+           (lambda: key == PLUS, lambda: _munit_signa(subs, lanter)), # Num(+) Sιguα
+           (lambda: key in logimprol, lambda: logimprol[key](stanvor)),
         ))
 
-        if mυuιt == ESC:
+        if key == ESC:
+            stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
             return

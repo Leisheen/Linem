@@ -8,7 +8,7 @@ import subprocess
 from screeninfo import get_monitors
 from typing import Any
 
-from core.sentam import Lanter
+from core.sentam import ScreenBuffer
 
 
 # -- INFO --
@@ -43,7 +43,7 @@ def system_info() -> str:
 
 
 # Monitor
-def monitor_info(lanter: Lanter) -> str:
+def monitor_info(screen: ScreenBuffer) -> str:
     """Return monitor info."""
     info = []
 
@@ -53,8 +53,8 @@ def monitor_info(lanter: Lanter) -> str:
 
         info.extend([
             f'Lαuter │  {m.name}',
-            f' Width │  {m.width} ({str(lanter.xlen)})',
-            f'Height │  {m.height} ({str(lanter.ylen)})'])
+            f' Width │  {m.width} ({str(screen.width)})',
+            f'Height │  {m.height} ({str(screen.height)})'])
 
     return '\n'.join(info)
 

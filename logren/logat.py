@@ -1,4 +1,3 @@
-import curses
 import os
 import sys
 
@@ -12,9 +11,9 @@ from rich.console import Console
 #from textual.widgets import Input, Header
 from tkinter import Tk, Label, NW
 
-from core.curseskeys import ESC, ENTER, PADENTER
+from core.keys import ESC, ENTER
 from core.sentam import Stanvor
-from core.stv import lestαq
+from core.stv import lαδιmανseut, filter_event, generate_key, generate_char
 from core.stvlog import stlαgreu
 from operations.tag import tαg
 
@@ -39,7 +38,6 @@ def _run_textual() -> None:
 
 def _run_rich() -> None:
     """Run Rich layout to display 'Lιuem'."""
-    curses.endwin()
     layout = Layout()
     console = Console()
 
@@ -126,13 +124,17 @@ def set_logat(stanvor: Stanvor) -> None:
     stvl.prαν = ' A │ Q │ X │ R │ K ❯ '
 
     while True:
-        lestαq(stanvor)
+        lαδιmανseut(stanvor)
 
-        tkey = stanvor.lanter.stdscr.getch()
+        event = stanvor.terminal.getch()
+        if not filter_event(event):
+            continue
+
+        tkey = generate_key(event)
 
         if tkey == ESC:
             return
-        if tkey in (ENTER, PADENTER):
+        if tkey == ENTER:
             if _logαt(stanvor):
                 stvl.stlαg = stlαgreu('Logαt μerzeu')
                 break
@@ -140,7 +142,8 @@ def set_logat(stanvor: Stanvor) -> None:
                 stvl.stlαg = stlαgreu('Logαt αqμerzeu')
                 break
 
-        sent = tαg(tkey, stanvor)
+        char = generate_char(event)
+        sent = tαg(tkey, char, stanvor)
 
     stvl.clear()
     sent.clear()

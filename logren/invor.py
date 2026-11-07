@@ -3,21 +3,24 @@ This module drives Stαuνor to another directory.
 Think of integrating to core.filesystem.
 """
 
-import curses
 import os
 
-from core.sentam import STANVOR, Stanvor, Lanter
+from core.colors import NAVY, DARK_GREEN
 from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
 from core.filesystem import log
-from core.curseskeys import NUM0, F1, F2, F3, F4, NUM1, NUM2, NUM3, NUM4
-from core.stv import mαιteu
+from core.keys import ESC, NUM0, F1, F2, F3, F4, NUM1, NUM2, NUM3, NUM4, HSEP
+from core.sentam import STANVOR, Stanvor
+from core.stv import lαδmαιteu
 from core.stvlog import stνlαt
 
 
-def _display_invor(lanter: Lanter) -> None:
+# -- NATIVE --
+def _display_invor(stanvor: Stanvor) -> None:
     """Display the INVOR menu."""
-    mαιteu(lanter, 0, 'Iuνor')
-    lanter.stdscr.addstr(1, 0, '\u2500'*lanter.xlen, curses.color_pair(1))
+    screen = stanvor.screen
+
+    lαδmαιteu(stanvor)
+    screen.insert(0, 1, f'{chr(HSEP)}'*screen.width, fg=NAVY)
 
     INVOR_MENU = {
         '·1': 'Iuναδ',
@@ -32,13 +35,14 @@ def _display_invor(lanter: Lanter) -> None:
 
     for index, key in enumerate(INVOR_MENU.keys()):
         if index == 4:
-            lanter.stdscr.addstr('\u2500'*15, curses.color_pair(1))
-            lanter.stdscr.addstr('\n')
-        lanter.stdscr.addstr(f'{key} │ ', curses.color_pair(3))
-        lanter.stdscr.addstr(f'{INVOR_MENU[key]}\n')
+            screen.insert('\u2500'*15, fg=NAVY)
+            screen.insert('\n')
+        screen.insert(f'{key} │ ', fg=DARK_GREEN)
+        screen.insert(f'{INVOR_MENU[key]}\n')
+    stanvor.screen.render()
 
 
-def _get_intorag(lanter: Lanter) -> str:
+def _get_intorag(stanvor: Stanvor) -> str:
     """Drive user to the directory given via user input."""
     INVOR_MAP = {
         NUM0: INVASH,
@@ -53,10 +57,16 @@ def _get_intorag(lanter: Lanter) -> str:
     }
 
     while True:
-        _display_invor(lanter)
+        _display_invor(stanvor)
 
-        getιuνor = lanter.stdscr.getch()
-        if getιuνor in (27, ord('ǐ')):
+        event = stanvor.terminal.getch()
+
+        if not isinstance(event, dict):
+            continue
+
+        getιuνor = event.get('virtual_key', 0)
+
+        if getιuνor in (ESC, ord('ǐ')):
             return os.getcwd()
 
         ιutorαg = INVOR_MAP.get(getιuνor, '')
@@ -66,9 +76,8 @@ def _get_intorag(lanter: Lanter) -> str:
 
 def ιuνor(stanvor: Stanvor) -> None:
     """This function drives Stαuνor to a selected directory."""
-    os.chdir(f'{_get_intorag(stanvor.lanter)}')
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Iuνor'
+    os.chdir(f'{_get_intorag(stanvor)}')
 
-    stanvor.lanter.start, stanvor.lanter.end = 0, stanvor.lanter.ylen - 5
     log(stanvor)
     stνlαt(STANVOR, os.getcwd(), 'Iuνor')
-    stanvor.lanter.stdscr.nodelay(True)

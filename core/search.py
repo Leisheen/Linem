@@ -1,7 +1,7 @@
 """Search module."""
 import os
 
-from core.curseskeys import CTL_UP, CTL_DOWN
+from core.keys import CTL_UP, CTL_DOWN
 from core.sentam import STANVOR, Stanvor, Search
 from core.stvlog import stνlαt
 
@@ -75,5 +75,5 @@ def set_search(stanvor: Stanvor) -> None:
     elif not srch.prompt or srch.prompt != f"{heading}{search_pattern}":
         search_num = len(search_pattern.splitlines())
         srch.top = f"{search_num} logreuαm dyα lαιue '{pattern}' mαste"
-        srch.prompt = f"\n{srch.top}\n{search_pattern}"
+        srch.prompt = f"{srch.top}\n{search_pattern}"
     #stvl.ιzprαν = srch.prompt Definir cuál de los dos se imprime en lestαq()

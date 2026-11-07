@@ -14,32 +14,33 @@ CTL_C           = 3
 BACK            = 8         # 0o10
 TAB             = 9         # ord('\t')
 
+PAD5            = 12
 ENTER           = 13
 
 SHF             = 16
 CTL             = 17
 ALT             = 18
-BKM             = 20       # Block Mayus
+BKM             = 20       # BLOCK MAYUS
 
 ESC             = 27
 
 SPACE           = 32
 
 # NAV PAGES
-PPAGE           = 33        # PREVIOUS PAGE
-NPAGE           = 34        # NEXT PAGE
-END             = 35        # KEY_END
-HOME            = 36        # KEY_HOME
+PREV            = 33
+NEXT            = 34
+END             = 35
+HOME            = 36
 
 # ARROWS
-LEFT            = 37       # KEY_LEFT
-UP              = 38       # KEY_UP
-RIGHT           = 39       # KEY_RIGHT
-DOWN            = 40       # KEY_DOWN
+LEFT            = 37
+UP              = 38
+RIGHT           = 39
+DOWN            = 40
 
 INS             = 45
 DEL             = 46
-
+#POINT           = 46       # ord('.')
 # NUMBERS
 NUM0            = 48        # ord('0')
 NUM1            = 49        # ord('1')
@@ -88,33 +89,141 @@ PADMINUS        = 109
 PADSLASH        = 111
 
 # FKEYS
-F1              = 112       # KEY_F1
-F2              = 113       # KEY_F2
-F3              = 114       # KEY_F3
-F4              = 115       # KEY_F4
-F5              = 116       # KEY_F5
-F6              = 117       # KEY_F6
-F7              = 118       # KEY_F7
-F8              = 119       # KEY_F8
-F9              = 120       # KEY_F9
-F10             = 121       # KEY_F10
-F11             = 122       # KEY_F11
-F12             = 123       # KEY_F12
+F1              = 112
+F2              = 113
+F3              = 114
+F4              = 115
+F5              = 116
+F6              = 117
+F7              = 118
+F8              = 119
+F9              = 120
+F10             = 121
+F11             = 122
+F12             = 123
+
+#DEL             = 127      # ord('\x7f') / KEY_BACKSPACE
 
 NUMLOCK         = 144
 
+FORWARDS        = 176
+BACKWARDS       = 177
+STOP            = 178
+PLAY            = 179
+
+#ORD             = 186       # ord('º') / ord('ª')
+DIERECIS        = 186       # `
 PLUS            = 187       # ord('+')
 COMMA           = 188       # ord(',')
 MINUS           = 189       # ord('-')
 POINT           = 190       # ord('.')
 CEDILLA         = 191       # ord('ç')
 
-
 # SPECIAL CHARACTERS
 QUESTION        = 219       # ?/'
-ORD             = 220       # º/ª
+ORD             = 220       # º/ª   # Virtual key
 ADMIRE          = 221       # ¡/¿
-COMPARE         = 226       # </>
+ACCENT          = 222       # ´
+LESS            = 226       # </>
+
+
+# SHIFT         (+250)
+SHF_TAB         = 259
+SHF_ENTER       = 263
+SHF_PREV        = 283
+SHF_NEXT        = 284
+SHF_END         = 285
+SHF_HOME        = 286
+SHF_LEFT        = 287
+SHF_UP          = 288
+SHF_RIGHT       = 289
+SHF_DOWN        = 290
+
+SHF_F1          = 362
+SHF_F2          = 363
+SHF_F3          = 364
+SHF_F12         = 373
+SHF_PADPLUS     = 357
+SHF_PADMINUS    = 359
+SHF_PLUS        = 437
+
+GREATER         = 476       # </>
+
+# CTRL          (+500)
+CTL_ENTER       = 513
+CTL_INS         = 545
+CTL_DEL         = 546
+CTL_PADSLASH    = 611
+CTL_PREV        = 533
+CTL_NEXT        = 534
+CTL_END         = 535
+CTL_HOME        = 536
+CTL_LEFT        = 537
+CTL_UP          = 538
+CTL_RIGHT       = 539
+CTL_DOWN        = 540
+
+# ALT           (+750)
+ALT_BACK        = 758
+ALT_LEFT        = 787
+ALT_UP          = 788
+ALT_RIGHT       = 789
+ALT_DOWN        = 790
+
+ALT_DEL         = 796
+ALT_PADSLASH    = 861
+ALT_A           = 815
+ALT_B           = 816
+ALT_C           = 817
+ALT_D           = 818
+ALT_E           = 819
+ALT_F           = 820
+ALT_G           = 821
+ALT_H           = 822
+ALT_I           = 823
+ALT_J           = 824
+ALT_K           = 825
+ALT_L           = 826
+ALT_M           = 827
+ALT_N           = 828
+ALT_O           = 829
+ALT_P           = 830
+ALT_Q           = 831
+ALT_R           = 832
+ALT_S           = 833
+ALT_T           = 834
+ALT_U           = 835
+ALT_V           = 836
+ALT_W           = 837
+ALT_X           = 838
+ALT_Y           = 839
+ALT_Z           = 840
+
+ALT_F1          = 862
+ALT_F2          = 863
+ALT_F12         = 873
+ALT_ORD         = 970
+
+
+# TO DEFINE
+FN_I            = None
+PAD1            = None
+PAD2            = None
+PAD3            = None
+PAD4            = None
+PAD5            = None
+PAD6            = None
+PAD7            = None
+PAD8            = None
+PAD9            = None
+PAD0            = None
+CTL_PAD3        = None
+ALT_PADSTOP     = None
+#SHF_F12         = 61488
+#CTL_PADSTOP     = 61489
+
+
+LEFT_ARROW      = 8594      # ord('→')
 
 # SEPARATORS
 HSEP            = 9472      # ord('─') / '\u2500' / HORIZONTAL_SEP ?
@@ -123,11 +232,20 @@ VSEP            = 9474      # ord('│') / '\u2505' / VERTICAL_SEP ?
 PROMPT          = 10095     # ord('❯')
 
 
-VERTICAL        = (UP, DOWN)
-HORIZONTAL      = (LEFT, RIGHT)
-ARROWS          = (*VERTICAL, *HORIZONTAL)
+YAXIS           = (UP, DOWN)
+XAXIS           = (LEFT, RIGHT)
+ARROWS          = (*YAXIS, *XAXIS)
 CONCLUDE        = (ENTER, ESC)
 ESCAPE          = (ESC, PADMINUS)
+COMPARE         = (LESS, GREATER)
+
+MSLTH_ORDS = [
+    ALT_C, ALT_A, ALT_Q, ALT_E, ALT_W, ALT_I, ALT_O,
+    ALT_U, ALT_Y, ALT_V, ALT_H, ALT_S, FN_I
+    ]
+MSLTH_STRS = ['ϥ', 'α', 'ᾱ', 'ɢ', 'ē', 'ι', 'ō', 'υ', 'ῡ', 'ν', 'ʯ', 'δ', 'ῑ']
+MUSSELAITH = {k: v for k, v in zip(MSLTH_ORDS, MSLTH_STRS)}
+
 
 SPECIALS_REF    = ('ALT', 'CTL', 'SHF', 'F', 'PAD')
 special_keys    = [WAIT, NULL, TAB, ENTER, ESC, BACK, DEL,

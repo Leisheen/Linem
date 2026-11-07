@@ -7,8 +7,8 @@ from core.def_paths import (
     SAGET, MNCOMMANDER, PROSERV, PIANO, CITIES, VERKLAIT, FINALE,
     DAVINCI, DATASET, VSCODE, GDRIVE, GCAL, NOTION, MUSDEV
 )
-from core.curseskeys import (
-    F1, F2, F3, F4, F5, F6, F7, F8, F9, ALT_F1, SHF_PADSLASH, ALT_BSLASH 
+from core.keys import (
+    F1, F2, F3, F4, F5, F6, F7, F8, F9, ALT_ORD, ALT_F1, #SHF_PADSLASH, ALT_BSLASH 
 )
 
 from logren.angestaq import αugestαq as angestaq
@@ -23,7 +23,8 @@ from logren.munit import mυuιtsyα
 from logren.prontel import proutel
 from logren.siev import ιsιeν
 from logren.soshat import soδᾱt as soshat
-from logren.stv_programs import print_color, install_module
+from logren.stv_programs import install_module
+from logren.color import print_color
 from logren.tαuder import tαuder
 from logren.vermat import νermαt
 from utils.info import show_sys_info
@@ -40,12 +41,13 @@ intlogren = {
     F8: soshat,
     F9: calculator,
     ALT_F1: proutel,
-    ALT_BSLASH: invor,
-    SHF_PADSLASH: invor,
+    ALT_ORD: invor,
+    #SHF_PADSLASH: invor,
 }
+
 strlogren = {
     '.sιeν':  lambda stanvor: ιsιeν(stanvor),
-    '.chr':   lambda stanvor: eval_char(stanvor.lanter),
+    '.chr':   lambda stanvor: eval_char(stanvor),
     '.sys':   lambda stanvor: show_sys_info(stanvor.lanter),
     '.color': lambda stanvor: print_color(stanvor),
     '.logαt': lambda stanvor: set_logat(stanvor),
@@ -56,8 +58,8 @@ ext_progs = {
     '.Olyαν':    lambda: os.startfile(MNCOMMANDER),
     '.Vαt':      lambda: os.system('start whatsapp:'),
     '.Explorer': lambda: os.system('start . command'),
-    '.Proserv':  lambda: os.startfile(PROSERV),
     '.msconfig': lambda: os.system('start ms-settings:'),
+    '.Proserv':  lambda: os.startfile(PROSERV),
     '.Piano':    lambda: os.startfile(PIANO),
     '.Lινseu':   lambda: os.startfile(CITIES),
     '.Verqlαιt': lambda: os.startfile(VERKLAIT),

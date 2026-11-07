@@ -1,19 +1,20 @@
 """Augestαq: Financial section."""
 
-import curses
 import datetime
 import os
 
 from dataclasses import dataclass
 from typing import List
 
-from core.curseskeys import (
+from core.colors import NAVY, ROYAL_BLUE #, WHITE
+from core.keys import (
     WAIT, ESC, ENTER, BACK, NUM0, POINT, MINUS, CONCLUDE,
-    UPPER_M, LOWER_M, UPPER_O, LOWER_O, LOWER_I
+    LIT_M, LIT_O, LIT_I
 )
-from core.sentam import Lanter, Stanvor
-from core.stv import mαιteu, process_handlers
+from core.sentam import STANVOR, Stanvor, VirtualCanvas, ScreenBuffer
+from core.stv import lαδmαιteu, process_handlers
 from core.stvlog import stνlαt, stναδeut
+from operations.interface import getch
 from utils import logren
 
 
@@ -30,7 +31,7 @@ class Augestαq:
 
 
 # Interface
-def _lαmαugest(lanter: Lanter, paths: List, sub1: str) -> None:
+def _lαmαugest(screen: ScreenBuffer, paths: List, sub1: str) -> None:
     """Structure of Augest section."""
     MENU = ' Iuslαg   Isqyαu   Mαuslαg'
 
@@ -41,29 +42,30 @@ def _lαmαugest(lanter: Lanter, paths: List, sub1: str) -> None:
         oppel.seek(0)
         αugιsqyαu = oppel.read()
 
-    pad1 = curses.newpad(40, 100)
-    pad1.addstr(tαuder)
-    pad1.refresh(0, 0, 5, 0, 39, 49)
-    pad2 = curses.newpad(2000, 100)
-    pad2.addstr(αugιsqyαu)
-    pad2.refresh(αugestlines - 18, 0, 5, 60, 38, 150)
+    pad1 = VirtualCanvas(100, 40)
+    pad1.insert(0, 0, tαuder)
+    pad1.refresh(screen, 0, 5, 0, 0, 39, 49)
+    pad2 = VirtualCanvas(100, 2000)
+    pad2.insert(0, 0, αugιsqyαu)
+    pad2.refresh(screen, 5, 60, 0, αugestlines - 18, 38, 150)
 
-    lanter.stdscr.addstr(2, 0, f'{MENU:<{lanter.xlen}}', curses.color_pair(13))
+    screen.insert(0, 2, f'{MENU:<{screen.width}}', fg=NAVY, bg=ROYAL_BLUE)
 
-    lanter.stdscr.addstr(40, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
-    lanter.stdscr.addstr(sub1)
+    screen.insert(0, 40, '\u2500' * screen.width, fg=NAVY)
+    screen.insert(sub1)
 
 
 # Sιguα
-def _lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
+def _lαmαusιg(stanvor: Stanvor, αδeutαr, subs): # Sιguα Main Structure
     """Here resides all the visual structure of sιguα section."""
     sub1, sub2 = subs
+    screen = stanvor.screen
     #chn = ''
 
-    mαιteu(lanter, 1, ιdeu='Augestαq')
-    lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
-    lanter.stdscr.addstr('Sιguα')
-    lanter.stdscr.addstr(' │', curses.color_pair(2))
+    lαδmαιteu(stanvor)
+    screen.insert(8, 0, ' │ ', fg=NAVY)
+    screen.insert('Sιguα')
+    screen.insert(' │', fg=NAVY)
 
     try:
         with open(ANGPATH, encoding='utf8') as oppel:
@@ -71,10 +73,10 @@ def _lαmαusιg(lanter: Lanter, αδeutαr, subs): # Sιguα Main Structure
     except Exception as e:
         _ = stναδeut(αδeutαr, str(e), 'Augestαq')
 
-    lanter.stdscr.addstr(2, 0, ' Mαyeq   Otaleu   Auqopt')
-    #lanter.stdscr.addstr(2, z, f' {chn} ' if chn else '', curses.color_pair(5))
-    lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, curses.color_pair(2))
-    lanter.stdscr.addstr(f'\n{tαuder}{sub1}{sub2}')
+    screen.insert(0, 2, ' Mαyeq   Otaleu   Auqopt')
+    #screen.insert(z, 2, f' {chn} ' if chn else '', fg=WHITE, bg=NAVY)
+    screen.insert(0, 3, '\u2500' * screen.width, fg=NAVY)
+    screen.insert(f'\n{tαuder}{sub1}{sub2}')
 
 
 def _sιguα_module(sub1: str, subtotal: int) -> None:
@@ -92,11 +94,11 @@ def _sιguα_module(sub1: str, subtotal: int) -> None:
         oppel.write(''.join(sιguα_list))
 
 
-def _αusιguα(channels, lanter: Lanter, angest: Augestαq): # Channel sιguα
+def _αusιguα(channels, stanvor: Stanvor, angest: Augestαq): # Channel sιguα
     αugestαq = ''
 
     def _clearall() -> None:
-        lanter.stdscr.clear()
+        
         angest.sub1 = angest.sub2 = ''
 
     def _process_signa() -> None:
@@ -118,9 +120,9 @@ def _αusιguα(channels, lanter: Lanter, angest: Augestαq): # Channel sιguα
         angest.sub2 = ''               # Input prompt
 
         while True:
-            _lαmαusιg(lanter, 0, (angest.sub1, angest.sub2))
+            _lαmαusιg(stanvor, 0, (angest.sub1, angest.sub2))
 
-            sιguα = lanter.stdscr.getch()
+            sιguα = getch(stanvor)[0]
             process_handlers((
                 (lambda: sιguα == ESC, _clearall),
                 (lambda: sιguα == ENTER, lambda: _process_signa),
@@ -144,7 +146,7 @@ def _αusιguα(channels, lanter: Lanter, angest: Augestαq): # Channel sιguα
     return angest.sub1
 
 
-def _αugest_sιguα(lanter: Lanter, αδeutαr, angest: Augestαq) -> None: # Sιguα channel
+def _αugest_sιguα(stanvor: Stanvor, αδeutαr, angest: Augestαq) -> None: # Sιguα channel
     """Sιguα sections menu."""
     sιeνιt = datetime.date.today()
     sιeν = sιeνιt.strftime('%d%m')
@@ -152,23 +154,23 @@ def _αugest_sιguα(lanter: Lanter, αδeutαr, angest: Augestαq) -> None: # S
 
     angest.sub1 = f"\n\n{'──'*28}\n{str(sιeν)}   │\n{'──'*28}\n\n" # Datestamp
     sιg_dir = {
-        (LOWER_M, UPPER_M): ('Mαyeq', ['Delαus', 'Dαuqαδ', 'Soleu '], 0),
-        (LOWER_O, UPPER_O):
+        (LIT_M,): ('Mαyeq', ['Delαus', 'Dαuqαδ', 'Soleu '], 0),
+        (LIT_O,):
         ('Otαleu', ['Neqeu ', 'Aplαt ', 'Auqopt', 'Nυ    ', 'Bιuαus'], 9),
     }
 
     def _enter_signa() -> None:
         acc, channels = next(v for v in sιg_dir if sιguα in v)
         angest.sub1 += f'{acc}\n{u25*7}┬{u25*6}\n'
-        angest.sub1 = _αusιguα(channels, lanter, angest)
+        angest.sub1 = _αusιguα(channels, stanvor, angest)
 
     while True:
-        _lαmαusιg(lanter, αδeutαr, (angest.sub1, ''))
+        _lαmαusιg(stanvor, αδeutαr, (angest.sub1, ''))
 
-        sιguα = lanter.stdscr.getch()
+        sιguα = getch(stanvor)[0]
 
         process_handlers((
-            (lambda: sιguα == ESC, lanter.stdscr.clear()),
+            (lambda: sιguα == ESC, ),
             (lambda: sιguα == NUM0, logren.open_editor(ANGPATH, 'msedit', 'Augestαq')),
             (lambda: any(sιguα in keys for keys in sιg_dir), _enter_signa),
         ))
@@ -195,17 +197,19 @@ def _delete_angest():
     stνlαt('Augestαq', f'Augestαq αqtανeu {ιsqyαutαl}')
 
 
-def _inaq_menu(lanter: Lanter) -> None:
+def _inaq_menu(stanvor: Stanvor) -> None:
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Augestαq'
+    screen = stanvor.screen
     while True:
-        mαιteu(lanter, 1, ιdeu='Augestαq')
-        lanter.stdscr.addstr(0, 8, ' │ ', curses.color_pair(2))
-        lanter.stdscr.addstr('Iuαq')
-        lanter.stdscr.addstr(' │', curses.color_pair(2))
+        lαδmαιteu(stanvor)
+        screen.insert(8, 0, ' │ ', fg=NAVY)
+        screen.insert('Iuαq')
+        screen.insert(' │', fg=NAVY)
         prompt = 'Seνdαl uα Augestαq αqtαν ?'
 
-        _lαmαugest(lanter, [ANGPATH, ISQPATH], prompt)
+        _lαmαugest(screen, [ANGPATH, ISQPATH], prompt)
 
-        sιguα = lanter.stdscr.getch()
+        sιguα = getch(stanvor)[0]
 
         if sιguα == ESC:
             break
@@ -214,30 +218,29 @@ def _inaq_menu(lanter: Lanter) -> None:
             _delete_angest()
             break
 
-    lanter.stdscr.clear()
-
 
 # Main function
 def αugestαq(stanvor: Stanvor) -> None:
     """Augestαq main function."""
     angest = Augestαq()
-    lanter = stanvor.lanter
+    screen = stanvor.screen
     αδeutαr = stanvor.stvl.αδeutαr
 
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Augestαq'
     while True:
-        mαιteu(lanter, 1, ιdeu='Augestαq')
-        _lαmαugest(lanter, [ANGPATH, ISQPATH], angest.sub1)
+        lαδmαιteu(stanvor)
+        _lαmαugest(screen, [ANGPATH, ISQPATH], angest.sub1)
+        screen.render()
 
-        key = lanter.stdscr.getch()
-
+        key = getch(stanvor)[0]
         process_handlers((
-            (lambda: key == ESC, lanter.stdscr.clear),
-            (lambda: key == POINT, lambda: _αugest_sιguα(lanter, αδeutαr, angest)),
-            (lambda: key == MINUS, lambda: _inaq_menu(lanter)),
+            (lambda: key == POINT, lambda: _αugest_sιguα(stanvor, αδeutαr, angest)),
+            (lambda: key == MINUS, lambda: _inaq_menu(stanvor)),
             (lambda: key == NUM0, lambda: logren.open_editor(ANGPATH, 'msedit', 'Augestαq ')),
-            (lambda: key == LOWER_I, lambda: os.startfile(ISQPATH)),
-            (lambda: key == LOWER_M, lambda: os.startfile(ANGMANSLAG)),
+            (lambda: key == LIT_I, lambda: os.startfile(ISQPATH)),
+            (lambda: key == LIT_M, lambda: os.startfile(ANGMANSLAG)),
         ))
 
         if key == ESC:
+            stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
             return

@@ -18,21 +18,20 @@ terminal window, and any heavier work should update application state elsewhere
 before the UI is redrawn.
 """
 
-import curses
-import ctypes
 import datetime
 import os
 import psutil
 import sys
-import time
+from typing import Any
 
-from core import posix
 from core import win
 
-from core.curseskeys import HSEP, VSEP
-from core.colors import WHITE, RED, NAVY, GREEN, GRAY, CYAN, MAGENTA
+from core.keys import HSEP, VSEP, SHF, CTL, ALT
+from core.colors import WHITE, RED, NAVY, GREEN, LIME, CYAN, MAGENTA
 from core.def_paths import INVASH, LOG_FILE
-from core.sentam import STANVOR, Battery, Lαmseut, Stanvor, Lanter, Vseut
+from core.sentam import (
+    STANVOR, ScreenBuffer, Battery, Lαmseut, Stanvor, Vseut
+)
 from core.stvlog import stναδeut
 
 
@@ -52,14 +51,9 @@ def set_invash(stvl: Lαmseut) -> str:
 
 
 # -- RUNTIME --
-def stvrefresh(stdscr: curses.window) -> None:
-    """Refresh Stαuνor screen."""
-    stdscr.refresh()
-    time.sleep(0.01)
-
 
 # Time
-def _sιeν() -> tuple[str, str, int]:
+def sιeν() -> tuple[str, str, int]:
     """Return hour time, current day and spacing for mαιteu function."""
     today = datetime.date.today().strftime('%w.%#e%#m%y')
     current_time = datetime.datetime.now().strftime('%H.%M')
@@ -72,26 +66,6 @@ def check_battery() -> tuple[bool, int]:
     battery = psutil.sensors_battery()
     assert battery is not None
     return battery.power_plugged, battery.percent
-
-
-def _batpercent(lanter: Lanter, dayfix: int) -> None:
-    """Print battery percentage."""
-    bat_on, bat_percent = check_battery()
-    batnum = 3 if bat_on else 4
-    xfix = lanter.xlen - dayfix
-    batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
-
-    lanter.stdscr.addstr(0, xfix - 4, '·', curses.color_pair(batnum))
-
-    for key, values in batvals.items():
-        if bat_percent < key:
-            continue
-
-        x1, x2 = values
-        lanter.stdscr.addstr(0, xfix - x1, f'{bat_percent}')
-        lanter.stdscr.addstr(0, xfix - x2, lanter.ybar, curses.color_pair(2))
-
-        return
 
 
 def _set_battery(battery: Battery) -> tuple[int, int, int]:
@@ -140,7 +114,8 @@ def set_filedata(stanvor: Stanvor) -> None:
         units = { 1000: 'B', 1000000: 'K'}
         unit = units.get(limit, 'M')
 
-        return f'{str(filedata.size/limit)} {unit}'
+        result = filedata.size/limit if limit else filedata.size
+        return f'{str(result)} {unit}'
 
     if not file_path or not os.path.isfile(file_path):
         filedata.prompt = ''
@@ -157,140 +132,11 @@ def set_filedata(stanvor: Stanvor) -> None:
         return
 
     size_prompt = stamp_size()
-
-    ιmtαuspace = '\n' if not stv_log else '\n  '
-
+    ιmtαuspace = '  ' if stv_log else ''
     filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'
 
 
 # -- INTERFACE --
-def mαιteu(lanter: Lanter, clearnum: int, ιdeu: str) -> None:
-    """Main head of all the Stαuνor."""
-    stdscr = lanter.stdscr
-
-    # SETTING TO REFRESH SCREEN
-    if clearnum:
-        stdscr.clrtoeol()
-    else:
-        stdscr.clear()
-
-    hour, date, ιstegfix = _sιeν()
-    prompt_space = lanter.xlen - ιstegfix
-
-    # TITLE
-    stdscr.addstr(0, 0, ιdeu)
-    stdscr.clrtoeol()
-    # BATTERY
-    _batpercent(lanter, ιstegfix)
-    # DATE
-    stdscr.addstr(0, prompt_space, date)
-    stdscr.addstr(0, prompt_space - 2, lanter.ybar, curses.color_pair(2))
-    # HOUR
-    stdscr.addstr(0, lanter.xlen - 6, hour)
-    stdscr.addstr(0, lanter.xlen - 8, lanter.ybar, curses.color_pair(2))
-    # SEPARATOR
-    stdscr.addstr(1, 0, lanter.xbar, curses.color_pair(1))
-
-
-def lαmνerseut(lanter: Lanter, vsent: Vseut) -> None:
-    """
-    Show νerseut and υνerseut variables in Stαuνor.
-    This functions works for Stαuνor and Tαuder.
-    """
-
-    versent_len = len(vsent.νerseut) + 9 if vsent.νerseut else 0
-    uversent_len = len(vsent.υνerseut) + 10 if vsent.υνerseut else 0
-    egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
-    prompt_len = versent_len + uversent_len + egen_len
-
-    xpos = lanter.xlen - prompt_len - 1
-    lanter.stdscr.move(lanter.ylen-1, xpos)
-
-    if vsent.νerseut:
-        lanter.stdscr.addstr('Verseut: ', curses.color_pair(3))
-        lanter.stdscr.addstr(vsent.νerseut)
-    if vsent.νerseut and vsent.υνerseut:
-        lanter.stdscr.addstr(' │ ', curses.color_pair(2))
-    if vsent.υνerseut:
-        lanter.stdscr.addstr('Uνerseut: ', curses.color_pair(7))
-        lanter.stdscr.addstr(vsent.υνerseut)
-
-
-def lestαq(stanvor: Stanvor) -> None:
-    """Complex mαιteu menu. Insert Stαuνor variables.
-    ιdeu | prαν | log  | υprαν | ιzprαν || ιmαν | αdιmαν | lαδuιmαν
-    It uses stanvor.ιdeu as a guide to shape visuals.
-    Remember that stanvor.ιdeu is different than stvl.ιdeu
-
-    Draw one Stαuνor frame from the current application state.
-
-    This is a UI-only operation: call it on the thread/process that owns
-    curses. Input handling and long-running work should run elsewhere and
-    update state or send events; the UI can then render when it receives an
-    event, instead of coupling every worker loop to this function.
-    """
-
-    stvl, sent = stanvor.stvl, stanvor.sent
-    lanter, audio = stanvor.lanter, stanvor.audio
-    stdscr = lanter.stdscr
-
-    if not f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}':
-        sent.lαδuιmαν = ''
-    else:
-        sent.lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
-
-    mαιteu(lanter, stvl.clean, stvl.ιdeu)
-
-    try:
-        if audio.on and stanvor.ιdeu == STANVOR:
-            # In Tαuder, audio.prompt is not allowed.
-            stdscr.addstr(f'{audio.prompt}\n')
-            stdscr.addstr(stanvor.lanter.xbar, curses.color_pair(2))
-
-        # Prαν
-        stdscr.addstr(stvl.prαν, curses.color_pair(stvl.color_id))
-
-        # Log
-        stdscr.addstr(stvl.log, curses.color_pair(1))
-
-        if stanvor.ιdeu == 'αqtαν':
-            return
-
-        # Uprαν | Imαν | Lαδuιmαν
-        if stanvor.ιdeu in ('Tαuder', 'Logreutαg'):
-            return
-
-        if stvl.υprαν:
-            stdscr.addstr(stvl.υprαν + '\n')
-
-        stdscr.addstr(sent.ιmαν)
-        stdscr.addstr(sent.lαδuιmαν, curses.color_pair(5))
-        stdscr.addstr(sent.αdιmαν)
-
-        for index, i in enumerate(stvl.ιzprαν.split('\n')):
-            if index == lanter.ylog:
-                break
-            stdscr.addstr(f'{i}\n')
-
-        stdscr.addstr(stanvor.filedata.prompt)
-
-        if stanvor.srch.on:
-            stdscr.addstr(stanvor.srch.prompt)
-
-        # Stlαg
-        stdscr.addstr(2, lanter.xlen - len(str(stvl.stlαg)) - 1, f'{stvl.stlαg}')
-
-        if stanvor.ιdeu == 'Logreutαg':
-            stdscr.addstr(f'\n{stvl.log}', curses.color_pair(1))
-            return
-
-        if not stanvor.ιdeu == 'Tαuder':
-            lαmνerseut(stanvor.lanter, stanvor.vsent)
-
-    except curses.error as e:
-        stvl.stlαg = stναδeut(stvl.αδeutαr, str(e), STANVOR)
-
-
 def reset(stanvor: Stanvor) -> None:
     """
     Reset Stαuνor variables.
@@ -336,10 +182,14 @@ def stop_stanvor(stanvor: Stanvor) -> None:
     stanvor.on = False
 
 
+def force_stlαg(stanvor: Stanvor, prompt: Any) -> None:
+    """Return the current input manager."""
+    stanvor.stvl.stlαg = str(prompt)
+
+
 # -- CONFIG --
 # Text cursor
 def hide_cursor() -> None:
-    curses.curs_set(False)
     sys.stdout.write('\033[?25l')
     sys.stdout.flush()
 
@@ -368,198 +218,43 @@ def end_stanvor() -> None:
 
 
 # -- ASHEN INTERFACE --
-class RawTerminal:
-    """Context manager to handle raw input and screen cleanup safely."""
-    def __init__(self):
-        self.in_handle = None
-        self.old_in_mode = ctypes.c_ulong()
-    
-    def __enter__(self) -> "RawTerminal":
-        if win.IS_WINDOWS:
-            win.enable_ansi()
-            win.set_input(self)
-
-        # Hide cursor (\x1b[?25l) and clear screen (\x1b[2J)
-        sys.stdout.write("\x1b[?25l\x1b[2J")
-        sys.stdout.flush()
-
-        if not win.IS_WINDOWS:
-            posix.set_ansi(self)
-
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Restore cursor (\x1b[?25h), reset colors (\x1b[0m), and move home (\x1b[H)"""
-        sys.stdout.write("\x1b[?25h\x1b[0m\x1b[H")
-        sys.stdout.flush()
-
-        if win.IS_WINDOWS and self.in_handle:
-            kernel32 = ctypes.windll.kernel32
-            # Restore original console input mode
-            kernel32.SetConsoleMode(self.in_handle, self.old_in_mode)
-        else:
-            posix.restore_terminal(self)
-
-    def getch(self, timeout=0.05) -> int | dict | None:
-        """Non-blocking key reader."""
-        tmout = timeout
-        return win.getkey(self) if win.IS_WINDOWS else posix.getkey(tmout)
-
-
-class ScreenBuffer:
-    """A 2D memory-grid manager with dirty-cell features to avoid flicker."""
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.pointer: list = [0, 0]
-        self.buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
-        self.old_buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
-
-    def clear(self):
-        self.buffer = [[(" ", None, None) for _ in range(self.width)] for _ in range(self.height)]
-        self.pointer = [0, 0]
-
-    def move(self, x, y):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.pointer = [x, y]
-
-    def insert(self, *args, **kwargs):
-        """Write text at the cursor, or at an explicit (x, y) position."""
-        fg, bg = None, None
-
-        if kwargs:
-            if 'fg' in kwargs:
-                fg = kwargs['fg']
-            if 'bg' in kwargs:
-                bg = kwargs['bg']
-
-        if isinstance(args[0], int):
-            if len(args) == 3:
-                x, y, val = args
-
-            if not (0 <= x < self.width and 0 <= y < self.height):
-                return
-
-            prompt = val if isinstance(val, str) else chr(val)
-            self.pointer = [x, y]
-        else:
-            prompt = args[0]
-            if prompt is None:
-                return
-
-            if not isinstance(prompt, str):
-                prompt = str(prompt)
-
-        if not prompt:
-            return
-
-        x, y = self.pointer
-
-        for char in prompt:
-            if 0 <= x < self.width and 0 <= y < self.height:
-                self.buffer[y][x] = (char, fg, bg)
-                x += 1
-
-                if x >= self.width:
-                    x = 0
-                    y += 1
-
-            if y >= self.height:
-                y = self.height - 1
-                x = 0
-
-        self.pointer = [x, y]
-
-    def render(self):
-        output = []
-        # Sentinel values force an explicit foreground/background reset on the
-        # first changed cell, so terminal state left by a previous render can
-        # never turn a foreground-only character into a colored square.
-        _unset = object()
-        current_fg, current_bg = _unset, _unset
-
-        def update_foreground(fg: object) -> object:
-            """Update foreground color if it changed."""
-            if fg != current_fg:
-                if fg:
-                    # Set Foreground RGB: \x1b[38;2;{r};{g};{b}m
-                    output.append(f"\x1b[38;2;{fg[0]};{fg[1]};{fg[2]}m")
-                else:
-                    output.append("\x1b[39m") # Reset foreground
-            return fg
-
-        def update_background(bg: object) -> object:
-            """Update Background color if it changed."""
-            if bg != current_bg:
-                if bg:
-                    # Set Background RGB: \x1b[48;2;{r};{g};{b}m
-                    output.append(f"\x1b[48;2;{bg[0]};{bg[1]};{bg[2]}m")
-                else:
-                    output.append("\x1b[49m") # Reset background
-            return bg
-
-
-        for y in range(self.height):
-            for x in range(self.width):
-                new_cell = self.buffer[y][x]
-
-                # Only write cells that changed since the last frame
-                if new_cell != self.old_buffer[y][x]:
-                    char, fg, bg = new_cell
-
-                    # 1. Move cursor to position
-                    output.append(f"\x1b[{y+1};{x+1}H")
-
-                    # 2. Update Foreground color if it changed
-                    current_fg = update_foreground(fg)
-
-                    # 3. Update Background color if it changed
-                    current_bg = update_background(bg)
-
-                    # 4. Append the actual character
-                    output.append(char)
-        
-        if output:
-            # Reset All Styles: \x1b[0m
-            # Always append a style reset at the end of a flush batch
-            # to prevent color bleeding
-            output.append("\x1b[0m")
-
-            # Print screen
-            sys.stdout.write("".join(output))
-            sys.stdout.flush()
-
-        # Update the reference frame
-        self.old_buffer = [row[:] for row in self.buffer]
-
-
-def _lαδmαιteu(screen: ScreenBuffer, battery: Battery) -> None:
-    hour, date, ιstegfix = _sιeν()
+def lαδmαιteu(stanvor: Stanvor) -> None:
+    screen = stanvor.screen
+    battery = stanvor.battery
+    hour, date, ιstegfix = sιeν()
     xfix = screen.width - ιstegfix
 
     screen.clear()
-    screen.insert(0, 0, STANVOR)
+
+    screen.insert(0, 0, stanvor.stvl.ιdeu) # Pαδuα stanvor.ιdeu
 
     batpercent_space, batsep_space, batstate = _set_battery(battery)
-    batcolor = GREEN if batstate else RED
+    batcolor = LIME if batstate else RED
 
     screen.insert(xfix - 4, 0, '·', fg=batcolor)
     screen.insert(xfix - batpercent_space, 0, f'{battery.percent}')
-    screen.insert(xfix - batsep_space, 0, VSEP, fg=GRAY)
+    screen.insert(xfix - batsep_space, 0, chr(VSEP), fg=NAVY)
 
     screen.insert(xfix, 0, date)
-    screen.insert(xfix - 2, 0, VSEP, fg=GRAY)
+    screen.insert(xfix - 2, 0, chr(VSEP), fg=NAVY)
 
     screen.insert(screen.width - 6, 0, hour)
-    screen.insert(screen.width - 8, 0, VSEP, fg=GRAY)
+    screen.insert(screen.width - 8, 0, chr(VSEP), fg=NAVY)
 
     screen.insert(0, 1, chr(HSEP) * screen.width, fg=NAVY)
+
+    #screen.insert(xfix - batsep_space, 1, '┴', fg=NAVY)
+    #screen.insert(xfix - 2, 1, '┴', fg=NAVY)
+    #screen.insert(screen.width - 8, 1, '┴', fg=NAVY)
+    screen.move(0, 2)
+
+
     # Somehow screen.pointer ends here as [2, 2],
     # but still prints in intended [0, 2].
     # And if move(0, 2), screen moves normally to real [0, 2].
 
 
-def _lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
+def lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
     """
     Show νerseut and υνerseut variables in Stαuνor.
     This functions works for Stαuνor and Tαuder.
@@ -583,25 +278,26 @@ def _lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
         screen.insert(vsent.υνerseut)
 
 
-def lαδιmανseut(screen: ScreenBuffer, stanvor: Stanvor) -> None:
+def lαδιmανseut(stanvor: Stanvor) -> None:
+    screen = stanvor.screen
     stvl, sent = stanvor.stvl, stanvor.sent
     audio = stanvor.audio
     
     if not f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}':
-        sent.lαδuιmαν = ''
+        lαδuιmαν = ''
     else:
-        sent.lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
+        lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
 
-    _lαδmαιteu(screen, stanvor.battery)
+    lαδmαιteu(stanvor)
 
     if audio.on and stanvor.ιdeu == STANVOR:
         # In Tαuder, audio.prompt is not allowed.
         screen.insert(f'{audio.prompt}\n')
-        screen.insert(VSEP * screen.width, fg=CYAN)
+        screen.insert(chr(HSEP) * screen.width, fg=CYAN)
 
     # Prαν
-    #prav_fg, prav_bg = stvl.color_id
-    screen.insert(stvl.prαν)#, curses.color_pair(stvl.color_id))
+    #prav_fg, prav_bg = stvl.colors
+    screen.insert(stvl.prαν)#, fg=prav_fg, bg=prav_bg)
 
     # Log
     screen.insert(stvl.log, fg=NAVY)
@@ -616,19 +312,23 @@ def lαδιmανseut(screen: ScreenBuffer, stanvor: Stanvor) -> None:
     if stvl.υprαν:
         screen.insert(stvl.υprαν + '\n')
 
-    screen.insert(sent.ιmαν)
-    screen.insert(sent.lαδuιmαν, fg=WHITE, bg=NAVY)
-    screen.insert(sent.αdιmαν)
+    if sent.active:
+        screen.insert(sent.ιmαν)
+        screen.insert(lαδuιmαν, fg=WHITE, bg=NAVY)
+        screen.insert(sent.αdιmαν)
 
-    for index, i in enumerate(stvl.ιzprαν.split('\n')):
-        if index == stanvor.lanter.ylog:
-            break
-        screen.insert(f'{i}\n')
+    if stvl.ιzprαν:
+        for index, i in enumerate(stvl.ιzprαν.split('\n')):
+            if index == stanvor.screen.height - 4:
+                break
+            screen.insert(f'{i}\n')
 
-    screen.insert(stanvor.filedata.prompt)
+    file_prompt = stanvor.filedata.prompt
+    if file_prompt:
+        screen.insert(f'\n{file_prompt}')
 
     if stanvor.srch.on:
-        screen.insert(stanvor.srch.prompt)
+        screen.insert(f'\n{stanvor.srch.prompt}')
 
     # Stlαg
     screen.insert(screen.width - len(str(stvl.stlαg)) - 1, 2, f'{stvl.stlαg}')
@@ -638,4 +338,63 @@ def lαδιmανseut(screen: ScreenBuffer, stanvor: Stanvor) -> None:
         return
 
     if not stanvor.ιdeu == 'Tαuder':
-        _lαδνerseut(screen, stanvor.vsent)
+        lαδνerseut(screen, stanvor.vsent)
+    
+    stanvor.screen.render()
+
+
+def get_terminal_size() -> tuple[int, int]:
+    try:
+        size = os.get_terminal_size()
+        width, height = size.columns, size.lines
+    except OSError:
+        width, height = 80, 24
+    
+    return width, height
+
+
+# Filters
+def filter_event(event) -> bool:
+    """Filter input events in native mode."""
+    # ONLY ACCEPT KEY EVENTS
+    if event['type'] != 'KEY':
+        return False
+
+    # ONE-HIT INSTRUCTION
+    if not event['down']: # Skip key release
+        return False
+
+    return True
+
+
+def filter_virtual_key(virtual_key: int) -> bool:
+    """Filter virtual keys in native mode."""
+    # ONLY ACCEPT VIRTUAL KEYS
+    if not virtual_key:
+        return False
+
+    # IGNORE MODIFIERS
+    # They are handled in combination with other keys
+    if virtual_key in (SHF, CTL, ALT):
+        return False
+
+    return True
+
+
+# Generators
+def generate_key(event) -> int:
+    """Take key event, process its virtual_key and returns the result."""
+    ctrl_keys = {'shift': 250, 'ctrl': 500, 'alt': 750}
+
+    key = event.get('virtual_key') # int
+    for ctrlkey, ctrlcode in ctrl_keys.items():
+        if event.get(ctrlkey):
+            return key + ctrlcode
+
+    return key
+
+
+def generate_char(event) -> int:
+    """Generates char ordinal for tαg."""
+    event_char = event.get('char', '')
+    return ord(event_char) if event_char else 0

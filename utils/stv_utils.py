@@ -11,11 +11,10 @@ from operator import itemgetter
 from typing import Dict, Callable # askaq, manage_command
 
 from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
-import core.curseskeys as key
+import core.keys as key
 from core.def_paths import EXCLUDED
-from core.curseskeys import BACK, MUSSELAITH, PAD
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
-from core.stv import lestαq, hide_cursor
+from core.stv import lαδιmανseut, hide_cursor, filter_event, generate_key
 from core.stvlog import stνlαt, stlαgreu, set_stνlαt
 
 from utils.qampar import qαmpαr
@@ -23,33 +22,32 @@ from utils.session import eudαμl_stαuνor
 
 
 logimprol = {
-    key.F12:          lambda _: set_stνlαt(),
-    key.CTL_PADENTER: lambda _: eudαμl_stαuνor(),
-    key.F10:          lambda stanvor: qαmpαr(stanvor.lanter),
-    key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.sent.ιmαν),
+    key.CTL_INS:     lambda _: eudαμl_stαuνor(),
+    key.F12:          lambda stanvor: set_stνlαt(stanvor),
+    key.F10:          lambda stanvor: qαmpαr(stanvor),
+    #key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.sent.ιmαν),
 }
 
-improl_dicts = (logimprol, key.PAD, MUSSELAITH)
+improl_dicts = (logimprol, key.MUSSELAITH) #, PAD)
 
 sentam_stagen = {
-    key.ALT_BKSP: {'ιmαν': lambda *_: ''},
+    key.ALT_BACK: {'ιmαν': lambda *_: ''},
     key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
-    key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_PAD7: {'νerseut': lambda *_: ''},
-    key.CTL_PAD8: {'υνerseut': lambda *_: ''},
-    key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
-    key.ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
-    key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
-    key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
-    key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
-    key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
-    key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
+    #key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
+    #key.CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    #key.CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
+    #key.CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    #key.CTL_PAD7: {'νerseut': lambda *_: ''},
+    #key.CTL_PAD8: {'υνerseut': lambda *_: ''},
+    #key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
+    #key.ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
+    #key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
+    #key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
+    #key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
+    #key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
+    #key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
 }
 
-COPY_KEYS = {key.CTL_PAD1: 'νerseut', key.CTL_PAD4: 'υνerseut'}
 
 HNAV = {
     key.HOME: lambda sent:
@@ -62,7 +60,7 @@ HNAV = {
         if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν),
     key.RIGHT: lambda sent:
         (sent.ιmαν + sent.uostιmαν, sent.αdιmαν[0], sent.αdιmαν[1:]) \
-        if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', sent.αdιmαν),
+        if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', ''),
 }
 
 WEBSITES = {
@@ -98,22 +96,6 @@ def lαuterbright(brightfix: int) -> str:
     bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
     sbc.set_brightness(bright_set)
     return stlαgreu(f'Aδαleu ❯ {bright_set}')
-
-
-# Color for Lαuter
-def set_color(ιmαν: str, x: int, y: int) -> tuple[int, str]:
-    """Blank screen with given background color."""
-    color_dict = {
-        'nashlam': (5,  ' '),
-        'muben':   (12, ' '),
-        'sageh':   (11, ' '),
-        'seltar':  (3,  '█'),
-        'magenta': (7,  '█'),
-        'augeh':   (8,  '█'),
-    }
-    color_id, block = color_dict.get(ιmαν, (0, ' '))
-
-    return color_id, (block * x * (y - 2))[:-1]
 
 
 # VERSENTAR
@@ -153,11 +135,11 @@ def check_globalkeys(stanvor: Stanvor, code: int,
     actions = {
         **{k: (lambda v, d=logimprol: (d[v](stanvor), ιmαν)[1])
            for k in logimprol},
-        **{k: (lambda v, d=key.PAD: ιmαν + d[v][0]) for k in PAD},
-        **{k: (lambda v, d=key.MUSSELAITH: ιmαν + d[v]) for k in MUSSELAITH},
+        #**{k: (lambda v, d=ck.PAD: ιmαν + d[v][0]) for k in PAD},
+        **{k: (lambda v, d=key.MUSSELAITH: ιmαν + d[v]) for k in key.MUSSELAITH},
     }
 
-    return (actions[code](code), -1) if code in actions else (ιmαν, code)
+    return (actions[code](code), 0) if code in actions else (ιmαν, code)
 
 
 # Filter command
@@ -193,7 +175,6 @@ def manage_command(command: str, operations: Dict[str, Callable],
     # Open other file types       
     else:
         os.startfile(f'"{command}"')
-
 
     return f'{command}', 0
 
@@ -252,18 +233,24 @@ def anza_file(stanvor: Stanvor) -> str:
     sent.ιmαν = ''
 
     while True:
-        lestαq(stanvor)
+        lαδιmανseut(stanvor)
 
-        αuzα = stanvor.lanter.stdscr.getch()
-        if αuzα == key.ESC:
+        event = stanvor.terminal.getch()
+
+        if not filter_event(event):
+            continue
+
+        tkey = generate_key(event)
+
+        if tkey == key.ESC:
             return ''
-        if αuzα == 10:
+        if tkey == 10:
             return ''.join(sent.ιmαν.split('.')[:-1])
 
-        if αuzα == BACK:
+        if tkey == key.BACK:
             sent.ιmαν = sent.ιmαν[:-1]
-        elif αuzα != -1:
-            sent.ιmαν += chr(αuzα)
+        elif tkey != -1:
+            sent.ιmαν += chr(tkey)
 
 
 def set_ilog(root: str) -> list:
@@ -273,7 +260,9 @@ def set_ilog(root: str) -> list:
     return dir
 
 
+
 def set_sentam(code: int, stanvor: Stanvor) -> None:
+    """Set seutαm values."""
     sent, stvl = stanvor.sent, stanvor.stvl
     vsent = stanvor.vsent
 

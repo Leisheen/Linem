@@ -1,11 +1,10 @@
 """Retrieves info about a given input character."""
-import curses
 import pyperclip
 from dataclasses import dataclass
 
-from core.curseskeys import *
-from core.sentam import Lanter
-from core.stv import mαιteu
+import core.keys as key
+from core.sentam import STANVOR, Stanvor, Terminal
+from core.stv import lαδmαιteu, filter_event, generate_key
 from utils.stv_utils import copy_to_clipboard
 
 
@@ -18,18 +17,26 @@ class Char:
     stlag: str = ''
 
 
+KEY_NAMES = {
+    value: name for name, value in vars(key).items()
+    if not name.startswith("_") and isinstance(value, (int, str))
+}
+
 # Visuals
-def _show_modes(options: list, lanter) -> None:
+def _show_modes(options: list, stanvor: Stanvor) -> None:
     """Show the modes menu."""
-    mαιteu(lanter, 0, 'Char')
+    screen = stanvor.screen
+    lαδmαιteu(stanvor)
 
-    lanter.stdscr.move(2, 0)
+    screen.move(0, 2)
     for index, item in enumerate(options, start=1):
-        lanter.stdscr.addstr(f'{index} │ {item}\n')
+        screen.insert(f'{index} │ {item}\n')
+    stanvor.screen.render()
 
 
-def _char_prompt(char: Char, lanter: Lanter) -> None:
+def _char_prompt(char: Char, stanvor: Stanvor) -> None:
     """Visuals for char prompt."""
+    screen = stanvor.screen
     prompt1 = f'{f'{char.mode} ❯':10}'
     char.lash.replace('\x00', '').replace('\n', '')
 
@@ -41,32 +48,28 @@ def _char_prompt(char: Char, lanter: Lanter) -> None:
         prompt2 = f'{'Key':10}'
         val1 = str(char.code) if char.code else '_'
         val2 = char.lash if char.lash else ''
-        #val3 = char.keyname if char.code else ''
+        val3 = char.keyname if char.code else ''
 
 
-    mαιteu(lanter, 1, 'Char')
-    lanter.stdscr.addstr(2, 0, f'{prompt1}{val1}')
-    lanter.stdscr.clrtoeol()
-    lanter.stdscr.addstr(3, 0, f'{prompt2}{val2.replace('\x00', '')}')
-    lanter.stdscr.clrtoeol()
-    lanter.stdscr.addstr(4, 0, f'{'Keyname':10}{char.keyname}')
-    lanter.stdscr.clrtoeol()
-
-    lanter.stdscr.addstr(f'\n· {char.stlag}' if char.stlag else '')
+    lαδmαιteu(stanvor)
+    screen.insert(0, 2, f'{prompt1}{val1}')
+    screen.insert(0, 3, f'{prompt2}{val2.replace('\x00', '')}')
+    screen.insert(0, 4, f'{'Keyname':10}{char.keyname}')
+    screen.insert(f'\n· {char.stlag}' if char.stlag else '')
 
 
 # Set stlαg
-def _filter_input(key: int, char: Char) -> bool:
+def _filter_input(tkey: int, char: Char) -> bool:
     """Get and filter a key stroke."""
-    if key == CTL_PAD3:
+    if tkey == key.CTL_PAD3:
         copy_to_clipboard(char.lash)
         char.stlag = f'chr Ǿ: Copy char {char.lash}'
         return True
-    elif key == ALT_PADSTOP:
+    elif tkey == key.ALT_PADSTOP:
         paste = pyperclip.paste()
         char.lash = paste if len(paste) == 1 else char.lash
         char.code = ord(char.lash)
-        char.keyname = str(curses.keyname(char.code))
+        char.keyname = KEY_NAMES.get(tkey, '')
         char.stlag = f'chr ǜ: Paste char {char.lash}'
         return True
 
@@ -74,61 +77,72 @@ def _filter_input(key: int, char: Char) -> bool:
 
 
 # Interface
-def _select_input_mode(lanter) -> str:
+def _select_input_mode(terminal: Terminal) -> str:
     """Select input mode: Key symbol or code number."""
     while True:
-        key = lanter.stdscr.getch()
+        event = terminal.getch()
+        if not filter_event(event):
+            continue
 
-        if key == ESC:
+        tkey = generate_key(event)
+
+        if tkey == key.ESC:
             return ''
-        if key == NUM1:
+        if tkey == key.NUM1:
             return 'Key'
-        if key == NUM2:
+        if tkey == key.NUM2:
             return 'Code'
 
 
-def _get_key(key: int, char: Char) -> None:
+def _get_key(tkey: int, char: Char) -> None:
     """Get key interface."""
-    cmap = {BACK: '0o10', TAB: r'\t', ENTER: '10'}
-    char.code = key
+    cmap = {key.BACK: '0o10', key.TAB: r'\t', key.ENTER: '10'}
+    char.code = tkey
     char.lash = cmap.get(char.code, chr(char.code))
-    char.keyname = str(curses.keyname(char.code))
+    char.keyname = KEY_NAMES.get(tkey, '')
 
 
-def _get_code(key: int, char: Char) -> None:
+def _get_code(tkey: int, char: Char) -> None:
     """Get code interface."""
-    key_char = chr(key)
+    key_char = chr(tkey)
 
     if key_char.isdigit():
         char.code = 0 if len(str(char.code)) > 2 else char.code
         char.code = int(f'{char.code}{key_char}')
         char.lash = chr(char.code)
-        char.keyname = str(curses.keyname(char.code))
+        char.keyname = KEY_NAMES.get(tkey, '')
 
 
 # Char
-def eval_char(lanter: Lanter) -> None:
+def eval_char(stanvor: Stanvor) -> None:
     """Main interface."""
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Char'
+    terminal = stanvor.terminal
+
     char = Char()
     modes = {'Key': _get_key, 'Code': _get_code}
 
-    _show_modes(list(modes.keys()), lanter)
-    char.mode = _select_input_mode(lanter)
+    _show_modes(list(modes.keys()), stanvor)
+    char.mode = _select_input_mode(terminal)
 
     if not char.mode:
         return
 
     while True:
-        lanter.stdscr.clear()
-        _char_prompt(char, lanter)
+        _char_prompt(char, stanvor)
+        stanvor.screen.render()
 
-        key = lanter.stdscr.getch()
+        event = terminal.getch()
+        if not filter_event(event):
+            continue
+        tkey = generate_key(event)
 
-        if key == ESC:
+        if tkey == key.ESC:
+            stanvor.ιdeu = STANVOR
             return
 
-        if _filter_input(key, char):
+        if _filter_input(tkey, char):
             continue
 
-        if key != WAIT:
-            modes[char.mode](key, char)
+        if tkey != key.NULL:
+            modes[char.mode](tkey, char)

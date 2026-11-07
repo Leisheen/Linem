@@ -2,7 +2,7 @@
 import os
 
 from core.def_paths import EXCLUDED
-from core.curseskeys import NPAGE, PPAGE, TAB, SHF_TAB
+from core.keys import TAB, SHF_TAB, PREV, NEXT
 from core.sentam import STANVOR, Stanvor
 from core.stvlog import stναδeut
 
@@ -82,8 +82,8 @@ def log_page(command: int, stanvor: Stanvor) -> None:
     previous_tuple = (lanter.start - lanter.ylog, lanter.end - lanter.ylog)
 
     log_commands = {
-        NPAGE: next_tuple if lanter.end < lenl else (0, lanter.ylog),
-        PPAGE: previous_tuple if lanter.end > lanter.ylog else (logfix, lenl),
+        NEXT: next_tuple if lanter.end < lenl else (0, lanter.ylog),
+        PREV: previous_tuple if lanter.end > lanter.ylog else (logfix, lenl),
     }
 
     lanter.start, lanter.end = log_commands.get(command, (lanter.start, lanter.end))
@@ -113,5 +113,5 @@ def tab_paths(code: int, stanvor: Stanvor) -> None:
 
 logvals = {
     (TAB, SHF_TAB): lambda code, stanvor: tab_paths(code, stanvor),
-    (PPAGE, NPAGE): lambda code, stanvor: log_page(code, stanvor),
+    (PREV, NEXT): lambda code, stanvor: log_page(code, stanvor),
 }

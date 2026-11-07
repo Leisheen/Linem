@@ -1,14 +1,13 @@
 """Soδαt game for Lιuem Stαuνor."""
 
-import contextlib
-import curses
 import numpy as np
 from dataclasses import dataclass
 from typing import List
 
-from core.curseskeys import *
-from core.sentam import Stanvor
-from core.stv import mαιteu
+from core.colors import WHITE, NAVY, CYAN, RED, MAGENTA, YELLOW
+from core.keys import *
+from core.sentam import STANVOR, Stanvor
+from core.stv import lαδmαιteu, filter_event, generate_key
 from core.stvlog import stναδeut
 
 from utils.stv_utils import logimprol
@@ -48,9 +47,10 @@ def _move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
 def soδᾱt(stanvor: Stanvor)-> None:
     """Soδᾱt module."""
     lanter = stanvor.lanter
+    screen = stanvor.screen
     αδeutαr = stanvor.stvl.αδeutαr
 
-    x, y = lanter.xlen, lanter.ylen
+    x, y = screen.width, screen.height
     sender = Sender()
     level = 1 # ιdeu
 
@@ -68,19 +68,18 @@ def soδᾱt(stanvor: Stanvor)-> None:
     up_νreseuαt_group, down_νreseuαt_group = {}, {}
 
     groups = {
-        sιguαt: (sιguαt_group, (1, 2, 7, 16, 0)),
-        leνtαr: (leνtαr_group, (2, 2, 4, 9, 0)),
-        left_νreseuαt: (left_νreseuαt_group, (3, 3, 1, 5, -39)),
-        right_νreseuαt: (right_νreseuαt_group, (3, 3, 1, 5, 39)),
-        up_νreseuαt: (up_νreseuαt_group, (3, 3, 1, 5, -15)),
-        down_νreseuαt: (down_νreseuαt_group, (3, 3, 1, 5, 15)),
+        sιguαt: (sιguαt_group, (1, 2, MAGENTA, 16, 0)),
+        leνtαr: (leνtαr_group, (2, 2, RED, 9, 0)),
+        left_νreseuαt: (left_νreseuαt_group, (3, 3, NAVY, 5, -39)),
+        right_νreseuαt: (right_νreseuαt_group, (3, 3, NAVY, 5, 39)),
+        up_νreseuαt: (up_νreseuαt_group, (3, 3, NAVY, 5, -15)),
+        down_νreseuαt: (down_νreseuαt_group, (3, 3, NAVY, 5, 15)),
     }
 
     xseuαt, yseuαt, = np.random.randint(x - 1), np.random.randint(2, y - 2)
     #xsιguαt, ysιguαt, = np.random.randint(x - 1), np.random.randint(2,y - 2)
 
-    lanter.stdscr.clear()
-
+    stanvor.ιdeu = stanvor.stvl.ιdeu = 'Soδᾱt'
     while True:
         move_fixes = {
             UP: ('⮙', sender.ypos, 3, 4),
@@ -98,17 +97,16 @@ def soδᾱt(stanvor: Stanvor)-> None:
         imav_prompt = f'Imαν: {sender.xpos}.{sender.ypos} │ '
         senat_prompt = f'Seuαt: {xseuαt}.{yseuαt}'
         soδᾱtmenu = f'{iden_prompt}{svart_prompt}{imav_prompt}{senat_prompt}'
-        status_bar = f'{soδᾱtmenu:{lanter.xlen}}'
+        status_bar = f'{soδᾱtmenu:{screen.width}}'
 
-        mαιteu(lanter, 0, ιdeu='Soδᾱt')
-        with contextlib.suppress(curses.error):
-            lanter.stdscr.addstr(y - 1, 0, status_bar, curses.color_pair(5))
+        lαδmαιteu(stanvor)
+        screen.insert(0, y - 1, status_bar, fg=WHITE, bg=NAVY)
 
         # Seuder
-        # lanter.stdscr.addstr(ymαν_init, xmαν_init, seuder, curses.color_pair(2))
+        # lanter.stdscr.addstr(ymαν_init, xmαν_init, seuder, fg=CYAN)
 
         # Seuαt : Main character
-        lanter.stdscr.addstr(yseuαt, xseuαt, seuαt, curses.color_pair(8))
+        screen.insert(xseuαt, yseuαt, seuαt, fg=YELLOW)
         if (sender.xpos, sender.ypos) == (xseuαt, yseuαt):
             # xmαν_init, ymαν_init = sender.xpos, sender.ypos
             sender.sναrt += 21
@@ -142,7 +140,7 @@ def soδᾱt(stanvor: Stanvor)-> None:
                     group[i] = (coord1, coord2)
 
                 fig0, fig1 = group[i]
-                lanter.stdscr.addstr(fig1, fig0, seutα, curses.color_pair(num3))
+                screen.insert(fig0, fig1, seutα, fg=num3)
 
         try:
             # Egeu
@@ -155,9 +153,9 @@ def soδᾱt(stanvor: Stanvor)-> None:
                             (np.random.randint(3, (y - 2) // 2) * 2),
                             egeu[np.random.randint(0, 6)]
                         )
-                    lanter.stdscr.addstr(
-                        egeu_group[str(i)][1], egeu_group[str(i)][0],
-                        egeu_group[str(i)][2], curses.color_pair(2))
+                    screen.insert(
+                        egeu_group[str(i)][0], egeu_group[str(i)][1],
+                        egeu_group[str(i)][2], fg=CYAN)
 
                 for _, value in egeu_group.items():
                     if (sender.xpos, sender.ypos) in (value[0], value[1]):
@@ -171,33 +169,39 @@ def soδᾱt(stanvor: Stanvor)-> None:
 
             # Imαν
             if sender.sναrt > 50:
-                sναrt_color = 1
+                sναrt_color = NAVY
             elif sender.sναrt > 30:
-                sναrt_color = 2
+                sναrt_color = CYAN
             elif sender.sναrt > 20:
-                sναrt_color = 8
+                sναrt_color = YELLOW
             elif sender.sναrt > 0:
-                sναrt_color = 4
+                sναrt_color = RED
                 stat_ymαν, stat_xmαν = sender.ypos, sender.xpos
             else:
                 sender.sναrt, sναrt_color = 0, 4
                 sender.ypos, sender.xpos = stat_ymαν, stat_xmαν
 
-            lanter.stdscr.addstr(sender.ypos, sender.xpos, seut, curses.color_pair(sναrt_color))
+            screen.insert(sender.ypos, sender.xpos, seut, fg=sναrt_color)
+            screen.render()
 
-            mαν = lanter.stdscr.getch()
-            if mαν == 27:
-                lanter.stdscr.clear()
+            event = stanvor.terminal.getch()
+            if not filter_event(event):
+                continue
+            
+            key = generate_key(event)
+
+            if key == ESC:
+                stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
                 return
 
-            if mαν in logimprol:
-                logimprol[mαν]()
-            elif mαν in move_fixes:
-                if move_fixes[mαν][0] in ['⮙', '⮛']:
-                    sender.ypos, seut, sender.sναrt = _move_sent([x, y], move_fixes[mαν], sender.sναrt)
+            if key in logimprol:
+                logimprol[key]()
+            elif key in move_fixes:
+                if move_fixes[key][0] in ['⮙', '⮛']:
+                    sender.ypos, seut, sender.sναrt = _move_sent([x, y], move_fixes[key], sender.sναrt)
                 else:
-                    sender.xpos, seut, sender.sναrt = _move_sent([x, y], move_fixes[mαν], sender.sναrt)
-            elif mαν == 10: # 10
+                    sender.xpos, seut, sender.sναrt = _move_sent([x, y], move_fixes[key], sender.sναrt)
+            elif key == ENTER:
                 xseuαt = np.random.randint(x - 1)
                 yseuαt = np.random.randint(2, y - 2)
             else:
