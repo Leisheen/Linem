@@ -169,6 +169,18 @@ CTL_LEFT: int   = 537
 CTL_UP: int     = 538
 CTL_RIGHT: int  = 539
 CTL_DOWN: int   = 540
+CTL_DEL: int    = 546
+
+CTL_NUM0: int   = 548
+CTL_NUM1: int   = 549
+CTL_NUM2: int   = 550
+CTL_NUM3: int   = 551
+CTL_NUM4: int   = 552
+CTL_NUM5: int   = 553
+CTL_NUM6: int   = 554
+CTL_NUM7: int   = 555
+CTL_NUM8: int   = 556
+CTL_NUM9: int   = 557
 
 CTL_C: int      = 567
 CTL_P: int      = 580
@@ -179,8 +191,19 @@ ALT_LEFT: int   = 787
 ALT_UP: int     = 788
 ALT_RIGHT: int  = 789
 ALT_DOWN: int   = 790
-
 ALT_DEL: int    = 796
+
+ALT_NUM0: int   = 798
+ALT_NUM1: int   = 799
+ALT_NUM2: int   = 800
+ALT_NUM3: int   = 801
+ALT_NUM4: int   = 802
+ALT_NUM5: int   = 803
+ALT_NUM6: int   = 804
+ALT_NUM7: int   = 805
+ALT_NUM8: int   = 806
+ALT_NUM9: int   = 807
+
 ALT_PADSLASH: int    = 861
 ALT_A: int      = 815
 ALT_B: int      = 816

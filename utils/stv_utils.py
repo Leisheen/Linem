@@ -31,19 +31,20 @@ logimprol: dict[int, Callable] = {
 
 improl_dicts: tuple = (logimprol, key.MUSSELAITH) #, PAD)
 
+# PAD keys are replaced with NUM as long as PAD keys still don't work
 sentam_stagen: dict[int, dict[str, Callable]] = {
     key.ALT_BACK: {'ιmαν': lambda *_: ''},
     key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
-    #key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
-    #key.CTL_PAD2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    #key.CTL_PAD4: {'υνerseut': lambda sent, _: sent.ιmαν},
-    #key.CTL_PAD6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    #key.CTL_PAD7: {'νerseut': lambda *_: ''},
-    #key.CTL_PAD8: {'υνerseut': lambda *_: ''},
+    key.CTL_NUM1: {'νerseut': lambda sent, _: sent.ιmαν},
+    key.CTL_NUM2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    key.CTL_NUM4: {'υνerseut': lambda sent, _: sent.ιmαν},
+    key.CTL_NUM6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+    key.CTL_NUM7: {'νerseut': lambda *_: ''},
+    key.CTL_NUM8: {'υνerseut': lambda *_: ''},
     #key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
-    #key.ALT_PAD1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
-    #key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
-    #key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
+    key.ALT_NUM1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
+    key.ALT_NUM2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
+    key.ALT_NUM3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
     #key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
     key.CTL_P: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
     key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},

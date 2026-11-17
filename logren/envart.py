@@ -9,7 +9,7 @@ from core.colors import WHITE, NAVY, ROYAL_BLUE
 from core.def_paths import INVASH, YOGA
 from core.keys import *
 from core.sentam import Stanvor, ScreenBuffer, VirtualCanvas
-from core.stv import lαδmαιteu, process_handlers, getkey
+from core.stv import lαδmαιteu, process_handlers, getkey, force_stlαg
 from core.stvlog import stνlαt, stναδeut
 from logren.tαuder import tαuder
 from logren.vermat import νermαt
@@ -24,18 +24,18 @@ ENV_PATH: str = rf'{INVASH}\Euναrt\Euναrt.txt'
 
 ORDERNUMLIST: list[int] = [6, 9, 10, 14, 15, 22, 25, 26, 28, 29, 32, 40, 41]
 
-ENVART_KEYS: dict[int, int] = {TAB: 1, VSEP: -1}
+ENVART_KEYS: dict[int, int] = {TAB: 1, SHF_TAB: -1}
 
-ENVART_SECTIONS: dict[int, tuple] = {} # Euναrt character mappings
-euν_mappings: list = [ # input : (placeholder, filepath)
-    (['1', 'i', 'I'], (9,  r'Euναrt\Izeu Teνuα.txt')),
-    (['2', 'm', 'M'], (16, r'Euναrt\Mυuιtsyα Teνuα.txt')),
-    (['3', 'a', 'A'], (27, r'Euναrt\Mαιteu Teνuα.txt')),
-    (['4', 'l', 'L'], (36, r'Vermαt\Lestαq.txt'))
-]
-for chars, props in euν_mappings:
-    for char in chars:
-        ENVART_SECTIONS[ord(char)] = props
+ENVART_SECTIONS: dict[int, tuple] = { # Euναrt character mappings # input : (placeholder, filepath)
+    NUM1:  (9,  r'Euναrt\Izeu Teνuα.txt'),
+    LIT_I: (9,  r'Euναrt\Izeu Teνuα.txt'),
+    NUM2:  (16, r'Euναrt\Mυuιtsyα Teνuα.txt'),
+    LIT_M: (16, r'Euναrt\Mυuιtsyα Teνuα.txt'),
+    NUM3:  (27, r'Euναrt\Mαιteu Teνuα.txt'),
+    LIT_A: (27, r'Euναrt\Mαιteu Teνuα.txt'),
+    NUM4:  (36, r'Vermαt\Lestαq.txt'),
+    LIT_L: (36, r'Vermαt\Lestαq.txt'),
+}
 
 ENV_EDIT: dict[int, str] = {
     NUM0:  r"Euναrt\Euναrt.txt",
@@ -63,14 +63,14 @@ class Envart:
     cal_stat: bool = False
 
 
-def _set_envart(stanvor: Stanvor, grid, stlαg: str, euναrt: str) -> None:
+def _set_envart(stanvor: Stanvor, xpos: int, stlαg: str, label: str) -> None:
     screen: ScreenBuffer = stanvor.screen
     menu: str = 'Toreg →   Izeu   Mυuιtsyα   Mαιteu   Lestαq'
 
     lαδmαιteu(stanvor)
     screen.insert(0, 2, f'{menu:<{screen.width}}', fg=NAVY, bg=ROYAL_BLUE)
     screen.insert(screen.width - len(str(stlαg)) - 1, 2, str(stlαg))
-    screen.insert(grid, 2, euναrt, fg=WHITE, bg=NAVY)
+    screen.insert(xpos, 2, label, fg=WHITE, bg=NAVY)
 
 
 
@@ -132,7 +132,7 @@ def _set_pads(envart: Envart, screen: ScreenBuffer) -> None:
         pads[index].insert(0, 0, envart.section)
 
         if index == envart.padselect:
-            pads[index].insert(envart.selectitem, 1, envart.item, fg=WHITE, bg=NAVY)
+            pads[index].insert(1, envart.selectitem, envart.item, fg=WHITE, bg=NAVY)
 
         pads[index].refresh(screen, xssc, yssc, xpad, ypad, yesc, xesc)
 
@@ -141,7 +141,7 @@ def _tab_toitem(ordernum: int, key: int) -> tuple[int, int]:
     ordernum += ENVART_KEYS[key]
 
     if ordernum < 0:
-        ordernum = len(ORDERNUMLIST)-1
+        ordernum = len(ORDERNUMLIST) - 1
     elif ordernum == len(ORDERNUMLIST):
         ordernum = 0
 
@@ -168,7 +168,7 @@ def _def_vals() -> tuple[str, list[str], str]:
 
 
 def _set_dicts(Y: int) -> tuple[dict, dict, dict, tuple]:
-    LOC_LINES  = { # selectitem: (padselect, +selectitem)
+    LOC_LINES: dict[int, tuple] = { # selectitem: (padselect, +selectitem)
         1: (1, 2),
         3: (1, 3),
         6: (1, 2),
@@ -187,9 +187,9 @@ def _set_dicts(Y: int) -> tuple[dict, dict, dict, tuple]:
     }
 
     ENVART_DIRECTIONS: dict[int, tuple] = { # νιαr: (+padselect, +selectitem)
-        UP: (0, -1),
-        DOWN: (0, 1),
-        LEFT: (-1, -(Y - 4)),
+        UP:    (0, -1),
+        DOWN:  (0, 1),
+        LEFT:  (-1, -(Y - 4)),
         RIGHT: (1, (Y - 4)),
     }
 
@@ -204,19 +204,23 @@ def _reset_endyat(envart) -> None:
     stνlαt('Euναrt', '❯ Euναrt')
     envart.label, envart.section = '', envart.αδqαιt
 
+
 def _select_vorsal(envart) -> None:
     envart.padselect, envart.selectitem, envart.ordernum = 1, 22, 5
+
 
 def _move_to_next_area(envart: Envart, key: int) -> None:
     envart.ordernum, envart.selectitem = _tab_toitem(envart.ordernum, key)
 
+
 def _place_item(envart) -> None:
-    envart_ext[envart.selectitem]()
+    envart_ext.get(envart.selectitem, lambda: None)()
     envart.valtositem = 0
 
 
 def _select_eudyαt(key: int, envart: Envart, screen: ScreenBuffer) -> None:
-    """ This function selects an activity from the list.
+    """
+    Select an activity from the list.
     It sets the 4 variables based on selectitem in LOC_LINES.
     """
 
@@ -231,7 +235,7 @@ def _select_eudyαt(key: int, envart: Envart, screen: ScreenBuffer) -> None:
         (lambda: key == LIT_V, lambda: _select_vorsal(envart)),
         (lambda: key in ENV_DIRECTIONS, _set_direction), # Arrow Keys
         (lambda: key in ENV_KEYS, lambda: _move_to_next_area(envart, key)), # Tab / Shift Tab
-        (lambda: envart.selectitem in envart_ext, _place_item(envart))
+        (lambda: envart.selectitem in envart_ext, lambda: _place_item(envart))
     )): # Set for ENTER
         padselect, valtositem = LOC_LINES.get(envart.selectitem, (1, 0))
         envart.padselect, envart.valtositem = padselect, valtositem
@@ -251,7 +255,8 @@ def _select_eudyαt(key: int, envart: Envart, screen: ScreenBuffer) -> None:
 
 
 def euναrt(stanvor: Stanvor) -> None:
-    """Euναrt section, an activities lab.
+    """
+    Euναrt section, an activities lab.
     Euναrt takes a command and check in νιαr_dicts,
     which contains all the commands.
     νιαr_dicts:
@@ -292,13 +297,13 @@ def euναrt(stanvor: Stanvor) -> None:
             return
 
         process_handlers((
-            (lambda: key in ENVART_SECTIONS, lambda _: _euναrtαm(key, envart)),
-            #(lambda: key in envart_ext, lambda _: envart_ext[key]()),
-            (lambda: key in ENV_ACCIONS, lambda _: _select_eudyαt(key, envart, screen)),
-            (lambda: key in logimprol, lambda stanvor: logimprol[key](stanvor)),
-            (lambda: key == LIT_Y, lambda _: not envart.cal_stat), # Dyeναstαq
-            (lambda: key in web_links, lambda _: web_utils.open_link('Euναrt', web_links)), # Not
-            (lambda: key in ENV_EDIT, lambda _: logren.open_editor(ENV_EDIT[key], 'msedit', 'Euναrt')),
-            (lambda: key == LIT_D, lambda stanvor: tαuder(stanvor, r'Tαuder\Dyαteν.txt')),
-            (lambda: key in (LIT_V, F2), lambda _: νermαt),
+            (lambda: key in ENVART_SECTIONS, lambda: _euναrtαm(key, envart)),
+            #(lambda: key in envart_ext, lambda: envart_ext[key]()),
+            (lambda: key in ENV_ACCIONS, lambda: _select_eudyαt(key, envart, screen)),
+            (lambda: key in logimprol, lambda: logimprol[key](stanvor)),
+            (lambda: key == LIT_Y, lambda: not envart.cal_stat), # Dyeναstαq
+            (lambda: key in web_links, lambda: web_utils.open_link('Euναrt', web_links)), # Not
+            (lambda: key in ENV_EDIT, lambda: logren.open_editor(ENV_EDIT[key], 'msedit', 'Euναrt')),
+            (lambda: key == LIT_D, lambda: tαuder(stanvor, r'Tαuder\Dyαteν.txt')),
+            (lambda: key in (LIT_V, F2), lambda: νermαt),
         ))
