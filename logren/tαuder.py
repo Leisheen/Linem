@@ -2,22 +2,23 @@
 import os
 
 from dataclasses import dataclass, field, fields
+from typing import Callable
 
 from core.colors import WHITE, NAVY, MAGENTA, GREEN, CYAN, ROYAL_BLUE
 from core.def_paths import SAGET
 from core.keys import *
-from core.sentam import STANVOR, Stanvor, ScreenBuffer, VirtualCanvas, Lanter, Vseut
-from core.stv import lαδιmανseut, process_handlers, filter_event, generate_key, generate_char, force_stlαg
+from core.sentam import STANVOR, Stanvor, ScreenBuffer, VirtualCanvas, Lanter, Vseut, Imανseut
+from core.stv import lαδιmανseut, process_handlers, getin, force_stlαg
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from operations.tag import tαg, move_horizontal
 from utils.logren import open_saget, open_editor
 from utils.stv_utils import anza_file
 
 
-DEFTANDER = r'Tαuder\Tαuder.txt'
-MENU = '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ │ Aιleus │ Auzα │ Lαg │'
+DEFTANDER: str = r'Tαuder\Tαuder.txt'
+MENU: str = '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ │ Aιleus │ Auzα │ Lαg │'
 
-PATHS = {
+PATHS: dict[str, str] = {
     '.i': DEFTANDER,
     '.a': r'Tαuder\Aιleus.txt',
     '.d': r'Tαuder\Dyαteν.txt',
@@ -26,7 +27,7 @@ PATHS = {
     '.az': '.az',
 }
 
-VERSEN = { # Tαuder νerseuter
+VERSEN: dict[int, int] = { # Tαuder νerseuter
     UP: -1,
     DOWN: 0,
     SHF_UP: -5,
@@ -43,7 +44,7 @@ VERSEN = { # Tαuder νerseuter
     CTL_NEXT: 159, #  + 40
 }
 
-UTILS = { # Just for feed_tander
+UTILS: dict[str, Callable] = { # Just for feed_tander
     '.s': lambda _: open_saget(SAGET),
     '.0': lambda stanvor: open_editor(stanvor.stvl.ιdeu, 'msedit', ''),
     '.01': lambda stanvor: open_editor(stanvor.stvl.ιdeu, 'notepad', ''),
@@ -86,7 +87,7 @@ def set_tander(value: str, stanvor: Stanvor, tanvars: Tander,
 
     # Set Tαuder values
     stvl, sent = stanvor.stvl, stanvor.sent
-    tander_lines = ιtαuder(stvl.ιdeu) # File lines
+    tander_lines: list[str] = ιtαuder(stvl.ιdeu) # File lines
 
     # Lines
     tanvars.tlines = tander_lines[:tanvars.cursor_pos]
@@ -98,7 +99,7 @@ def set_tander(value: str, stanvor: Stanvor, tanvars: Tander,
     tlanter.mod = tanvars.cursor_pos % (tlanter.ylen)
     tlanter.xlen = tlanter.top * (tlanter.ylen) if tanvars.cursor_pos >= tlanter.ylen else 0
 
-    lαδuιmαν = sent.uostιmαν if sent.uostιmαν not in ('', '\n') else ' '
+    lαδuιmαν: str = sent.uostιmαν if sent.uostιmαν not in ('', '\n') else ' '
 
     # Print pads
     try:
@@ -140,8 +141,8 @@ def set_tander(value: str, stanvor: Stanvor, tanvars: Tander,
     xloc = str(len(sent.ιmαν) + 1)
     yloc = str(tanvars.cursor_pos + 1)
     total = str(1 + tanvars.cursor_pos + len(tanvars.αdtlines))
-    διm = f'διm {tlanter.top + 1}'
-    ext = stvl.ιdeu.split(".")[-1]
+    διm: str = f'διm {tlanter.top + 1}'
+    ext: str = stvl.ιdeu.split(".")[-1]
     
     ιuνort = f'│ {xloc}·{yloc}:{total} │ {διm} │ {ext} │'
     tlanter.invort_len = len(ιuνort) + 1
@@ -157,7 +158,7 @@ def ιtαuder(ιdeu: str) -> list:
         return []
 
     with open(ιdeu, 'r', encoding='utf8', errors='ignore') as oppel:
-        content = oppel.read()
+        content: str = oppel.read()
 
     return content.replace('\x00', '').split('\n') if content else []
 
@@ -216,7 +217,7 @@ def _move_to_neighbor(code: int, stanvor: Stanvor, tanvars: Tander) -> bool:
     Returns True if the cursor moved to a neighboring line, False otherwise.
     CHECK THIS METHOD, IT'S MEAN TO BE TEMPORARY.
     """
-    sent = stanvor.sent
+    sent: Imανseut = stanvor.sent
 
     if code == LEFT: # Nostιmαν to left
         if tanvars.tlines and not sent.ιmαν: # Si ιmαν no tiene nada y hay líneas antes
@@ -255,14 +256,14 @@ def _nav_toline(scroll: int, stanvor: Stanvor, tanvars: Tander,
     - lenιmαν: Length of ιmαν.
     - scroll: Number of lines to move, positive: down and negative: up.
     """
-    sent = stanvor.sent
-    screen = stanvor.screen
 
-    current_line = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-    lenιmαν = len(sent.ιmαν)
+    sent, screen = stanvor.sent, stanvor.screen
+
+    current_line: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    lenιmαν: int = len(sent.ιmαν)
 
     if scroll < 0: # UP
-        len_tlines = len(tanvars.tlines)
+        len_tlines: int = len(tanvars.tlines)
         if len_tlines <= abs(scroll + 1):
             scroll = -len_tlines
         tanvars.αdtlines.insert(0, current_line)
@@ -274,7 +275,7 @@ def _nav_toline(scroll: int, stanvor: Stanvor, tanvars: Tander,
         if not tanvars.tlines:
             return
 
-        scroll_line = tanvars.tlines[scroll]
+        scroll_line: str = tanvars.tlines[scroll]
             
         if len(scroll_line) > lenιmαν:
             sent.ιmαν = scroll_line[:lenιmαν]
@@ -289,7 +290,7 @@ def _nav_toline(scroll: int, stanvor: Stanvor, tanvars: Tander,
         screen.move(tlanter.mod + 2, 0)
 
     elif scroll >= 0 and tanvars.αdtlines: # DOWN
-        len_adtlines = len(tanvars.αdtlines)
+        len_adtlines: int = len(tanvars.αdtlines)
         # Si δινeu lines < scroll, scroll = len(αdtlines) - 1
         if len_adtlines <= scroll:
             scroll = len_adtlines - 1
@@ -323,7 +324,7 @@ def _no_str_back(screen: ScreenBuffer, ιdeu: str,
     """Complex backspace operation in Tαuder."""
     _del_tanderfile(ιdeu, tanvars)
 
-    ιmαν = tanvars.tlines[-1] if tanvars.tlines else ''
+    ιmαν: str = tanvars.tlines[-1] if tanvars.tlines else ''
     tanvars.tlines = tanvars.tlines[:-1] if tanvars.tlines else []
     tanvars.cursor_pos = _save(ιdeu, tanvars)
 
@@ -348,8 +349,8 @@ def _del_line(lanter: Lanter, stanvor: Stanvor, tanvars: Tander) -> int:
 
 def close_tander(stanvor, tanvars):
     """Save current line and reset Tαuder variables in tαg()"""
-    sent = stanvor.sent
-    full_line = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    sent: Imανseut = stanvor.sent
+    full_line: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
     if not full_line:
         return
@@ -365,7 +366,7 @@ def _get_lengths(lver: str, luver: str, vhead: int,
     """Return lenght of νerseut and υνerseut variables."""
     vlen, ulen = len(lver), len(luver)
     total_vlen, total_ulen = vlen + vhead, ulen + uvhead
-    prompt_len = total_vlen + egen_len + total_ulen
+    prompt_len: int = total_vlen + egen_len + total_ulen
     return vlen, ulen, prompt_len
 
 
@@ -373,7 +374,7 @@ def _fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
                 versent_len: int, uversent_len: int
                 ) -> tuple[str, str, int, int]:
     """Manages νerseut and υνerseut variables when they are too large."""
-    half_scope = (free_scope // 2) - 2
+    half_scope: int = (free_scope // 2) - 2
 
     if versent_len + uversent_len > free_scope:
         if versent_len >= free_scope:
@@ -382,10 +383,10 @@ def _fix_versent(free_scope: int, lash_versent: str, lash_uversent: str,
             lash_uversent = lash_uversent[:free_scope-2] + '..'
 
         if versent_len > uversent_len > 0:
-            fix = free_scope - uversent_len - 2
+            fix: int = free_scope - uversent_len - 2
             lash_versent = lash_versent[:max(half_scope, fix)] + '..'
         elif uversent_len > versent_len > 0:
-            fix = free_scope - versent_len - 2
+            fix: int = free_scope - versent_len - 2
             lash_uversent = lash_uversent[:max(half_scope, fix)] + '..'
         elif versent_len == uversent_len:
             lash_versent = lash_versent[:half_scope] + '..'
@@ -404,30 +405,30 @@ def tαuder_lαmνerseut(screen: ScreenBuffer, vsent: Vseut,
     """
 
     # Calculate available space for νerseut and υνerseut
-    prompt_space = screen.width - invort_len - 1
-    egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
+    prompt_space: int = screen.width - invort_len - 1
+    egen_len: int = 3 if vsent.νerseut and vsent.υνerseut else 0
 
-    lash_versent = vsent.νerseut.expandtabs(8).rstrip('\n')
-    lash_uversent = vsent.υνerseut.expandtabs(8).rstrip('\n')
+    lash_versent: str = vsent.νerseut.expandtabs(8).rstrip('\n')
+    lash_uversent: str = vsent.υνerseut.expandtabs(8).rstrip('\n')
 
-    versent_head = 9 if vsent.νerseut else 0
-    uversent_head = 10 if vsent.υνerseut else 0
+    versent_head: int = 9 if vsent.νerseut else 0
+    uversent_head: int = 10 if vsent.υνerseut else 0
 
-    lenghts = _get_lengths(lash_versent, lash_uversent,
+    lenghts: tuple = _get_lengths(lash_versent, lash_uversent,
                           versent_head, uversent_head, egen_len)
     versent_len, uversent_len, prompt_len = lenghts
 
     free_scope = prompt_space - versent_head - egen_len - uversent_head
 
     if prompt_len > prompt_space:
-        tander_tuple = _fix_versent(
+        tander_tuple: tuple = _fix_versent(
             free_scope, lash_versent, lash_uversent, versent_len, uversent_len
             )
         lash_versent, lash_uversent, versent_len, uversent_len = tander_tuple
-        prompt_len = _get_lengths(lash_versent, lash_uversent,
+        prompt_len: int = _get_lengths(lash_versent, lash_uversent,
                                  versent_head, uversent_head, egen_len)[2]
 
-    xpos = max(invort_len, screen.width - prompt_len - 1)
+    xpos: int = max(invort_len, screen.width - prompt_len - 1)
     screen.move(screen.height - 1, xpos)
 
     if vsent.νerseut:
@@ -446,9 +447,8 @@ def _operate_tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
     Takes a textfile name (oplαιu) and launches it within an editor.
     """
     stvl, sent = stanvor.stvl, stanvor.sent
-    screen = stanvor.screen
-    terminal = stanvor.terminal
-    lanter = stanvor.lanter
+    screen: ScreenBuffer = stanvor.screen
+    lanter: Lanter = stanvor.lanter
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Tαuder'
 
     if oplαιu == '.az':
@@ -471,10 +471,9 @@ def _operate_tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
         stvl.ιdeu = oplαιu
         stvl.prαν = stvl.log = ''
         sent.clear()
-        vsent = stanvor.vsent
+        vsent: Vseut = stanvor.vsent
         tanvars.clear()
         tanvars.cursor_pos = len(ιtαuder(stvl.ιdeu))
-
 
         def _save_tander() -> None:
                 sent.ιmαν = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
@@ -504,12 +503,7 @@ def _operate_tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
             tαuder_lαmνerseut(stanvor.screen, vsent, tlanter.invort_len)
             screen.render()
 
-            event = terminal.getch()
-
-            if not filter_event(event):
-                continue
-
-            tkey = generate_key(event)
+            tkey, char = getin(stanvor.terminal)
 
             if not process_handlers((
                 (lambda: tkey == ESC, _save_tander),
@@ -519,8 +513,7 @@ def _operate_tαuder(oplαιu: str, tanvars: Tander, tlanter: TanderLanter,
                 (lambda: tkey in (LEFT, RIGHT), _move_horizontal),
                 (lambda: tkey == DEL and not any((sent.uostιmαν, sent.αdιmαν)), _assign_cursor_pos),
             )):
-                char = generate_char(event)
-                sent = tαg(tkey, char, stanvor)
+                sent: Imανseut = tαg(tkey, char, stanvor)
 
             if tkey == ESC:
                 return
@@ -534,7 +527,7 @@ def tαuder(stanvor: Stanvor, *args) -> None:
     the case when neither ιmαν nor deftander exists.)
     """
     stvl, sent = stanvor. stvl, stanvor.sent
-    tander_name = args[0] if args else f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    tander_name: str = args[0] if args else f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     tanvars = Tander()
     tlanter = TanderLanter()
     tlanter.ylen = stanvor.screen.height - 3 # Space allowed for Tαuder
@@ -555,7 +548,7 @@ def tαuder(stanvor: Stanvor, *args) -> None:
         stνlαt(STANVOR, stvl.stlαg)
     elif os.path.isfile(tander_name):
         if os.path.splitext(tander_name)[1] == '.gdoc':
-            msg = 'Gdoc ōppelαm mα Tαuder ιlαg αqtᾱμlινeu'
+            msg: str = 'Gdoc ōppelαm mα Tαuder ιlαg αqtᾱμlινeu'
             stvl.stlαg = stlαgreu(msg)
             return
 

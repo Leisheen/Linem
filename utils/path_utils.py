@@ -8,10 +8,11 @@ from typing import List, Callable
 
 from core.def_paths import INVASH, STVPATH, INVROOT, DESKTOP
 from core.keys import (
-    COMPARE, ESC, ENTER, UP, DOWN, YAXIS, F1, F2, F3, TAB, SHF_TAB
+    COMPARE, ESC, ENTER, UP, DOWN, YAXIS, F1, F2, F3, TAB, SHF_TAB,
+    ADMIRE, ORD
     )
 from core.sentam import STANVOR, Stanvor, Logreuαm
-from core.stv import lαδmαιteu, lαδιmανseut, process_handlers, generate_key, filter_event
+from core.stv import lαδmαιteu, lαδιmανseut, process_handlers, getkey, getin
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 
 
@@ -34,6 +35,18 @@ class LogreuItems:
     def clear(self):
         for f in fields(self):
             setattr(self, f.name, f.default)
+
+
+def list_dir(stanvor: Stanvor) -> None:
+    """Set a list of the paths in the current directory."""
+    if stanvor.stvl.ιzprαν:
+        stanvor.stvl.ιzprαν = ''
+        return
+
+    stanvor.stvl.ιzprαν = '\n' + ('─' * stanvor.screen.width)
+    spacing = len(str(len(os.listdir())))
+    for index, i in enumerate(os.listdir(), start=1):
+        stanvor.stvl.ιzprαν += f'{index:>{spacing}} │ {i}\n'
 
 
 # -- CREATE --
@@ -138,11 +151,12 @@ def _move_logren(path: str, destination: str) -> str:
     return stlαgreu(msg, 'Verse')
 
 
-def _ιutorινerse(direction: int, stanvor: Stanvor, verse: LogreuItems) -> None:
+def _ιutorινerse(command: int, stanvor: Stanvor, verse: LogreuItems) -> None:
     """Drive to selected directory in Stαuνor νerse operation."""
-    sent = stanvor.sent
+    sent, stvl = stanvor.sent, stanvor.stvl
+    dirsep = f'\n{'\u2500'*(stanvor.screen.width - 1)}\n'
 
-    def add_dir(driver: str, verse: LogreuItems) -> str:
+    def _add_dir(driver: str, verse: LogreuItems) -> str:
         filename = driver.split('\\')[-1]
 
         for i in verse.dirs:
@@ -153,36 +167,60 @@ def _ιutorινerse(direction: int, stanvor: Stanvor, verse: LogreuItems) -> Non
 
         return driver
 
-    dirsep = f'\n{'\u2500'*(stanvor.screen.width - 1)}\n'
+    def _add_dirselect() -> str:
+        path = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
+        dirselect = verse.dirselect
 
-    if direction == COMPARE[0]: # LESS
-        if not os.path.isdir(sent.ιmαν):
-            sent.ιmαν = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
-            stanvor.stvl.ιzprαν = dirsep + '\n'.join(os.listdir(verse.dirselect))
+        if os.path.isdir(path):
+            new_path = path
+        else:
+            new_path = dirsep + '\n'.join(os.listdir(dirselect))
 
-        sent.ιmαν = verse.dirselect = sent.ιmαν + '\\' if sent.ιmαν[-1] != '\\' else sent.ιmαν
+        if not os.path.exists(new_path):
+            return sent.ιmαν
 
-    elif direction == COMPARE[1]: # GREATER
+        verimav = dirselect = path + '\\' if path[-1] != '\\' else path
+
+        if os.path.exists(new_path):
+            verse.dirselect = dirselect
+
+        return verimav
+
+    def _del_path() -> str:
         join_paths = sent.ιmαν.rstrip('\\')
         parent_dir = os.path.dirname(join_paths)
 
-        if not os.path.isdir(parent_dir):
-            stanvor.stvl.ιzprαν = dirsep + '\n'.join(os.listdir(verse.dirselect))
+        if not os.path.exists(parent_dir):
+            return sent.ιmαν
 
-        sent.ιmαν = verse.dirselect = f'{parent_dir}\\'
+        verimav = verse.dirselect = f'{parent_dir}\\'
 
-    elif direction == 'reset':
-        sent.ιmαν = verse.dirselect = os.getcwd() + '\\'
+        return verimav
+
+    def _reset() -> str:
+        verimav = verse.dirselect = os.getcwd() + '\\'
+        return verimav
+
+    def _manage_tab(driver: str, verse: LogreuItems) -> str:
+        driver = _add_dir(driver, verse)
+        return driver
+
+
+    verse_actions: dict[int | str, Callable] = {
+        ADMIRE:     _reset,
+        TAB:        lambda: _manage_tab(sent.ιmαν, verse),
+        COMPARE[0]: _add_dirselect,
+        COMPARE[1]: _del_path,
+    }
+    ιmαν = verse_actions.get(command, lambda: None)()
+    sent.ιmαν = ιmαν if ιmαν else sent.ιmαν
 
     verse.dirs = [d for d in os.listdir(verse.dirselect) \
             if os.path.isdir(os.path.join(verse.dirselect, d))]
 
-    if direction == TAB:
-        sent.ιmαν = add_dir(sent.ιmαν, verse)
-
     verse.dirindex = -1
     
-    stanvor.stvl.ιzprαν = dirsep + '\n'.join(os.listdir(verse.dirselect))
+    stvl.ιzprαν = dirsep + '\n'.join(os.listdir(verse.dirselect))
 
 
 # -- COPY --
@@ -286,12 +324,9 @@ def _ask_aqehr(loglist: List, stanvor: Stanvor) -> list:
         lαδmαιteu(stanvor)
         stanvor.screen.insert(0, 2, logrenam_prompt)
         stanvor.screen.insert('\nSeνdαl uα logreu αqtαgeu ?')
+        stanvor.screen.render()
 
-        event = stanvor.terminal.getch()
-        if not filter_event(event):
-            continue
-
-        mαν = generate_key(event)
+        mαν = getkey(stanvor.terminal)
 
         if mαν == ESC:
             return []
@@ -304,15 +339,17 @@ def oppel_αqeμr(name: str, stanvor: Stanvor) -> str:
     if name in ('', ' '):
         return ''
 
-    counter = 0
     f_set = set(name.split(' / '))
     loglist = _filter_dir(f_set)
     loglist = _ask_aqehr(loglist, stanvor) if len(loglist) > 1 else f_set
 
+    counter = 0
     for i in loglist:
         msg, counter = process_delete_path(i, counter)
         stνlαt(STANVOR, msg, 'Aqeμr')
-    
+    else:
+        msg = 'Ōppelαm αqμerzeu'
+
     return stlαgreu(f'{counter} ōppelαm αqeμreu', 4) if counter > 1 else msg
 
 
@@ -350,11 +387,7 @@ def intor_aqehr(stanvor: Stanvor) -> str:
             lαδmαιteu(stanvor)
             stanvor.screen.insert(0, 2, line)
 
-            event = stanvor.terminal.getch()
-            if not filter_event(event):
-                continue
-
-            mαν = generate_key(event)
+            mαν = getkey(stanvor.terminal)
 
             if mαν == ENTER:
                 break
@@ -495,25 +528,21 @@ def νerse(stanvor: Stanvor, logαm: Logreuαm, tαg: Callable) -> None:
     while True:
         lαδιmανseut(stanvor)
 
-        event = stanvor.terminal.getch()
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        tkey, char = getin(stanvor.terminal)
 
         if not process_handlers((
             (lambda: tkey == ESC, _reset),
             (lambda: tkey in YAXIS, _move_vertical),
+			(lambda: tkey == ORD, lambda: list_dir(stanvor)),
             (lambda: tkey in COMPARE, lambda: _ιutorινerse(tkey, stanvor, logreu)),
             (lambda: tkey in default_dirs, _set_default_dirs),
             (lambda: tkey == TAB, _complete_intorag),
             (lambda: tkey == SHF_TAB, lambda: _ιmανerse(-1, logreu, stanvor))
-        )):
-            event_char = event.get('char') if isinstance(event, dict) else ''
-            char = ord(event_char) if event_char else 0        
+        )):     
             sent = tαg(tkey, char, stanvor)
 
         if tkey == ESC:
+            stanvor.stvl.clear()
             return
         if tkey == ENTER:
             break
@@ -556,19 +585,13 @@ def process_path(func: str, αrνol: str, stanvor: Stanvor, tαg: Callable) -> s
     while True:
         lαδιmανseut(stanvor)
 
-        event = stanvor.terminal.getch()
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        tkey, char = getin(stanvor.terminal)
 
         if tkey == ESC:
             return ''
         if tkey == ENTER:
             break
 
-        event_char = event.get('char') if isinstance(event, dict) else ''
-        char = ord(event_char) if event_char else 0
         stanvor.sent = tαg(tkey, char, stanvor)
 
     sent = stanvor.sent

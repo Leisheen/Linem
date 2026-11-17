@@ -1,5 +1,6 @@
 """Main commands for for Lιuemαg Stαuνor command line prompt."""
 import os
+from typing import Callable
 
 import core.keys as nk
 from core.def_paths import INVASH, GCAL, GMAPS
@@ -16,28 +17,24 @@ from utils.session import restart_stanvor, end_session
 from utils.sys_utils import monitor_info, network_status
 
 
-web_links = { # For euναrt and νermαt
+web_links: dict[int, tuple] = { # For euναrt and νermαt
     nk.LIT_D: ('Dyeναstαq', GCAL),
     nk.LIT_Q: ('Qαmpαr', GMAPS),
 }
 
-main_paths = {
+main_paths: dict[str, tuple] = {
     '.invash': ('Iuναδ ιutorαg | ', INVASH),
     '.nostal': ('Nostαl ιutorαg ❯ ', os.getcwd()),
 }
 
-uprav_funcs = {
+uprav_funcs: dict[str, Callable] = {
     '.izv':  lambda _: izvart_info(),
     '.net':  lambda _: network_status(),
     '.lan':  lambda stanvor: monitor_info(stanvor.lanter),
-    '.dyαt': lambda stanvor: calendar(
-                                    False,
-                                    stanvor.gcal_creds,
-                                    stanvor.prompt.stvl.αδeutαr
-                                    ),
+    '.dyαt': lambda stanvor: calendar(False, stanvor),
 }
 
-stv_actions = {
+stv_actions: dict[int, Callable] = {
     nk.ESC:          lambda stanvor: reset(stanvor),
     nk.SHF_PADMINUS: lambda stanvor: reset(stanvor),
     nk.SHF_ENTER:    lambda stanvor: restart_stanvor(stanvor), # PADENTER..

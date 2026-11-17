@@ -1,6 +1,7 @@
 """Dyαteν module for Lιuɢmαg Stαuνor."""
 import csv
 import os
+from typing import Callable
 import pandas as pd
 import webbrowser
 
@@ -15,30 +16,29 @@ from core.keys import (
     NUM0, NUM1, NUM2, NUM3, NUM4, LIT_D, LIT_M, LIT_Q, LIT_T,
     PADPLUS, PADSLASH, PROMPT, VSEP, HSEP, LEFT_ARROW
 )
-from core.sentam import Stanvor, Lαmseut
-from core.stv import lαδmαιteu, process_handlers
+from core.sentam import ScreenBuffer, Stanvor, Lαmseut
+from core.stv import lαδmαιteu, process_handlers, getkey
 from core.stvlog import stνlαt, stναδeut
 
 from logren.tαuder import tαuder
 
-from operations.interface import getch
 from utils.logren import open_editor
 from utils.stv_utils import logimprol
 
 
-DPATH = rf'{INVASH}\Tαuder\Dyatev.csv'
-DPATH1 = rf'{INVASH}\Tαuder\Dyαteν.txt'
-DPATH2 = rf'{INVASH}\Tαuder\Dyαtēν.txt'
+DPATH: str = rf'{INVASH}\Tαuder\Dyatev.csv'
+DPATH1: str = rf'{INVASH}\Tαuder\Dyαteν.txt'
+DPATH2: str = rf'{INVASH}\Tαuder\Dyαtēν.txt'
 
-SELECTORS = (SHF_TAB, UP, TAB, DOWN)
+SELECTORS: tuple = (SHF_TAB, UP, TAB, DOWN)
 
-DYATANDERAM = {
+DYATANDERAM: dict[tuple, str] = {
     (ORD,): 'Dyatev.csv',
     (NUM1, LIT_T): r'Tαuder\Dyαteν.txt',
     (NUM2, LIT_M): r'Tαuder\Mυuιtsyα.txt',
 }
 
-DYAT_LIST = (
+DYAT_LIST: tuple = (
     ('Qαιse | ', '\n\n\n'),
     ('Lαιu | ', ''),
     ('Sιeνιt | ', '────────┤\nSιeνιt  │'),
@@ -48,7 +48,7 @@ DYAT_LIST = (
     ('Dyαutαl | ', '        │')
 )
 
-WEBDYAT = {
+WEBDYAT: dict[tuple, tuple] = {
     (NUM3, LIT_D): ('Dyēναstαq', "https://calendar.google.com/"),
     (NUM4, LIT_Q): ('Qαmpαr', "https://www.google.com/maps"),
 }
@@ -88,13 +88,13 @@ class DyatevItems:
 
 def _lαmdyαt(stanvor: Stanvor, dyatev: DyatevItems) -> None:
     """Show Dyαteν activity."""
-    screen = stanvor.screen
-    stvl = stanvor.stvl
+    screen: ScreenBuffer = stanvor.screen
+    stvl: Lαmseut = stanvor.stvl
 
     lαδmαιteu(stanvor)
 
-    menu = f' Tαuder   Mυutαuder   Dyeναstαq   Qαmpαr'
-    space = screen.width - len(str(stvl.stlαg))
+    menu: str = f' Tαuder   Mυutαuder   Dyeναstαq   Qαmpαr'
+    space: int = screen.width - len(str(stvl.stlαg))
     #screen.insert(0, 2, f'{menu:<{space}}', fg=ROYAL_BLUE, bg=NAVY)
     screen.insert(0, 2, f'{menu:<{space}}', fg=NAVY, bg=ROYAL_BLUE)
     #screen.insert(f'{str(stvl.stlαg)}\n', fg=ROYAL_BLUE, bg=NAVY)
@@ -169,7 +169,7 @@ def _reset_dyatev(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
 def _select_item(dyαt: int, dyatev: DyatevItems) -> None:
     """Select item by tabs or up/down arrows."""
-    way = 1 if dyαt in (TAB, DOWN) else - 1
+    way: int = 1 if dyαt in (TAB, DOWN) else - 1
     dyatev.index = (dyatev.index + way) % (len(dyatev.prompt_lines) + 1)
 
 
@@ -214,7 +214,7 @@ def _add_event(event: list, dyatev: DyatevItems) -> None:
 
 def _dyαt_sιguα(dyatev: DyatevItems, stamp: str) -> None:
     """Signa module for Dyαteν."""
-    linend = '   ' if dyatev.sub1 == 'Qαιse | ' else '\n'
+    linend: str = '   ' if dyatev.sub1 == 'Qαιse | ' else '\n'
     if not dyatev.line:
         return
 
@@ -227,14 +227,14 @@ def _dyαt_sιguα(dyatev: DyatevItems, stamp: str) -> None:
 def _sιguα_menu(section: str, stamp: str, dyatev: DyatevItems,
                stanvor: Stanvor) -> None:
     """Shows the sιguα menu."""
-    stvl = stanvor.stvl
+    stvl: Lαmseut = stanvor.stvl
     stvl.ιdeu += ' │ Sιguα'
     dyatev.sub1 = section
 
     while True:
         _lαmdyαt(stanvor, dyatev)
 
-        sιgnum = getch(stanvor)[0]
+        sιgnum = getkey(stanvor.terminal)
         process_handlers((
             (lambda: sιgnum == ENTER, lambda: _dyαt_sιguα(dyatev, stamp)),
             (lambda: sιgnum == ORD, dyatev.clearsubs),
@@ -251,7 +251,7 @@ def _sιguα_menu(section: str, stamp: str, dyatev: DyatevItems,
 
 
 def _dyαt_sιguα_module(dyatev: DyatevItems, stanvor: Stanvor) -> None:
-    stvl = stanvor.stvl
+    stvl: Lαmseut = stanvor.stvl
     dyatev.clearsubs()
 
     try:
@@ -270,7 +270,7 @@ def _dyαt_sιguα_module(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         while True:
             _lαmdyαt(stanvor, dyatev)
 
-            if getch(stanvor)[0] == ENTER:
+            if getkey(stanvor.terminal) == ENTER:
                 dyatev.clearsubs()
                 stνlαt('Dyαteν', f'❯ Sιguα  │ {e}')
                 return
@@ -282,7 +282,7 @@ def _sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     stanvor.stvl.ιdeu += ' | Sιguα'
     dyatev.sub1 = f'{chr(LEFT_ARROW)}  '
     dyatev.sub3 = '  '
-    items_list = []
+    items_list: list = []
 
     def _process_enter() -> None:
         event = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
@@ -299,7 +299,7 @@ def _sιguα(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
         _lαmdyαt(stanvor, dyatev)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         process_handlers((
             (lambda: key == ENTER, _process_enter),
@@ -330,7 +330,7 @@ def _change_item(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
         _lαmdyαt(stanvor, dyatev)
 
-        eudαμl = getch(stanvor)[0]
+        eudαμl: int = getkey(stanvor.terminal)
         process_handlers((
         	(lambda: eudαμl == ENTER, _process_change),
             (lambda: eudαμl == BACK, lambda: _del_fromimav(dyatev)),
@@ -353,7 +353,7 @@ def _νerqom(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     while True:
         _lαmdyαt(stanvor, dyatev)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         process_handlers((
             (lambda: key == ESC, lambda: _reset_dyatev(dyatev, stanvor)),
@@ -372,7 +372,7 @@ def _select_move(dyatev: DyatevItems, stanvor: Stanvor) -> bool:
     while True:
         _lαmdyαt(stanvor, dyatev)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         if key == ESC:
             _reset_dyatev(dyatev, stanvor)
@@ -398,10 +398,10 @@ def _νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
 
     def _go_up() -> None:
-        way = 1 if key == DOWN else - 1
+        way: int = 1 if key == DOWN else - 1
 
-        start_index = int(dyatev.ιmαν) - 1 if dyatev.ιmαν else 0
-        final_index = (start_index + way) % len(dyatev.lines)
+        start_index: int = int(dyatev.ιmαν) - 1 if dyatev.ιmαν else 0
+        final_index: int = (start_index + way) % len(dyatev.lines)
         dyatev.ιmαν = str(final_index + 1)
         dyatev.uostιmαν = dyatev.αdιmαν = ''
 
@@ -412,13 +412,13 @@ def _νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
             ref_number = int(start_point + chr(key))
         else:
             target = int(chr(key))
-            ref_number = target if target else int(start_point)
+            ref_number: int = target if target else int(start_point)
 
         if ref_number <= len(dyatev.lines):
             dyatev.ιmαν = str(ref_number)
 
     def _insert_dyatev() -> None:
-        new_index = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
+        new_index: str = dyatev.ιmαν + dyatev.uostιmαν + dyatev.αdιmαν
         if not new_index or int(new_index) > len(dyatev.lines):
             return
 
@@ -429,7 +429,7 @@ def _νerse(dyatev: DyatevItems, stanvor: Stanvor) -> None:
         dyatev.lαδuιmαν = dyatev.uostιmαν if dyatev.uostιmαν else ' '
         _lαmdyαt(stanvor, dyatev)
         
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
         process_handlers((
         	(lambda: key == ESC, lambda: _reset_dyatev(dyatev, stanvor)),
 			(lambda: key == ENTER, _insert_dyatev),
@@ -450,7 +450,7 @@ def _delete_event(dyatev: DyatevItems) -> None:
 
     stνlαt('Dyαteν', f'❯ Iuαq') #│ {'\t'.join(item_to_delete)}', 0)
 
-    index_to_del = dyatev.index - 1
+    index_to_del: int = dyatev.index - 1
     dyatev.header = list(dyatev.events.keys())
     dyatev.lines = list(zip(*dyatev.events.values()))
     dyatev.lines = [e for i, e in enumerate(dyatev.lines) if i != index_to_del]
@@ -467,7 +467,7 @@ def _ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
     while True:
         _lαmdyαt(stanvor, dyatev)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         if key == ENTER:
             _delete_event(dyatev)
@@ -481,7 +481,7 @@ def _ιuαq(dyatev: DyatevItems, stanvor: Stanvor) -> None:
 
 
 def _open_dyatander(key: int, stvl: Lαmseut, dyatev: DyatevItems) -> None:
-    path = next(value for keys, value in DYATANDERAM.items() if key in keys)
+    path: str = next(value for keys, value in DYATANDERAM.items() if key in keys)
 
     if not os.path.exists(path):
         stvl.stlαg = f'{path} αqtαgeu'
@@ -499,7 +499,7 @@ def _open_webdyat(key: int) -> None:
 
 
 # Master
-dyαt_operations = {
+dyαt_operations: dict[int, Callable] = {
     DEL: _ιuαq,
     MINUS: _ιuαq,
     BACK: _νerqom,
@@ -538,7 +538,7 @@ def dyαteν(stanvor: Stanvor) -> None:
         stanvor.stvl.clean = 1
         _lαmdyαt(stanvor, dyatev)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         if key == ESC:
             stanvor.stvl.clear()

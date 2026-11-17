@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from core.keys import ESC, ENTER, BACK, WAIT, HSEP
 from core.sentam import Stanvor
-from core.stv import lαδmαιteu, process_handlers, filter_event, generate_key
+from core.stv import lαδmαιteu, process_handlers, getkey
 from core.stvlog import stνlαt
 
 
@@ -44,7 +44,7 @@ def _addchar(web: Web, key: int) -> None:
 def web_driver(stanvor: Stanvor) -> None:
     """Opens a link with a webdriver."""
     web = Web()
-    prαν = '> '
+    prαν: str = '> '
     stanvor.ιdeu = stanvor.stvl.ιdeu='Iugersαtel'
     screen = stanvor.screen
 
@@ -55,12 +55,7 @@ def web_driver(stanvor: Stanvor) -> None:
         screen.insert(web.url)
         screen.render()
 
-        event = stanvor.terminal.getch()
-
-        if not filter_event(event):
-            continue
-
-        key = generate_key(event)
+        key: int = getkey(stanvor.terminal)
 
         process_handlers((
             (lambda: key == ENTER, lambda: _explore()),

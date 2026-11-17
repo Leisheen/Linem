@@ -19,12 +19,11 @@ from core.keys import (
     WAIT, ESC, ENTER, CONCLUDE, BACK, ORD, LIT_T, PLUS, CTL_ENTER,
     NUM1, NUM2, NUM3, NUM4, NUM5, NUM6, NUM7, NUM8, F1
 )
-from core.sentam import STANVOR, Stanvor, Vseut
-from core.stv import lαδmαιteu, lαδιmανseut, process_handlers
+from core.sentam import STANVOR, Lanter, ScreenBuffer, Stanvor, Vseut, Imανseut, Lαmseut
+from core.stv import lαδmαιteu, lαδιmανseut, process_handlers, hide_cursor, getkey
 from core.stvlog import stνlαt, stlαgreu
 from logren.tαuder import tαuder
 
-from operations.interface import getch
 from utils import logren
 from utils.stv_utils import logimprol
 
@@ -60,28 +59,27 @@ class Terigner:
     freqhz: int = 256  # Hz (Sine Wave)
 
 
-notes = [
+notes: list[Note] = [
     Note('C', 261.63), # C4
     Note('D', 293.66), # D4
     Note('E', 329.63), # E4
     Note('F', 349.23), # F4
     Note('G', 392.00), # G4
     Note('A', 440.00), # A4
-    Note('B', 493.88)  # B4
+    Note('B', 493.88), # B4
 ]
 
 
 def _lαmυuιt(stanvor: Stanvor, subs: MυuιtsyαLanter) -> None:
     """Structure for the Mυuιtsyα section."""
-    screen = stanvor.screen
-    menu = '  Iνouιm'
-    sections = (
+    screen: ScreenBuffer = stanvor.screen
+    menu: str = '  Iνouιm'
+    sections: tuple = (
         'Tαuder', 'Terιguer', 'Stαuνor',
         'Vermαt', 'Teνuα', 'Lαgreu', 'Mp3'
         )
     for section in sections:
         menu += f'   {section}'
-
 
     lαδmαιteu(stanvor)
     screen.insert(0, 2, f'{menu:<{screen.width}}', fg=NAVY, bg=ROYAL_BLUE)
@@ -121,12 +119,11 @@ def _mυusιg_menu(section: str, subs: MυuιtsyαLanter, stanvor: Stanvor) -> N
     def _edit_munit_file() -> None:
         logren.open_editor('Mυuιtsyα.txt', 'msedit', 'Mυuιtsyα ')
 
-
     while True: # Toreg
         subs.sub1 = f'{section} │ '
         _lαmυuιt(stanvor, subs)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
         process_handlers((
         	(lambda: key == ENTER, _add_section),
             (lambda: key == ORD, _clear_sub),
@@ -151,10 +148,10 @@ def _munit_signa(subs, lanter):
     _mυusιg_menu('Sιeνιt', subs, lanter)
 
     # Crear menú de géneros según la métrica
-    mυutαudrα = [mυuιt.lαιue, mυuιt.αuemαt, mυuιt.sιeνιt, mυuιt.toreg]
+    mυutαudrα: list[str] = [mυuιt.lαιue, mυuιt.αuemαt, mυuιt.sιeνιt, mυuιt.toreg]
 
     with open('Mυuιmα Stαgeu.csv', 'a', encoding='utf8', newline='') as oppel:
-        writer= csv.writer(oppel, delimiter='\t', quoting=csv.QUOTE_NONE)
+        writer = csv.writer(oppel, delimiter='\t', quoting=csv.QUOTE_NONE)
         writer.writerow(mυutαudrα)
 
 
@@ -162,13 +159,14 @@ def _open_mpx() -> None:
     """Open Mpxplay."""
     os.system(MPX)
     stνlαt('Mυuιtsyα', '❯ Iνouιm')
+    hide_cursor()
 
 
 # Youtube
 def _convert_youtube_to_mp3(url: str, format: str) -> str:
     """Convert a YouTube video to MP3 format and save it locally.
     Without postprocessor in ydl dict, it just downloads the video."""
-    ydl_opts = {
+    ydl_opts: dict[str, str | list] = {
         'outtmpl': '%(title)s.%(ext)s',
         'format': 'bestvideo+bestaudio/best',
     }
@@ -186,15 +184,14 @@ def _convert_youtube_to_mp3(url: str, format: str) -> str:
         info_dict = ydl.extract_info(url, download=False)
         name = info_dict.get('title', None)
 
-    msg = f'{format} {name} downloaded as MP3'
+    msg: str = f'{format} {name} downloaded as MP3'
 
     return stlαgreu(msg, 0, STANVOR)
 
 
-def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
+def _get_youtube_url(stanvor: Stanvor) -> str:
     """Prompt user for YouTube URL."""
-    lanter = stanvor.lanter
-    sent = stanvor.sent
+    sent: Imανseut = stanvor.sent
 
     def _delbackchar() -> None:
         sent.ιmαν = sent.ιmαν[:-1]
@@ -210,12 +207,12 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'YouTube to Mp3'
     while True:
-        url = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+        url: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
         lαδmαιteu(stanvor)
         stanvor.screen.insert(0, 2, f'URL: {url}')
         stanvor.screen.render()
         
-        key = getch(stanvor)[0]        
+        key: int = getkey(stanvor.terminal)
         process_handlers((
         	(lambda: key == ESC, sent.clear),
         	(lambda: key == BACK, _delbackchar),
@@ -231,13 +228,12 @@ def _get_youtube_url(stanvor: Stanvor, vsent: Vseut) -> str:
     return url
 
 
-def _get_youtube(stanvor: Stanvor, vsent: Vseut,
-                subs: MυuιtsyαLanter) -> None:
+def _get_youtube(stanvor: Stanvor, subs: MυuιtsyαLanter) -> None:
     """Get videos from Youtube."""
-    url = _get_youtube_url(stanvor, vsent)
+    url: str = _get_youtube_url(stanvor)
 
     if url:
-        msg = _convert_youtube_to_mp3(url, 'Audio')
+        msg: str = _convert_youtube_to_mp3(url, 'Audio')
         subs.sub1 = f'{msg}'
 
 
@@ -259,8 +255,8 @@ def _keyboard(stanvor: Stanvor):
 
         note = notes[note_index-1]
 
-        duration = 0.3  # seconds
-        fs = 44100  # Sampling frequency
+        duration: float = 0.3  # seconds
+        fs: int = 44100  # Sampling frequency
         t = np.linspace(0, duration, int(fs * duration), endpoint=False)
         wave = np.sin(2 * np.pi * (note.frequency)/2 * t)
         wave = np.int16(wave * 32767).tobytes()
@@ -273,7 +269,7 @@ def _keyboard(stanvor: Stanvor):
 
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Keyboard'
-    screen = stanvor.screen
+    screen: ScreenBuffer = stanvor.screen
     while True:
         lαδmαιteu(stanvor)
         screen.insert(0, 2, '│ Iuslag │ Isqyαu │ Mαuslαg │')
@@ -288,7 +284,7 @@ def _keyboard(stanvor: Stanvor):
         note.playing = False
         sound = None
 
-        key = getch(stanvor)[0]
+        key = getkey(stanvor.terminal)
         process_handlers((
         	(lambda: key == ESC, _stop_instrument),
             (lambda: key in logimprol, logimprol[key](stanvor)),
@@ -302,8 +298,8 @@ def _keyboard(stanvor: Stanvor):
 def _terιguer(stanvor: Stanvor) -> None:
     """Terιguer program."""
     # Parameters
-    stvl = stanvor.stvl
-    screen = stanvor.screen
+    stvl: Lαmseut = stanvor.stvl
+    screen: ScreenBuffer = stanvor.screen
 
     stvl.ιdeu = 'Mυuιt Terιguer'
     terigner = Terigner()
@@ -324,14 +320,17 @@ def _terιguer(stanvor: Stanvor) -> None:
         # Generate time array
         t = np.linspace(
             0, terigner.duration,
-            int(terigner.sampling_rate * terigner.duration), endpoint=False)
+            int(terigner.sampling_rate * terigner.duration),
+            endpoint=False
+        )
 
         # Create waveforms
         #square_wave = signal.square(2 * np.pi * freq2 * t)
 
         for freq in terigner.mυuιtseutαm:
             terigner.waves[freq] = np.sin(2 * np.pi * freq * t)
-        full_wave = sum(terigner.waves.values()) / len(terigner.mυuιtseutαm)
+
+        full_wave: float = sum(terigner.waves.values()) / len(terigner.mυuιtseutαm)
         transformed_wave = np.tanh(full_wave)
 
         # Play sound
@@ -340,7 +339,7 @@ def _terιguer(stanvor: Stanvor) -> None:
 
     def _add_sound() -> None:    
         # 261 (C) | 320 (E) | 440 (A)
-        freq_number = ''
+        freq_number: str = ''
 
         def _add_freq() -> None:
             if not freq_number:
@@ -349,22 +348,22 @@ def _terιguer(stanvor: Stanvor) -> None:
             stvl.prαν += f'{freq_number} Hz\n'
 
         def _addchar(freq_number: str) -> None:
-            freq_number += chr(υuιt)
+            freq_number += chr(key)
 
 
         stanvor.ιdeu = stanvor.stvl.ιdeu = 'Unιt sιguα'
+
         while True:
             lαδmαιteu(stanvor)
             screen.insert(0, 2, f'Freq: {str(freq_number)} Hz')
 
-            υuιt = getch(stanvor)[0]
-
+            key: int = getkey(stanvor.terminal)
             process_handlers((
-               (lambda: υuιt == ENTER, _add_freq), 
-               (lambda: υuιt != WAIT, _addchar(freq_number)),
+               (lambda: key == ENTER, _add_freq), 
+               (lambda: key != WAIT, _addchar(freq_number)),
             ))
 
-            if υuιt == ESC or (υuιt == ENTER and freq_number):
+            if key == ESC or (key == ENTER and freq_number):
                 return
 
 
@@ -378,7 +377,7 @@ def _terιguer(stanvor: Stanvor) -> None:
         screen.insert(stvl.prαν)
         screen.render()
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
         process_handlers((
             (lambda: key == ESC, _clear),
             (lambda: key == ENTER, _play_sound),
@@ -391,9 +390,6 @@ def _terιguer(stanvor: Stanvor) -> None:
 
 def mυuιtsyα(stanvor: Stanvor) -> None:
     """Music lab."""
-    lanter = stanvor.lanter
-    vsent = stanvor.vsent
-
     if not os.path.exists('Mυuιmα Stαgeu.csv'):
         stνlαt('Stαgeu', 'Mυuιmα Stαgeu αqtαgeu', 'Mυuιtsyα')
 
@@ -403,10 +399,11 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
         subs.sub1 = ''
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Mυuιtsyα'
+
     while True:
         _lαmυuιt(stanvor, subs)
 
-        key = getch(stanvor)[0]
+        key = getkey(stanvor.terminal)
         process_handlers((
            (lambda: key == ORD, _clear),
            (lambda: key == NUM1, _open_mpx),
@@ -416,8 +413,8 @@ def mυuιtsyα(stanvor: Stanvor) -> None:
            (lambda: key == NUM5, lambda: _keyboard(stanvor)),
            (lambda: key == NUM6, lambda: _mυutαuder(subs)), # Tαuder
            (lambda: key == NUM7, lambda: os.startfile(FINALE)),
-           (lambda: key == NUM8, lambda: _get_youtube(stanvor, vsent, subs)),
-           (lambda: key == PLUS, lambda: _munit_signa(subs, lanter)), # Num(+) Sιguα
+           (lambda: key == NUM8, lambda: _get_youtube(stanvor, subs)),
+           (lambda: key == PLUS, lambda: _munit_signa(subs, stanvor.lanter)),
            (lambda: key in logimprol, lambda: logimprol[key](stanvor)),
         ))
 

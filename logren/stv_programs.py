@@ -14,7 +14,7 @@ def install_module(stanvor: Stanvor) -> None:
 
     set_sentam(stanvor)
 
-    module = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    module: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
     try:
         lαmlιuem('Tαg', stanvor.screen.width)

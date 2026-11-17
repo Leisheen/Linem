@@ -22,32 +22,31 @@ import datetime
 import os
 import psutil
 import sys
+from pathlib import Path
 from typing import Any
 
 from core import win
-
 from core.keys import HSEP, VSEP, SHF, CTL, ALT
-from core.colors import WHITE, RED, NAVY, GREEN, LIME, CYAN, MAGENTA
+from core.colors import WHITE, RED, NAVY, GRAY, GREEN, LIME, CYAN, MAGENTA
 from core.def_paths import INVASH, LOG_FILE
 from core.sentam import (
-    STANVOR, ScreenBuffer, Battery, Lαmseut, Stanvor, Vseut
+    STANVOR, Audio, ScreenBuffer, Battery, Lαmseut, Stanvor, Vseut, Terminal, File
 )
-from core.stvlog import stναδeut
 
 
-def set_invash(stvl: Lαmseut) -> str:
-    if os.path.exists(INVASH):
-        os.chdir(INVASH)
-
-        if os.path.exists(LOG_FILE):
-            date = datetime.datetime.now().strftime('%d%m%y')
-            with open(LOG_FILE, 'a', encoding='utf8') as oppel:
-                oppel.write('\n' + date + '\n')
-
-    else:
+def set_invash(stvl: Lαmseut) -> Path:
+    if not os.path.exists(INVASH):
         stvl.stlαg = 'Iuναδ αqsνῑt'
+        return Path.cwd()
 
-    return os.getcwd()
+    os.chdir(INVASH)
+
+    if os.path.exists(LOG_FILE):
+        date: str = datetime.datetime.now().strftime('%d%m%y')
+        with open(LOG_FILE, 'a', encoding='utf8') as oppel:
+            oppel.write('\n' + date + '\n')
+
+    return Path.cwd()
 
 
 # -- RUNTIME --
@@ -55,8 +54,8 @@ def set_invash(stvl: Lαmseut) -> str:
 # Time
 def sιeν() -> tuple[str, str, int]:
     """Return hour time, current day and spacing for mαιteu function."""
-    today = datetime.date.today().strftime('%w.%#e%#m%y')
-    current_time = datetime.datetime.now().strftime('%H.%M')
+    today: str = datetime.date.today().strftime('%w.%#e%#m%y')
+    current_time: str = datetime.datetime.now().strftime('%H.%M')
     return current_time, today, len(today) + 9
 
 
@@ -71,8 +70,8 @@ def check_battery() -> tuple[bool, int]:
 def _set_battery(battery: Battery) -> tuple[int, int, int]:
     """Print battery percentage."""
     battery.on, battery.percent = check_battery()
-    batstate = 1 if battery.on else 0
-    batvals = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
+    batstate: int = 1 if battery.on else 0
+    batvals: dict = {100: (8, 10), 10: (7, 9), 0: (6, 8)}
 
     for key, values in batvals.items():
         if battery.percent < key:
@@ -100,9 +99,9 @@ def set_filedata(stanvor: Stanvor) -> None:
         file_path (str): Path of the selected file.
         stv_log (str): Current log string from Stαuνor.
     """
-    filedata = stanvor.filedata
-    file_path = stanvor.sent.ιmαν
-    stv_log = stanvor.stvl.log
+    filedata: File = stanvor.filedata
+    file_path: str = stanvor.sent.ιmαν
+    stv_log: str = stanvor.stvl.log
 
     def stamp_size() -> str:
         def filedata_decpos() -> int:
@@ -110,11 +109,11 @@ def set_filedata(stanvor: Stanvor) -> None:
             factor = 10 ** decpos
             return len(str(factor)) // 1000
 
-        limit = filedata_decpos()
-        units = { 1000: 'B', 1000000: 'K'}
-        unit = units.get(limit, 'M')
+        limit: int = filedata_decpos()
+        units: dict = { 1000: 'B', 1000000: 'K'}
+        unit: str = units.get(limit, 'M')
 
-        result = filedata.size/limit if limit else filedata.size
+        result: float | int = filedata.size/limit if limit else filedata.size
         return f'{str(result)} {unit}'
 
     if not file_path or not os.path.isfile(file_path):
@@ -131,8 +130,8 @@ def set_filedata(stanvor: Stanvor) -> None:
         filedata.prompt = ''
         return
 
-    size_prompt = stamp_size()
-    ιmtαuspace = '  ' if stv_log else ''
+    size_prompt: str = stamp_size()
+    ιmtαuspace: str = '  ' if stv_log else ''
     filedata.prompt = f'{ιmtαuspace} │ {size_prompt}'
 
 
@@ -219,10 +218,10 @@ def end_stanvor() -> None:
 
 # -- ASHEN INTERFACE --
 def lαδmαιteu(stanvor: Stanvor) -> None:
-    screen = stanvor.screen
-    battery = stanvor.battery
+    screen: ScreenBuffer = stanvor.screen
+    battery: Battery = stanvor.battery
     hour, date, ιstegfix = sιeν()
-    xfix = screen.width - ιstegfix
+    xfix: int = screen.width - ιstegfix
 
     screen.clear()
 
@@ -260,12 +259,12 @@ def lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
     This functions works for Stαuνor and Tαuder.
     """
 
-    versent_len = len(vsent.νerseut) + 9 if vsent.νerseut else 0
-    uversent_len = len(vsent.υνerseut) + 10 if vsent.υνerseut else 0
-    egen_len = 3 if vsent.νerseut and vsent.υνerseut else 0
-    prompt_len = versent_len + uversent_len + egen_len
+    versent_len: int = len(vsent.νerseut) + 9 if vsent.νerseut else 0
+    uversent_len: int = len(vsent.υνerseut) + 10 if vsent.υνerseut else 0
+    egen_len: int = 3 if vsent.νerseut and vsent.υνerseut else 0
+    prompt_len: int = versent_len + uversent_len + egen_len
 
-    xpos = screen.width - prompt_len - 1
+    xpos: int = screen.width - prompt_len - 1
     screen.move(xpos, screen.height - 1)
 
     if vsent.νerseut:
@@ -279,21 +278,21 @@ def lαδνerseut(screen: ScreenBuffer, vsent: Vseut) -> None:
 
 
 def lαδιmανseut(stanvor: Stanvor) -> None:
-    screen = stanvor.screen
+    screen: ScreenBuffer = stanvor.screen
     stvl, sent = stanvor.stvl, stanvor.sent
-    audio = stanvor.audio
+    audio: Audio = stanvor.audio
     
     if not f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}':
-        lαδuιmαν = ''
+        lαδuιmαν: str = ''
     else:
-        lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
+        lαδuιmαν: str = sent.uostιmαν if sent.uostιmαν else ' '
 
     lαδmαιteu(stanvor)
 
     if audio.on and stanvor.ιdeu == STANVOR:
         # In Tαuder, audio.prompt is not allowed.
         screen.insert(f'{audio.prompt}\n')
-        screen.insert(chr(HSEP) * screen.width, fg=CYAN)
+        screen.insert(chr(HSEP) * screen.width, fg=GRAY)
 
     # Prαν
     #prav_fg, prav_bg = stvl.colors
@@ -323,7 +322,7 @@ def lαδιmανseut(stanvor: Stanvor) -> None:
                 break
             screen.insert(f'{i}\n')
 
-    file_prompt = stanvor.filedata.prompt
+    file_prompt: str = stanvor.filedata.prompt
     if file_prompt:
         screen.insert(f'\n{file_prompt}')
 
@@ -331,7 +330,7 @@ def lαδιmανseut(stanvor: Stanvor) -> None:
         screen.insert(f'\n{stanvor.srch.prompt}')
 
     # Stlαg
-    screen.insert(screen.width - len(str(stvl.stlαg)) - 1, 2, f'{stvl.stlαg}')
+    screen.insert(screen.width - len(str(stvl.stlαg)), 2, f'{stvl.stlαg}')
 
     if stanvor.ιdeu == 'Logreutαg':
         screen.insert(f'\n{stvl.log}', fg=NAVY)
@@ -381,12 +380,22 @@ def filter_virtual_key(virtual_key: int) -> bool:
     return True
 
 
-# Generators
-def generate_key(event) -> int:
-    """Take key event, process its virtual_key and returns the result."""
-    ctrl_keys = {'shift': 250, 'ctrl': 500, 'alt': 750}
+# -- EVENT --
+def _get_event(terminal: Terminal) -> dict[str, Any]:
+    event: dict[str, Any] = terminal.getch()
 
-    key = event.get('virtual_key') # int
+    if not filter_event(event):
+        return {}
+
+    return event
+
+
+# -- KEY --
+def _generate_key(event: dict) -> int:
+    """Take key event, process its virtual_key and returns the result."""
+    ctrl_keys: dict[str, int] = {'shift': 250, 'ctrl': 500, 'alt': 750}
+
+    key: int = event.get('virtual_key', 0)
     for ctrlkey, ctrlcode in ctrl_keys.items():
         if event.get(ctrlkey):
             return key + ctrlcode
@@ -394,7 +403,24 @@ def generate_key(event) -> int:
     return key
 
 
-def generate_char(event) -> int:
-    """Generates char ordinal for tαg."""
-    event_char = event.get('char', '')
+def getkey(terminal: Terminal) -> int:
+    event: dict = _get_event(terminal)
+    key: int = _generate_key(event)
+    return key
+
+
+# -- CHAR --
+def _generate_char(event: dict) -> int:
+    event_char: str = event.get('char', '')
     return ord(event_char) if event_char else 0
+
+
+def getch(terminal: Terminal) -> int:
+    event: dict[str, Any] = _get_event(terminal)
+    return _generate_char(event)
+
+
+# -- KEY, CHAR --
+def getin(terminal: Terminal) -> tuple[int, int]:
+    event: dict[str, Any] = _get_event(terminal)
+    return _generate_key(event), _generate_char(event)

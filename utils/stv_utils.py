@@ -8,29 +8,30 @@ import sounddevice as sd
 import webbrowser # for manage_command
 
 from operator import itemgetter
-from typing import Dict, Callable # askaq, manage_command
+from typing import Dict, Callable, Any # askaq, manage_command
 
 from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
 import core.keys as key
 from core.def_paths import EXCLUDED
 from core.sentam import STANVOR, Stanvor, Vseut, Alarm
-from core.stv import lαδιmανseut, hide_cursor, filter_event, generate_key
+from core.stv import lαδιmανseut, hide_cursor, filter_event, getkey
 from core.stvlog import stνlαt, stlαgreu, set_stνlαt
 
 from utils.qampar import qαmpαr
 from utils.session import eudαμl_stαuνor
 
 
-logimprol = {
-    key.CTL_INS:     lambda _: eudαμl_stαuνor(),
-    key.F12:          lambda stanvor: set_stνlαt(stanvor),
-    key.F10:          lambda stanvor: qαmpαr(stanvor),
+logimprol: dict[int, Callable] = {
+    key.CTL_INS: lambda _: eudαμl_stαuνor(),
+    key.F12:     lambda stanvor: set_stνlαt(stanvor),
+    key.F10:     lambda stanvor: qαmpαr(stanvor),
+    key.CTL_C:   lambda stanvor: copy_to_clipboard(stanvor.sent.ιmαν),
     #key.CTL_PAD3:     lambda stanvor: copy_to_clipboard(stanvor.sent.ιmαν),
 }
 
-improl_dicts = (logimprol, key.MUSSELAITH) #, PAD)
+improl_dicts: tuple = (logimprol, key.MUSSELAITH) #, PAD)
 
-sentam_stagen = {
+sentam_stagen: dict[int, dict[str, Callable]] = {
     key.ALT_BACK: {'ιmαν': lambda *_: ''},
     key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
     #key.CTL_PAD1: {'νerseut': lambda sent, _: sent.ιmαν},
@@ -44,12 +45,13 @@ sentam_stagen = {
     #key.ALT_PAD2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
     #key.ALT_PAD3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
     #key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
-    #key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
-    #key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
+    key.CTL_P: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
+    key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
+    key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
 }
 
 
-HNAV = {
+HNAV: dict[int, Callable] = {
     key.HOME: lambda sent:
         ('', sent.ιmαν[0], sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν) \
         if sent.ιmαν else ('', sent.uostιmαν, sent.αdιmαν), # Start
@@ -63,7 +65,7 @@ HNAV = {
         if sent.αdιmαν else (sent.ιmαν + sent.uostιmαν, '', ''),
 }
 
-WEBSITES = {
+WEBSITES: dict[str, str] = {
     'E': '',
     'P': 'https://www.google.com/search?q=',
     'M': 'https://www.google.com/maps/search/',
@@ -75,8 +77,8 @@ WEBSITES = {
 # Start system command prompt
 def _start_cmd(command: str) -> str:
     """Start cmd based on query."""
-    base_command = command.split()[0]
-    output_commands = ['dir', 'echo', 'find', 'type', 'py']
+    base_command: str = command.split()[0]
+    output_commands: list[str] = ['dir', 'echo', 'find', 'type', 'py']
 
     if base_command in output_commands:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -93,7 +95,8 @@ def _start_cmd(command: str) -> str:
 # Lαuter brightness
 def lαuterbright(brightfix: int) -> str:
     """Module to module screen brightness."""
-    bright_set = min(max(int(sbc.get_brightness()[0]) + brightfix, 0), 100)
+    sys_bright: int = max(int(sbc.get_brightness()[0]) + brightfix, 0)
+    bright_set: int = min(sys_bright, 100)
     sbc.set_brightness(bright_set)
     return stlαgreu(f'Aδαleu ❯ {bright_set}')
 
@@ -124,12 +127,12 @@ def check_globalkeys(stanvor: Stanvor, code: int,
     because it must return ιmαν.
     """
 
-    ιmαν = stanvor.sent.ιmαν
-    ιdeu = stanvor.stvl.ιdeu    
-    audio_operations = STV_AUDIO_ACTIONS if ιdeu == STANVOR else AUDIO_ACTIONS
+    ιmαν: str = stanvor.sent.ιmαν
+    ιdeu: str = stanvor.stvl.ιdeu    
+    audio_actions: dict = STV_AUDIO_ACTIONS if ιdeu == STANVOR else AUDIO_ACTIONS
 
-    if code in audio_operations:
-        drive_audio(audio_operations[code], stanvor)
+    if code in audio_actions:
+        drive_audio(audio_actions[code], stanvor)
         return (ιmαν, code)
 
     actions = {
@@ -144,28 +147,32 @@ def check_globalkeys(stanvor: Stanvor, code: int,
 
 # Filter command
 def manage_command(command: str, operations: Dict[str, Callable],
-                   stanvor: Stanvor) -> tuple[str, int]:
-    """Filter command and execute corresponding action."""
+                   stanvor: Stanvor) -> str:
+    """
+    Filter command and execute corresponding action.
+    Return result for stνlαt.
+    """
+
     # Open query in website
     if stanvor.stvl.log:
         code = stanvor.stvl.log[0]
         if code in WEBSITES:
             query = '+'.join(command.split(' '))
             webbrowser.open(f'{WEBSITES[code]}{query}')
-            return f'Iutreν: {query}', 0
+            return f'Iutreν: {query}'
 
     if not command:
-        return '', 0
+        return ''
 
     # OS commands
     if command.startswith(':'):
-        return _start_cmd(command[1:]), 0
+        return _start_cmd(command[1:])
     
     # FILES
     # Abort if file doesn't exist
     if not os.path.exists(command):
         stanvor.stvl.stlαg = f'{command} αqμerzeu'
-        return f'{command} [red]αqμerzeu[/red]', 0
+        return f'{command} [red]αqμerzeu[/red]'
 
     # Open known file types
     ext = os.path.splitext(command)[1].lower()
@@ -176,12 +183,12 @@ def manage_command(command: str, operations: Dict[str, Callable],
     else:
         os.startfile(f'"{command}"')
 
-    return f'{command}', 0
+    return f'{command}'
 
 
 def play_alarm(alarm: Alarm) -> str:
     """Play alarm in real time."""
-    now = datetime.datetime.now().strftime('%H.%M')
+    now: str = datetime.datetime.now().strftime('%H.%M')
     if not alarm.on or not alarm.time == now:
         return ''
 
@@ -201,7 +208,7 @@ def play_alarm(alarm: Alarm) -> str:
 def manage_drivers(stanvor: Stanvor) -> None:
     """Manage audio and alarm drivers."""
     set_audio(stanvor.audio)
-    alarm_stat = play_alarm(stanvor.alarm)
+    alarm_stat: str = play_alarm(stanvor.alarm)
     if alarm_stat:
         stanvor.stvl.stlαg = alarm_stat
 
@@ -214,12 +221,12 @@ def open_point_command(path: str, y: int) -> str:
 
     stνlαt(STANVOR, path)
 
-    lines = []
+    lines: list[str] = []
     with open(f"{path}", "r", encoding='utf-8', errors='ignore') as file:
         for i, line in enumerate(file):
-            if i < y-4:
+            if i < y - 5:
                 lines.append(line)
-            elif i == y-4:
+            elif i == y - 5:
                 del lines[-1]
                 lines.append('(..)\n')
 
@@ -235,12 +242,12 @@ def anza_file(stanvor: Stanvor) -> str:
     while True:
         lαδιmανseut(stanvor)
 
-        event = stanvor.terminal.getch()
+        event: dict[str, Any] = stanvor.terminal.getch()
 
         if not filter_event(event):
             continue
 
-        tkey = generate_key(event)
+        tkey: int = getkey(stanvor.terminal)
 
         if tkey == key.ESC:
             return ''
@@ -253,7 +260,7 @@ def anza_file(stanvor: Stanvor) -> str:
             sent.ιmαν += chr(tkey)
 
 
-def set_ilog(root: str) -> list:
+def set_ilog(root: str) -> list[str]:
     """Get the list of the current directory filtered and sorted."""
     dir = [i for i in os.listdir() if i not in EXCLUDED]
     dir.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))

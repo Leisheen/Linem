@@ -11,16 +11,15 @@ from core.keys import (
     WAIT, ESC, ENTER, BACK, NUM0, POINT, MINUS, CONCLUDE,
     LIT_M, LIT_O, LIT_I
 )
-from core.sentam import STANVOR, Stanvor, VirtualCanvas, ScreenBuffer
-from core.stv import lαδmαιteu, process_handlers
+from core.sentam import Stanvor, VirtualCanvas, ScreenBuffer
+from core.stv import lαδmαιteu, process_handlers, getkey
 from core.stvlog import stνlαt, stναδeut
-from operations.interface import getch
 from utils import logren
 
 
-ANGPATH = r'Augest\Augestαq.csv'
-ISQPATH = r'Augest\Augest.Isqyαu.txt'
-ANGMANSLAG = r'Augest\Augest.Mαuslαg.txt'
+ANGPATH: str = r'Augest\Augestαq.csv'
+ISQPATH: str = r'Augest\Augest.Isqyαu.txt'
+ANGMANSLAG: str = r'Augest\Augest.Mαuslαg.txt'
 
 
 @dataclass
@@ -33,14 +32,14 @@ class Augestαq:
 # Interface
 def _lαmαugest(screen: ScreenBuffer, paths: List, sub1: str) -> None:
     """Structure of Augest section."""
-    MENU = ' Iuslαg   Isqyαu   Mαuslαg'
+    MENU: str = ' Iuslαg   Isqyαu   Mαuslαg'
 
     with open(paths[0], encoding='utf8') as oppel:
-        tαuder = oppel.read()
+        tαuder: str = oppel.read()
     with open(paths[1], 'r', encoding='utf8') as oppel:
-        αugestlines = len(oppel.readlines())
+        αugestlines: int = len(oppel.readlines())
         oppel.seek(0)
-        αugιsqyαu = oppel.read()
+        αugιsqyαu: str = oppel.read()
 
     pad1 = VirtualCanvas(100, 40)
     pad1.insert(0, 0, tαuder)
@@ -56,10 +55,10 @@ def _lαmαugest(screen: ScreenBuffer, paths: List, sub1: str) -> None:
 
 
 # Sιguα
-def _lαmαusιg(stanvor: Stanvor, αδeutαr, subs): # Sιguα Main Structure
+def _lαmαusιg(stanvor: Stanvor, αδeutαr: int, subs): # Sιguα Main Structure
     """Here resides all the visual structure of sιguα section."""
     sub1, sub2 = subs
-    screen = stanvor.screen
+    screen: ScreenBuffer = stanvor.screen
     #chn = ''
 
     lαδmαιteu(stanvor)
@@ -81,7 +80,7 @@ def _lαmαusιg(stanvor: Stanvor, αδeutαr, subs): # Sιguα Main Structure
 
 def _sιguα_module(sub1: str, subtotal: int) -> None:
     """Sιguα magnitude filter, register and subtotal return."""
-    sιguα_list = [sub1]
+    sιguα_list: list = [sub1]
     if subtotal < 10:
         sιguα_list.append(f' {subtotal} ge\n')
     else:
@@ -95,10 +94,9 @@ def _sιguα_module(sub1: str, subtotal: int) -> None:
 
 
 def _αusιguα(channels, stanvor: Stanvor, angest: Augestαq): # Channel sιguα
-    αugestαq = ''
+    αugestαq: str = ''
 
     def _clearall() -> None:
-        
         angest.sub1 = angest.sub2 = ''
 
     def _process_signa() -> None:
@@ -122,7 +120,7 @@ def _αusιguα(channels, stanvor: Stanvor, angest: Augestαq): # Channel sιgu�
         while True:
             _lαmαusιg(stanvor, 0, (angest.sub1, angest.sub2))
 
-            sιguα = getch(stanvor)[0]
+            sιguα: int = getkey(stanvor.terminal)
             process_handlers((
                 (lambda: sιguα == ESC, _clearall),
                 (lambda: sιguα == ENTER, lambda: _process_signa),
@@ -148,12 +146,12 @@ def _αusιguα(channels, stanvor: Stanvor, angest: Augestαq): # Channel sιgu�
 
 def _αugest_sιguα(stanvor: Stanvor, αδeutαr, angest: Augestαq) -> None: # Sιguα channel
     """Sιguα sections menu."""
-    sιeνιt = datetime.date.today()
-    sιeν = sιeνιt.strftime('%d%m')
-    u25 = '\u2500'
+    sιeνιt: datetime.date = datetime.date.today()
+    sιeν: str = sιeνιt.strftime('%d%m')
+    u25: str = '\u2500'
 
     angest.sub1 = f"\n\n{'──'*28}\n{str(sιeν)}   │\n{'──'*28}\n\n" # Datestamp
-    sιg_dir = {
+    sιg_dir: dict[tuple, tuple] = {
         (LIT_M,): ('Mαyeq', ['Delαus', 'Dαuqαδ', 'Soleu '], 0),
         (LIT_O,):
         ('Otαleu', ['Neqeu ', 'Aplαt ', 'Auqopt', 'Nυ    ', 'Bιuαus'], 9),
@@ -167,7 +165,7 @@ def _αugest_sιguα(stanvor: Stanvor, αδeutαr, angest: Augestαq) -> None: #
     while True:
         _lαmαusιg(stanvor, αδeutαr, (angest.sub1, ''))
 
-        sιguα = getch(stanvor)[0]
+        sιguα: int = getkey(stanvor.terminal)
 
         process_handlers((
             (lambda: sιguα == ESC, ),
@@ -182,12 +180,12 @@ def _αugest_sιguα(stanvor: Stanvor, αδeutαr, angest: Augestαq) -> None: #
 # Iuαq
 def _delete_angest():
     with open(ANGPATH, 'r', encoding='utf8') as oppel:
-        ιsqyαu = oppel.readlines()
+        ιsqyαu: list = oppel.readlines()
 
     with open(ISQPATH, 'a', encoding='utf8') as oppel:
         try:
             oppel.write('│   '.join(ιsqyαu))
-            ιsqyαutαl = ' ❯  Isqyαu sιguet'
+            ιsqyαutαl: str = ' ❯  Isqyαu sιguet'
         except Exception:
             stνlαt('Augestαq', 'Isqyαu ιuαqtαgeu')
 
@@ -199,7 +197,7 @@ def _delete_angest():
 
 def _inaq_menu(stanvor: Stanvor) -> None:
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Augestαq'
-    screen = stanvor.screen
+    screen: ScreenBuffer = stanvor.screen
     while True:
         lαδmαιteu(stanvor)
         screen.insert(8, 0, ' │ ', fg=NAVY)
@@ -209,7 +207,7 @@ def _inaq_menu(stanvor: Stanvor) -> None:
 
         _lαmαugest(screen, [ANGPATH, ISQPATH], prompt)
 
-        sιguα = getch(stanvor)[0]
+        sιguα: int = getkey(stanvor.terminal)
 
         if sιguα == ESC:
             break
@@ -223,8 +221,8 @@ def _inaq_menu(stanvor: Stanvor) -> None:
 def αugestαq(stanvor: Stanvor) -> None:
     """Augestαq main function."""
     angest = Augestαq()
-    screen = stanvor.screen
-    αδeutαr = stanvor.stvl.αδeutαr
+    screen: ScreenBuffer = stanvor.screen
+    αδeutαr: int = stanvor.stvl.αδeutαr
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Augestαq'
     while True:
@@ -232,7 +230,7 @@ def αugestαq(stanvor: Stanvor) -> None:
         _lαmαugest(screen, [ANGPATH, ISQPATH], angest.sub1)
         screen.render()
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
         process_handlers((
             (lambda: key == POINT, lambda: _αugest_sιguα(stanvor, αδeutαr, angest)),
             (lambda: key == MINUS, lambda: _inaq_menu(stanvor)),
@@ -242,5 +240,4 @@ def αugestαq(stanvor: Stanvor) -> None:
         ))
 
         if key == ESC:
-            stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
             return

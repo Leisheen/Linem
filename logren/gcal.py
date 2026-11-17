@@ -8,7 +8,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from core.stvlog import stνlαt, stναδeut, STANVOR
+from core.stv import STANVOR, Stanvor
+from core.stvlog import stνlαt, stναδeut
 
 
 
@@ -61,16 +62,19 @@ def _load_calendar(creds) -> str:
         return f"An error occurred: {error}"
 
 
-def calendar(logged: bool, creds, αδeutαr: int) -> str:
+def calendar(logged: bool, stanvor: Stanvor) -> str:
     """Returns name, date and time of the next 10 events on calendar."""
     #cal = calendar.TextCalendar(calendar.SUNDAY)
     #cal_month = cal.formatmonth(year, month)
     #S.υprαν = cal.formatyear(2025) + '\n\n'
+    creds = stanvor.gcal_creds
+    αδeutαr = stanvor.stvl.αδeutαr
+
     if logged and creds:
         try:
             return _load_calendar(creds)
         except Exception as e:
-            _ = calendar(False, creds, αδeutαr)
+            _ = calendar(False, stanvor)
             return stναδeut(αδeutαr, str(e), 0)
 
     try:
@@ -94,7 +98,8 @@ def calendar(logged: bool, creds, αδeutαr: int) -> str:
                     client_secret_file, scopes)
                 creds = flow.run_local_server(port=0)
             else:
-                return 'Dyαteν αqyeμreu: client_secret.json αqμerzeu'
+                stanvor.stvl.stlαg = 'Dyαteν αqyeμreu: client_secret.json αqμerzeu'
+                return ''
             # Save the credentials for the next run
             with open("token.json", "w", encoding='utf8') as token:
                 token.write(creds.to_json())
@@ -102,7 +107,7 @@ def calendar(logged: bool, creds, αδeutαr: int) -> str:
         _ = stναδeut(αδeutαr, str(e), 0)
         if os.path.exists("token.json"):
             os.remove('token.json')
-        calendar(True, creds, αδeutαr)  # Retry after removing token.json
+        calendar(True, stanvor)  # Retry after removing token.json
 
     stνlαt(STANVOR, '❯ Dyevast')
     return _load_calendar(creds)

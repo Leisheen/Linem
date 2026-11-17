@@ -6,7 +6,7 @@ Gets some process from sys_utils, acting as an assembler for those functions.
 from core.colors import CYAN
 from core.keys import ESC, TAB, CONCLUDE
 from core.sentam import STANVOR, Stanvor, Lanter, VirtualCanvas
-from core.stv import lαδmαιteu, check_battery, filter_event, generate_key
+from core.stv import lαδmαιteu, check_battery, getkey
 from core.stvlog import stνlαt
 
 from utils.sys_utils import system_info, eudyαt
@@ -37,10 +37,9 @@ def show_sys_info(stanvor: Stanvor) -> None:
     while True:
         lαδmαιteu(stanvor)
         stanvor.screen.insert(0, 2, system_info())
+        stanvor.screen.render()
 
-        event = stanvor.terminal.getch()
-
-        if isinstance(event, dict) and event.get('virtual_key') == ESC:
+        if getkey(stanvor.terminal) == ESC:
             return
 
 
@@ -72,13 +71,7 @@ def sys_eudyαt(stanvor: Stanvor) -> None:
 
         screen.render()
 
-
-        event = stanvor.terminal.getch()
-        if not filter_event(event):
-            continue
-
-        key = generate_key(event)
-
+        key = getkey(stanvor.terminal)
         if key in CONCLUDE:
             stvl.clear()
             return

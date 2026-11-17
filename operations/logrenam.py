@@ -1,6 +1,7 @@
 """Programs"""
 import subprocess
 import os
+from typing import Callable
 import webbrowser
 
 from core.def_paths import (
@@ -30,7 +31,7 @@ from logren.vermat import νermαt
 from utils.info import show_sys_info
 
 
-intlogren = {
+intlogren: dict[int, Callable] = {
     F1: euναrt,
     F2: νermαt,
     F3: tαuder,
@@ -45,15 +46,15 @@ intlogren = {
     #SHF_PADSLASH: invor,
 }
 
-strlogren = {
-    '.sιeν':  lambda stanvor: ιsιeν(stanvor),
-    '.chr':   lambda stanvor: eval_char(stanvor),
-    '.sys':   lambda stanvor: show_sys_info(stanvor.lanter),
-    '.color': lambda stanvor: print_color(stanvor),
-    '.logαt': lambda stanvor: set_logat(stanvor),
-    '.tαg':   lambda stanvor: install_module(stanvor),
+strlogren: dict[str, Callable] = {
+    '.sιeν':  ιsιeν,
+    '.chr':   eval_char,
+    '.sys':   show_sys_info,
+    '.color': print_color,
+    '.logαt': set_logat,
+    '.tαg':   install_module,
 }
-ext_progs = {
+ext_progs: dict[str, Callable] = {
     '.Sαget':    lambda: subprocess.Popen(SAGET),
     '.Olyαν':    lambda: os.startfile(MNCOMMANDER),
     '.Vαt':      lambda: os.system('start whatsapp:'),

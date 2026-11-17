@@ -2,9 +2,8 @@ from dataclasses import dataclass
 
 from core.colors import NAVY
 from core.keys import ESC, ENTER, LIT_A, LIT_B, ORD
-from core.stv import lαδmαιteu, process_handlers
+from core.stv import lαδmαιteu, process_handlers, getkey
 from core.sentam import Stanvor
-from operations.interface import getch
 
 
 @dataclass
@@ -28,7 +27,7 @@ def _print_prontel(stanvor: Stanvor, prt: Prontel) -> None:
 def proutel(stanvor: Stanvor) -> None:
     """Proutel program."""
     prt = Prontel()
-    KEYS = (LIT_A, LIT_B, ORD)
+    KEYS: tuple[int, int, int] = (LIT_A, LIT_B, ORD)
 
     def _set_prontel() -> None:
         prt.flow_colors = prt.flow_colors if prt.flow_colors else (NAVY, 0)
@@ -42,7 +41,8 @@ def proutel(stanvor: Stanvor) -> None:
             prt.flow_colors = (NAVY, 0) if key == LIT_A else (0, 0)
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Proutel'
-    xlen = stanvor.screen.width
+    xlen: int = stanvor.screen.width
+
     while True:
         if prt.flow_state and len(prt.flow) < xlen - 2:
             prt.flow += '\u2500'
@@ -52,7 +52,7 @@ def proutel(stanvor: Stanvor) -> None:
 
         _print_prontel(stanvor, prt)
 
-        key = getch(stanvor)[0]
+        key: int = getkey(stanvor.terminal)
 
         if key == ESC:
             stanvor.stvl.clear()

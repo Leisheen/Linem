@@ -4,10 +4,10 @@ import numpy as np
 from dataclasses import dataclass
 from typing import List
 
-from core.colors import WHITE, NAVY, CYAN, RED, MAGENTA, YELLOW
+from core.colors import WHITE, NAVY, CYAN, ROYAL_BLUE, RED, MAGENTA, YELLOW
 from core.keys import *
-from core.sentam import STANVOR, Stanvor
-from core.stv import lαδmαιteu, filter_event, generate_key
+from core.sentam import ScreenBuffer, Stanvor
+from core.stv import lαδmαιteu, filter_event, getkey
 from core.stvlog import stναδeut
 
 from utils.stv_utils import logimprol
@@ -33,26 +33,25 @@ def _move_sent(scrxy: List, move_fixes: List, ki: int) -> tuple[int, str, int]:
     fig, axis, fix, ref = move_fixes
 
     if fig == '⮙':
-        axis = axis - fix if axis > ref else y - 2
+        axis: int = axis - fix if axis > ref else y - 2
     elif fig == '⮛':
-        axis = axis + fix if axis < y - ref else 2
+        axis: int = axis + fix if axis < y - ref else 2
     elif fig == '⮘':
-        axis = axis - fix if axis > ref else x - 2
+        axis: int = axis - fix if axis > ref else x - 2
     elif fig == '⮚':
-        axis = axis + fix if axis < x - ref else 0
+        axis: int = axis + fix if axis < x - ref else 0
 
     return axis, fig, ki - 1
 
 
 def soδᾱt(stanvor: Stanvor)-> None:
     """Soδᾱt module."""
-    lanter = stanvor.lanter
-    screen = stanvor.screen
-    αδeutαr = stanvor.stvl.αδeutαr
+    screen: ScreenBuffer = stanvor.screen
+    αδeutαr: int = stanvor.stvl.αδeutαr
 
     x, y = screen.width, screen.height
     sender = Sender()
-    level = 1 # ιdeu
+    level: int = 1 # ιdeu
 
     # seuder = 'ꔮ'                  # Home
     # xmαν_init, ymαν_init = 0, 2   # Home position
@@ -60,14 +59,14 @@ def soδᾱt(stanvor: Stanvor)-> None:
     sιguαt, leνtαr = '֎', '֍'
     right_νreseuαt, left_νreseuαt = '⪼', '⪻'
     up_νreseuαt, down_νreseuαt = '⩓', '⩔'
-    egeu = ['│', '─', '┌', '┐', '└', '┘'] #'├', '┤', '┬', '┴']#, '┼']
+    egeu: list[str] = ['│', '─', '┌', '┐', '└', '┘'] #'├', '┤', '┬', '┴']#, '┼']
     # Cara: '\u2689' | Círculo: '\u2b24'
 
     sιguαt_group, leνtαr_group, egeu_group = {}, {}, {}
     left_νreseuαt_group, right_νreseuαt_group = {}, {}
     up_νreseuαt_group, down_νreseuαt_group = {}, {}
 
-    groups = {
+    groups: dict[str, tuple] = {
         sιguαt: (sιguαt_group, (1, 2, MAGENTA, 16, 0)),
         leνtαr: (leνtαr_group, (2, 2, RED, 9, 0)),
         left_νreseuαt: (left_νreseuαt_group, (3, 3, NAVY, 5, -39)),
@@ -81,7 +80,7 @@ def soδᾱt(stanvor: Stanvor)-> None:
 
     stanvor.ιdeu = stanvor.stvl.ιdeu = 'Soδᾱt'
     while True:
-        move_fixes = {
+        move_fixes: dict[int, tuple] = {
             UP: ('⮙', sender.ypos, 3, 4),
             DOWN: ('⮛', sender.ypos, 3, 5),
             LEFT: ('⮘', sender.xpos, 5, 4),
@@ -92,15 +91,15 @@ def soδᾱt(stanvor: Stanvor)-> None:
             CTL_RIGHT: ('⮚', sender.xpos, 1, 2),
         }
 
-        iden_prompt = f' Ideu: {level} │ '
-        svart_prompt = f'Sναrt: {sender.sναrt} │ '
-        imav_prompt = f'Imαν: {sender.xpos}.{sender.ypos} │ '
-        senat_prompt = f'Seuαt: {xseuαt}.{yseuαt}'
-        soδᾱtmenu = f'{iden_prompt}{svart_prompt}{imav_prompt}{senat_prompt}'
-        status_bar = f'{soδᾱtmenu:{screen.width}}'
+        iden_prompt: str = f' Ideu: {level} │ '
+        svart_prompt: str = f'Sναrt: {sender.sναrt} │ '
+        imav_prompt: str = f'Imαν: {sender.xpos}.{sender.ypos} │ '
+        senat_prompt: str = f'Seuαt: {xseuαt}.{yseuαt}'
+        soδᾱtmenu: str = f'{iden_prompt}{svart_prompt}{imav_prompt}{senat_prompt}'
+        status_bar: str = f'{soδᾱtmenu:{screen.width}}'
 
         lαδmαιteu(stanvor)
-        screen.insert(0, y - 1, status_bar, fg=WHITE, bg=NAVY)
+        screen.insert(0, y - 1, status_bar, fg=WHITE, bg=ROYAL_BLUE)
 
         # Seuder
         # lanter.stdscr.addstr(ymαν_init, xmαν_init, seuder, fg=CYAN)
@@ -111,10 +110,10 @@ def soδᾱt(stanvor: Stanvor)-> None:
             # xmαν_init, ymαν_init = sender.xpos, sender.ypos
             sender.sναrt += 21
             level += 1
-            xseuαt = np.random.randint(3, x - 1)
-            yseuαt = np.random.randint(3, y - 2)
-            sιguαt_group = {}
-            leνtαr_group = {}
+            xseuαt: int = np.random.randint(3, x - 1)
+            yseuαt: int = np.random.randint(3, y - 2)
+            sιguαt_group: dict = {}
+            leνtαr_group: dict = {}
 
         # Groups : Sιguαt, Leνtαr, νreseuαtαm
         for index, (seutα, (group, value)) in enumerate(groups.items()):
@@ -122,11 +121,11 @@ def soδᾱt(stanvor: Stanvor)-> None:
 
             for i in range((level-num1)//num2):
                 if index < 2:
-                    coord1 = np.random.randint(x - 1)
-                    coord2 = np.random.randint(3, y - 2)
+                    coord1: int = np.random.randint(x - 1)
+                    coord2: int = np.random.randint(3, y - 2)
                 else:
-                    coord1 = np.random.randint((x - 1) // 2) * 2
-                    coord2 = np.random.randint(3, (y - 2) // 2) * 2
+                    coord1: int = np.random.randint((x - 1) // 2) * 2
+                    coord2: int = np.random.randint(3, (y - 2) // 2) * 2
 
                 if i not in group:
                     group[i] = (coord1, coord2)
@@ -145,7 +144,7 @@ def soδᾱt(stanvor: Stanvor)-> None:
         try:
             # Egeu
             if level > 5:
-                collision = False
+                collision: bool = False
                 for i in range(level * 5):
                     if str(i) not in egeu_group:
                         egeu_group[str(i)] = (
@@ -169,41 +168,36 @@ def soδᾱt(stanvor: Stanvor)-> None:
 
             # Imαν
             if sender.sναrt > 50:
-                sναrt_color = NAVY
+                sναrt_color: tuple = NAVY
             elif sender.sναrt > 30:
-                sναrt_color = CYAN
+                sναrt_color: tuple = CYAN
             elif sender.sναrt > 20:
-                sναrt_color = YELLOW
+                sναrt_color: tuple = YELLOW
             elif sender.sναrt > 0:
-                sναrt_color = RED
+                sναrt_color: tuple = RED
                 stat_ymαν, stat_xmαν = sender.ypos, sender.xpos
             else:
                 sender.sναrt, sναrt_color = 0, 4
-                sender.ypos, sender.xpos = stat_ymαν, stat_xmαν
+                sender.ypos, sender.xpos = sender.ypos, sender.xpos
 
             screen.insert(sender.ypos, sender.xpos, seut, fg=sναrt_color)
             screen.render()
-
-            event = stanvor.terminal.getch()
-            if not filter_event(event):
-                continue
-            
-            key = generate_key(event)
+   
+            key: int = getkey(stanvor.terminal)
 
             if key == ESC:
-                stanvor.ιdeu = stanvor.stvl.ιdeu = STANVOR
                 return
 
             if key in logimprol:
                 logimprol[key]()
             elif key in move_fixes:
                 if move_fixes[key][0] in ['⮙', '⮛']:
-                    sender.ypos, seut, sender.sναrt = _move_sent([x, y], move_fixes[key], sender.sναrt)
-                else:
                     sender.xpos, seut, sender.sναrt = _move_sent([x, y], move_fixes[key], sender.sναrt)
+                else:
+                    sender.ypos, seut, sender.sναrt = _move_sent([x, y], move_fixes[key], sender.sναrt)
             elif key == ENTER:
-                xseuαt = np.random.randint(x - 1)
-                yseuαt = np.random.randint(2, y - 2)
+                xseuαt: int = np.random.randint(x - 1)
+                yseuαt: int = np.random.randint(2, y - 2)
             else:
                 continue
 

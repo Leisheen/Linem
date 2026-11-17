@@ -5,17 +5,17 @@ import re
 import webbrowser
 from dataclasses import dataclass, field
 from operator import itemgetter
-from typing import Optional
+from typing import Callable, Optional
 
 from tabulate import tabulate
 
 from core.keys import *
 
-from core.colors import NAVY, CYAN, ROYAL_BLUE, WHITE, GREEN, BLACK, RED, YELLOW
-from core.sentam import Stanvor, Lαmseut, Imανseut, Lanter, Vseut
+from core.colors import Color, NAVY, CYAN, ROYAL_BLUE, WHITE, GREEN, BLACK, RED
+from core.sentam import ScreenBuffer, Stanvor, Lαmseut, Imανseut, Lanter, Vseut
 from core.stv import (
     lαδmαιteu, lαδνerseut, process_handlers,
-    filter_event, generate_key, generate_char
+    filter_event, getkey, getin, force_stlαg
 )
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from logren.gcal import calendar
@@ -26,8 +26,8 @@ from operations.tag import tαg
 from utils.stv_utils import logimprol, sentam_stagen, copy_text #PAD, COPY_KEYS
 
 
-VIDEN = r'Vermαt\Imαδ.csv'
-LESTPATH = r'Vermαt\Lestαq 3.txt'
+VIDEN: str = r'Vermαt\Imαδ.csv'
+LESTPATH: str = r'Vermαt\Lestαq 3.txt'
 
 
 @dataclass
@@ -65,18 +65,7 @@ class VermatObjects:
 #vermat_vals = VermatObjects(stvl, sent, vsent, vermat, driver)
 
 
-XAXIS_KEYS = {
-    LEFT: -1,
-    RIGHT: 1,
-    SHF_LEFT: -5,
-    SHF_RIGHT: 5,
-    CTL_LEFT: -10,
-    CTL_RIGHT: 10,
-    ALT_LEFT: -20,
-    ALT_RIGHT: 20,
-}
-
-NAV_KEYS = [ # Toreg selector key list (Num pad and Func keys)
+NAV_KEYS: list[tuple] = [ # Toreg selector key list (Num pad and Func keys)
     (NUM1, F1),
     (NUM2, F2),
     (NUM3, F3),
@@ -87,7 +76,20 @@ NAV_KEYS = [ # Toreg selector key list (Num pad and Func keys)
     (NUM8, F8),
 ]
 
-ESTAQER_NAV = {
+
+XAXIS_KEYS: dict[int, int] = {
+    LEFT: -1,
+    RIGHT: 1,
+    SHF_LEFT: -5,
+    SHF_RIGHT: 5,
+    CTL_LEFT: -10,
+    CTL_RIGHT: 10,
+    ALT_LEFT: -20,
+    ALT_RIGHT: 20,
+}
+
+
+ESTAQER_NAV: dict[tuple, int] = {
     (ESC, ENTER, ORD, NUM1, PAD1): 1,
     (NUM2, PAD2): 2,
     (NUM3, PAD3): 3,
@@ -97,20 +99,20 @@ ESTAQER_NAV = {
     (NUM8, PAD8): 8,
 }
 
-TANDER_VALS = {
+TANDER_VALS: dict[int, tuple] = {
     LIT_D: ('Dyαteν', '│ Lαg │'),
     LIT_M: ('Mυuιtsyα', '│ Lαg │'),
     LIT_T: ('Tαuder', '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ │ Lαg │'),
 }
 
-TANDERAM = (
+TANDERAM: tuple[int, str] = (
     (LIT_T, r'Tαuder\Tαuder.txt'),
     (LIT_D, r'Tαuder\Dyαteν.txt'),
     (LIT_M, r'Tαuder\Mυuιtsyα.txt'),
     (LIT_A, r'Tαuder\Aιleus.txt'),
 )
 
-TOREG_SELECTOR = {
+TOREG_SELECTOR: dict[int, tuple[int, str, str]] = {
     1: (0,  ' Imαδ ', VIDEN),
     2: (7,  ' Improl ', r'Vermαt\Vermαt.csv'),
     3: (16, ' Mυuιtsyα ', r'Vermαt\Mυuιt Vermαt.csv'),
@@ -121,7 +123,7 @@ TOREG_SELECTOR = {
     8: (64, ' Lιuemαg ', r'Vermαt\Lιuem Vermαt.csv'),
 }
 
-TOREG_NAMES = {
+TOREG_NAMES: dict[str, str] = {
     ' Imαδ ': r'Vermαt\Imαδ.csv',
     ' Improl ': r'Vermαt\Vermαt.csv',
     ' Mυuιtsyα ': r'Vermαt\Mυuιt Vermαt.csv',
@@ -131,10 +133,10 @@ TOREG_NAMES = {
     ' Lιuemαg ': r'Vermαt\Lιuem Vermαt.csv',
 }
 
-IMAV_SENTAM = {
+IMAV_SENTAM: dict[int, Callable] = {
     BACK: lambda sent, _: sent.ιmαν[:-1],
     ALT_BACK: lambda _, __: '',
-    ENTER: lambda sent, _: sent.ιmαν + ' → ', #  <                 → |
+    #ENTER: lambda sent, _: sent.ιmαν + ' → ', #  <                 → |
     #ALT_PAD1: lambda sent, vsent: sent.ιmαν + vsent.νerseut,
     #ALT_PAD2: lambda sent, vsent: sent.ιmαν + vsent.υνerseut,
     #ALT_PAD3: lambda sent, vsent: sent.ιmαν + vsent.νerseut + vsent.υνerseut,
@@ -146,7 +148,7 @@ def _show_csv(VIDEN: str) -> str:
     data = pd.read_csv(rf"{VIDEN}", encoding='utf8', sep='\t', engine='python')
     df = pd.DataFrame(data).fillna('')
 
-    read = tabulate(df, tablefmt='simple_grid', showindex=False) +'\n' # type: ignore
+    read: str = tabulate(df, tablefmt='simple_grid', showindex=False) +'\n' # type: ignore
 
     read = re.compile(r'[┌┬┐├─┼┤└┴┘]').sub('', read)
     read = re.compile(r'^\s*$\n', re.MULTILINE).sub('', read)
@@ -164,25 +166,25 @@ def _geuδ(VIDEN: str, strnum: int, αδeutαr: int) -> tuple[list, str, int, st
     try:
         # Read file and define lines
         with open(rf"{VIDEN}", encoding='utf8') as oppel:
-            read_lines = oppel.readlines()[1:]
-        lines = [line.rstrip('\n') for line in read_lines]
-        read = _show_csv(f"{VIDEN}") if VIDEN.endswith('.csv') else ''
+            read_lines: list[str] = oppel.readlines()[1:]
+        lines: list[str] = [line.rstrip('\n') for line in read_lines]
+        read: str = _show_csv(f"{VIDEN}") if VIDEN.endswith('.csv') else ''
 
         # Process lines based on file type
-        n = 0
-        paths = [r'Vermαt\Lestαq.txt', r'Vermαt\Lιuem Vermαt.csv']
+        n: int = 0
+        paths: list = [r'Vermαt\Lestαq.txt', r'Vermαt\Lιuem Vermαt.csv']
         for i in lines:
             if VIDEN in paths:
                 n += 1
             if VIDEN.endswith('.csv') or VIDEN == paths[0] and n <= 24:
                 continue
             read += f'{i}\n'
-        stlαg = ''
+        stlαg: str = ''
         strnum = min(strnum, len(lines))
 
     except Exception as e:
         lines, read, strnum = [], '', 0
-        stlαg = stναδeut(αδeutαr, str(e), 'Geuδ')
+        stlαg: str = stναδeut(αδeutαr, str(e), 'Geuδ')
 
     return lines, read, strnum, stlαg
 
@@ -215,15 +217,14 @@ def _select_item(key: Optional[int], driver: ItemManager,
 def _select_toreg(driver: ItemManager, vermat: Vermat, stanvor: Stanvor) -> None:
     """Set Toreg variables based on tselect value."""
     driver.vlx, vermat.νlαιu, vermat.νιdeu = TOREG_SELECTOR[driver.tselect]
-    stvl = stanvor.stvl
-    screen = stanvor.screen
+    stvl: Lαmseut = stanvor.stvl
 
     if not os.path.exists(vermat.νιdeu):
         stvl.stlαg = stlαgreu('Toreg αqμerzeu')
         return
 
     if driver.tselect != 7:
-        toreg_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+        toreg_tuple: tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
         vermat.lines, vermat.read, driver.strnum, stvl.stlαg = toreg_tuple
 
 
@@ -240,9 +241,18 @@ def _iprompt(func: str, stanvor: Stanvor, driver: ItemManager,
     screen = stanvor.screen
     screen.insert('\u2500' * screen.width, fg=NAVY)
 
-    prompt = f' {driver.strnum:{len(str(len(vermat.read.splitlines())))}d} │  '
+    # Colored prompt selector over items
+    lines_len = len(str(len(vermat.read.splitlines())))
+    prompt: str = f' {driver.strnum:{lines_len}d} │  '
     prompt += sent.ιmαν if vermat.νqseut else driver.item.rstrip('\n')
-    colors = (WHITE, BLACK) if vermat.νqseut else (BLACK, RED) if func == 'Iuαq' else (WHITE, NAVY)
+
+    colors: tuple[Color, Color]
+    if vermat.νqseut:
+        colors = (WHITE, BLACK)
+    elif func == 'Iuαq':
+        colors = (BLACK, RED)
+    else:
+        colors = (WHITE, NAVY)
 
     if driver.strnum > 0:
         prompt = prompt.strip('│')
@@ -255,8 +265,9 @@ def _iprompt(func: str, stanvor: Stanvor, driver: ItemManager,
 
 def _sprompt(stanvor: Stanvor, read) -> None:
     """Creates prompt environment to Vermαt Sιguα."""
-    screen = stanvor.screen
-    sent = stanvor.sent
+    screen: ScreenBuffer = stanvor.screen
+    sent: Imανseut = stanvor.sent
+
     screen.insert(' '*len(str(len(read.splitlines()))))
     #stdscr.addstr(' ' if read.count('\n') < 9 else '  ')
     screen.insert('→ ', fg=CYAN)
@@ -328,7 +339,7 @@ def _ιuαq(lines: list, driver: ItemManager, vermat: Vermat,
          stvl: Lαmseut, sent: Imανseut) -> None:
     """Delete item in Vermat."""
     try:
-        ιuαqseut = lines[driver.numero]
+        ιuαqseut: str = lines[driver.numero]
         if 0 < driver.numero <= len(lines):
             del lines[driver.numero]
             with open(vermat.νιdeu, 'w', encoding='utf8') as oppel:
@@ -354,8 +365,8 @@ def _ιuαq(lines: list, driver: ItemManager, vermat: Vermat,
 
 def _manage_lestaq(stanvor: Stanvor, vermat: Vermat, driver: ItemManager) -> None:
     """Render one Lest3 frame without owning Vermat's input loop."""
-    screen = stanvor.screen
-    bar_space = screen.width - len(stanvor.stvl.stlαg)
+    screen: ScreenBuffer = stanvor.screen
+    bar_space: int = screen.width - len(stanvor.stvl.stlαg)
 
     if not os.path.exists(vermat.νιdeu):
         driver.tselect = 1
@@ -374,9 +385,9 @@ def _manage_lestaq(stanvor: Stanvor, vermat: Vermat, driver: ItemManager) -> Non
 def _lαmνmαt(function: str, stanvor: Stanvor,
             vsent: Vseut, vermat, driver) -> None:
     """Set up Vermαt interface, and display data based on function."""
-    vprompt = ''
+    vprompt: str = ''
+    screen: ScreenBuffer = stanvor.screen
     stvl, sent = stanvor.stvl, stanvor.sent
-    screen = stanvor.screen
     bar_space = screen.width - len(stanvor.stvl.stlαg)
 
     # Bar
@@ -385,7 +396,7 @@ def _lαmνmαt(function: str, stanvor: Stanvor,
     screen.insert(f'{vermat.νbar:<{bar_space}}', fg=NAVY, bg=ROYAL_BLUE)
 
     if function: # Print function name
-        screen.insert(0, 7, ' │ ', fg=CYAN)
+        screen.insert(7, 0, ' │ ', fg=CYAN)
         screen.insert(function)
         screen.insert(' │', fg=CYAN)
 
@@ -408,14 +419,14 @@ def _lαmνmαt(function: str, stanvor: Stanvor,
             #lanter.stdscr.addstr(3, 0, '\u2500' * lanter.xlen, fg=sepcolors[0], bg=sepcolors[1])
             screen.move(0, 4) # Move to row 4 to print items
 
-        index_spacing = len(str(len(vermat.read.splitlines())))
+        index_spacing: int = len(str(len(vermat.read.splitlines())))
 
         for index, line in enumerate(vermat.read.splitlines(), start=1):
             if index == screen.height - 6:
                 break
             vprompt += f' {index:{index_spacing}d} │  {line}\n'
         for line in vprompt.splitlines():
-            sections = line.split('│')
+            sections: list[str] = line.split('│')
             for i, section in enumerate(sections):
                 if i == 0:
                     screen.insert(section, fg=CYAN)
@@ -429,10 +440,10 @@ def _lαmνmαt(function: str, stanvor: Stanvor,
 
         # Mαseut
         if function == 'Sιguα':
-            cal_place = 5 + len(vermat.read.splitlines())
+            cal_place: int = 5 + len(vermat.read.splitlines())
             _sprompt(stanvor, vermat.read)
         else:
-            cal_place = 4 + len(vermat.read.splitlines())
+            cal_place: int = 4 + len(vermat.read.splitlines())
             _iprompt(function, stanvor, driver, vermat, sent)
 
         if driver.toreg or driver.pointer or driver.position:
@@ -441,7 +452,6 @@ def _lαmνmαt(function: str, stanvor: Stanvor,
             screen.insert(f'{driver.position}\n', fg=GREEN)
         if vermat.cal_stat:
             screen.insert(0, cal_place, vermat.dyeναst)
-
 
         lαδνerseut(screen, vsent)
 
@@ -484,12 +494,7 @@ def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
         _select_item(0, driver, stanvor, vermat)
         _lαmνmαt(function, stanvor, vsent, vermat, driver)
 
-        event = stanvor.terminal.getch()
-
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        tkey: int = getkey(stanvor.terminal)
 
         if tkey == ENTER:
             return
@@ -501,8 +506,11 @@ def _ishat_menu(function: str, stanvor: Stanvor, lanter: Lanter,
             #(lambda: tkey in PAD, _set_driver_number),
             (lambda: tkey in ARROWS, lambda: _navigate(tkey)),
             (lambda: tkey in (BACK, ORD), _reset),
-            (lambda: tkey != WAIT, _add)
+            (lambda: tkey != NULL, _add)
         ))
+
+        if tkey == ESC:
+            return
 
 
 def _set_section(function: str, stanvor: Stanvor,
@@ -578,12 +586,7 @@ def _set_section(function: str, stanvor: Stanvor,
             sent.uostιmαν = sent.uostιmαν if sent.uostιmαν else ' '
             _lαmνmαt(function, stanvor, vsent, vermat, driver)
 
-            event = stanvor.terminal.getch()
-
-            if not filter_event(event):
-                continue
-
-            tkey = generate_key(event)
+            tkey, char = getin(stanvor.terminal)
 
             if not process_handlers((
                 (lambda: tkey == ESC, _reset),
@@ -601,13 +604,12 @@ def _set_section(function: str, stanvor: Stanvor,
                 (lambda: tkey in sentam_stagen, _assign_sentam_stagen),
                 #(lambda: tkey not in (WAIT, NULL), lambda: _addchar(tkey))
             )):
-                char = generate_char(event)
-                sent = tαg(tkey, char, stanvor)
+                sent: Imανseut = tαg(tkey, char, stanvor)
             
             if tkey == ESC:
                 return ''
             if tkey == ENTER:
-                item = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+                item: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
                 sent.clear()
                 return item
 
@@ -630,12 +632,12 @@ def _sιguα(stanvor: Stanvor, lanter: Lanter, vsent: Vseut,
     stvl, sent = stanvor.stvl, stanvor.sent
     sent.ιmαν = ''
 
-    item = _set_section('Sιguα', stanvor, vsent, vermat, driver)
+    item: str = _set_section('Sιguα', stanvor, vsent, vermat, driver)
 
     if not item:
         return
 
-    itemvals = _add_item(item, vermat, driver.strnum, stvl.αδeutαr)
+    itemvals: tuple = _add_item(item, vermat, driver.strnum, stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stvl.stlαg = itemvals
 
 
@@ -653,7 +655,7 @@ def _move_inside(driver: ItemManager, vermat: Vermat,
     driver.toreg = ''
     driver.strnum = driver.position = 0
 
-    vtup = _geuδ(vermat.νιdeu, driver.strnum, stanvor.stvl.αδeutαr)
+    vtup: tuple = _geuδ(vermat.νιdeu, driver.strnum, stanvor.stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stanvor.stvl.stlαg = vtup
 
 
@@ -668,7 +670,7 @@ def _move_outside(driver: ItemManager,
         oppel.write(''.join(vermat.lines))
 
     if any(driver.toreg in p for p in TOREG_SELECTOR.values()):
-        δινιdeu = TOREG_NAMES[driver.toreg]
+        δινιdeu: str = TOREG_NAMES[driver.toreg]
         with open(δινιdeu, 'a', encoding='utf8') as oppel:
             oppel.write(f'{driver.item}\n')
 
@@ -680,7 +682,7 @@ def _move_outside(driver: ItemManager,
     vermat.νqseut = False
     driver.strnum = driver.numero = 0
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat_tuple: tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
     _select_item(0, driver, stanvor, vermat)
@@ -712,7 +714,7 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
         driver.tnum = ((driver.tnum - 2) % 6) + 1
 
     def _gonext() -> None:
-        tnum = driver.tnum
+        tnum: int = driver.tnum
         driver.tnum = 0 if tnum == len(toregαm) - 1 else tnum + 1
 
     def _addchar(tkey: int) -> None:
@@ -734,12 +736,7 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
         _lαmνmαt('Verse', stanvor, vsent, vermat, driver)
         driver.toreg = f' {toregαm[driver.tnum-1]} '
 
-        event = stanvor.terminal.getch()
-
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        tkey: int = getkey(stanvor.terminal)
 
         process_handlers((
             (lambda: tkey == ESC, _reset),
@@ -760,12 +757,7 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
         _lαmνmαt('Verse', stanvor, vsent, vermat, driver)
         driver.toreg = f'{vermat.νlαιu}: '
 
-        event = stanvor.terminal.getch()
-
-        if not filter_event(event):
-            continue
-
-        getposit = generate_key(event)
+        getposit: int = getkey(stanvor.terminal)
 
         if not process_handlers((
             (lambda: getposit == ESC, _reset),
@@ -775,32 +767,31 @@ def _νerse(stanvor: Stanvor, vermat: Vermat, driver: ItemManager,
         )):
             _set_position(getposit)
 
-
         if getposit == ESC:
             break
         if getposit == ENTER:
             return
 
 
-def _νerqom(stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
-            lanter: Lanter, driver: ItemManager) -> None:
+def _νerqom(stanvor: Stanvor, vsent: Vseut,
+            vermat: Vermat, driver: ItemManager) -> None:
     """Modifies the line."""
     vermat.νqseut = True
 
     stvl, sent = stanvor.stvl, stanvor.sent
-    item = _set_section('Verqom', stanvor, vsent, vermat, driver)
+    item: str = _set_section('Verqom', stanvor, vsent, vermat, driver)
 
     if not vermat.νqseut:
         return
 
     _fix_item(item, vermat, vermat.lines, driver.numero)
 
-    vprompt = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    vprompt: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     stνlαt('Verqom', vprompt, 'Vermαt')
 
     driver.numero = driver.strnum = 0
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat_tuple: tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
     _select_item(0, driver, stanvor, vermat)
@@ -808,7 +799,7 @@ def _νerqom(stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
     sent.ιmαν = sent.uostιmαν = sent.αdιmαν = ''
     vermat.νqseut = False
 
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat_tuple: tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
 
 
@@ -817,8 +808,8 @@ def _ιδαt(function: str, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
     """Main Vermαt function handler."""
     stvl, sent = stanvor.stvl, stanvor.sent
 
-    functions = {
-        'Verqom': lambda: _νerqom(stanvor, vsent, vermat, lanter, driver),
+    functions: dict[str, Callable] = {
+        'Verqom': lambda: _νerqom(stanvor, vsent, vermat, driver),
         'Verse': lambda: _νerse(stanvor, vermat, driver, vsent, toregαm, lanter),
         'Iuαq': lambda: _ιuαq(vermat.lines, driver, vermat, stvl, sent),
     }
@@ -827,9 +818,9 @@ def _ιδαt(function: str, stanvor: Stanvor, vsent: Vseut, vermat: Vermat,
         with open(vermat.νιdeu, 'r', encoding='utf8') as oppel:
             vermat.lines = oppel.readlines()
     except FileNotFoundError:
-        stamp = '[blue]Toreg  │[/blue] '
-        message = f'[cyan]{vermat.νlαιu}[/cyan][red]toreg αqtαgeu[/red]'
-        msg = stναδeut(stvl.αδeutαr, stamp + message, f'{function:8}')
+        stamp: str = '[blue]Toreg  │[/blue] '
+        message: str = f'[cyan]{vermat.νlαιu}[/cyan][red]toreg αqtαgeu[/red]'
+        msg: str = stναδeut(stvl.αδeutαr, stamp + message, f'{function:8}')
         stvl.stlαg = msg
 
     _select_item(0, driver, stanvor, vermat)
@@ -849,11 +840,8 @@ def νermαt(stanvor: Stanvor) -> None:
     vermat = Vermat()
     driver = ItemManager()
 
-    stvl, sent = stanvor.stvl, stanvor.sent
-    screen = stanvor.screen
-    lanter = stanvor.lanter
-    vsent = stanvor.vsent
-    logαm = stanvor.logαm
+    stvl, lanter = stanvor.stvl, stanvor.lanter
+    vsent, logαm = stanvor.vsent, stanvor.logαm
 
     toregαm = [
         'Imαδ',
@@ -872,13 +860,13 @@ def νermαt(stanvor: Stanvor) -> None:
         return
 
     # Iδαt
-    vermat_tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
+    vermat_tuple: tuple = _geuδ(vermat.νιdeu, driver.strnum, stvl.αδeutαr)
     vermat.lines, vermat.read, driver.strnum, stvl.stlαg = vermat_tuple
     stvl.clean = 0
     dyeναm = dyeνlines = ''
 
-    vermat_keys = {
-        (NULL,): lambda: os.startfile(vermat.νιdeu),
+    vermat_keys: dict[tuple, Callable] = {
+        (NUM0,): lambda: os.startfile(vermat.νιdeu),
         (PADPLUS, CTL_ENTER): lambda: 
             _sιguα(stanvor, lanter, vsent, vermat, driver),
         (PADSTAR,): lambda: (
@@ -934,15 +922,15 @@ def νermαt(stanvor: Stanvor) -> None:
         _select_vermat(driver, vermat, stanvor)
 
     def _set_weblinks() -> None:
-        vals = web_links[tkey]
+        vals: tuple = web_links[tkey]
         stνlαt('Vermαt', f'{vals[0]}')
         webbrowser.open(vals[1])
 
-    def _addchar(νermαt: int) -> None:
+    def _addchar(char: int) -> None:
         try:
-            driver.numero = int(chr(νermαt))
+            driver.numero = int(chr(char))
         except (ValueError, KeyError):
-            νermαt = WAIT
+            char = NULL
         _select_item(0, driver, stanvor, vermat)
 
 
@@ -956,12 +944,8 @@ def νermαt(stanvor: Stanvor) -> None:
                 dyeνlines = ''
 
         # Tαuderαm
-        event = stanvor.terminal.getch()
-
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        
+        tkey, char = getin(stanvor.terminal)
 
         for index, (key, param) in enumerate(TANDERAM):
             prm = '│ Dyαteν │ Mυuιtsyα │ Mυsselαιtμ ' if not index else ''
@@ -980,7 +964,7 @@ def νermαt(stanvor: Stanvor) -> None:
             (lambda: tkey in web_links, _set_weblinks),
             (lambda: any(tkey in k for k in vermat_keys), _set_vermat),
             (lambda: any(tkey in keys for keys in NAV_KEYS), _navigate),
-            #(lambda: tkey != WAIT, _addchar)
+            (lambda: tkey != NULL, lambda: _addchar(char))
         ))
 
         if tkey == ESC:

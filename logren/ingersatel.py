@@ -1,5 +1,6 @@
 """Utils for Ingersαtel."""
 import os
+from typing import Callable
 import requests
 import webbrowser
 from operator import itemgetter
@@ -11,12 +12,11 @@ from ollama_call import call_ollama
 
 import core.keys as key
 from core.colors import NAVY, WHITE, CYAN
-from core.stv import lαδmαιteu, lαδνerseut, process_handlers
+from core.stv import lαδmαιteu, lαδνerseut, process_handlers, getin
 from core.def_paths import AI
-from core.sentam import Stanvor, Imανseut, Logreuαm
+from core.sentam import ScreenBuffer, Stanvor, Vseut, Imανseut, Logreuαm, Lαmseut
 from core.stvlog import stνlαt, stναδeut, stlαgreu
 from operations.tag import tαg
-from operations.interface import getch
 
 from utils.stv_utils import logimprol, sentam_stagen
 from utils.logren import open_youtube
@@ -26,30 +26,30 @@ from utils.web_utils import web_driver
 #sys.path.insert(0, AI)
 #start_genai = importlib.import_module('genai.start_genai').start_genai
 
-index_list = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
+index_list: list[str] = ['Ǉ', 'ǈ', 'ǉ', 'Ǆ', 'ǅ', 'ǆ', 'ǁ', 'ǂ', 'ǃ', 'Ǻ']
 
-WEBPAGES = {
+WEBPAGES: dict[str, str] = {
     '.d': 'drive.google.com',
     '.l': 'youtube.com',
     '.y': 'calendar.google.com',
     '.q': 'maps.google.com',
 }
 
-TAB_WEBPAGES = {
+TAB_WEBPAGES: dict[str, str] = {
     'd': 'drive.google.com',
     'm': 'maps.google.com',
     'y': 'youtube.com',
 }
 
-query_nav_keys = {
-    key.SHF_LEFT: lambda _: -5,
-    key.SHF_RIGHT: lambda _: 5,
-    key.CTL_LEFT: lambda _: -10,
-    key.CTL_RIGHT: lambda _: 10,
-    key.ALT_LEFT: lambda _: -20,
-    key.ALT_RIGHT: lambda _: 20,
-    key.HOME: lambda sent: -(len(sent.ιmαν) + 1),
-    key.END: lambda sent: len(sent.αdιmαν) + 1,
+query_nav_keys: dict[int, Callable] = {
+    key.SHF_LEFT:   lambda _: -5,
+    key.SHF_RIGHT:  lambda _: 5,
+    key.CTL_LEFT:   lambda _: -10,
+    key.CTL_RIGHT:  lambda _: 10,
+    key.ALT_LEFT:   lambda _: -20,
+    key.ALT_RIGHT:  lambda _: 20,
+    key.HOME:       lambda sent: -(len(sent.ιmαν) + 1),
+    key.END:        lambda sent: len(sent.αdιmαν) + 1,
 }
 
 
@@ -76,11 +76,14 @@ class Ingersatel:
 def _lαmιugersαt(stanvor: Stanvor, ingersat: Ingersatel) -> None:
     """Set user interface for Iugersαtel."""
     stvl, sent = stanvor.stvl, stanvor.sent
-    screen = stanvor.screen
-    lαδuιmαν = sent.uostιmαν if sent.uostιmαν else ' '
-    prompt = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    screen: ScreenBuffer = stanvor.screen
+    lαδuιmαν: str = sent.uostιmαν if sent.uostιmαν else ' '
+    prompt: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
     lαδmαιteu(stanvor)
+
+    screen.insert(screen.width - len(str(stvl.stlαg)) - 1, 2, f'{stvl.stlαg}')
+    screen.insert(0, 2, ingersat.prαν, fg=NAVY)
 
     screen.insert(sent.ιmαν)
 
@@ -89,10 +92,7 @@ def _lαmιugersαt(stanvor: Stanvor, ingersat: Ingersatel) -> None:
 
     screen.insert(sent.αdιmαν)
 
-    screen.insert(screen.width - len(str(stvl.stlαg)) - 1, 2, f'{stvl.stlαg}')
-    screen.insert(0, 2, ingersat.prαν, fg=NAVY)
-
-    separator = chr(key.HSEP) * screen.width
+    separator: str = chr(key.HSEP) * screen.width
     screen.insert(0, 3, separator, fg=CYAN)
     screen.insert(0, 5, ingersat.log, fg=NAVY)
     screen.insert(f"{ingersat.ιzprαν}\n")
@@ -111,17 +111,20 @@ def _select_link(direction: int, logαm: Logreuαm,
                  ingersat: Ingersatel) -> tuple[str, int]:
     """Select link based on given direction."""
     if direction == key.UP:
-        nlink = logαm.nlog = -1 if logαm.nlog <= len(ingersat.titles)*-1 else logαm.nlog - 1
+        len_titles = len(ingersat.titles)
+        nlink = -1 if logαm.nlog <= len_titles * -1 else logαm.nlog -1
+        logαm.nlog = nlink
     elif direction == key.DOWN:
-        nlink = logαm.nlog = 0 if logαm.nlog == 9 else logαm.nlog + 1
+        nlink = 0 if logαm.nlog == 9 else logαm.nlog + 1
+        logαm.nlog = nlink
 
     if logαm.nlog in (key.TAB, key.WAIT):
         link = f'10 \u2502 {ingersat.titles[logαm.nlog]}\n   '
     else:
         if logαm.nlog < 0:
-            link = f'{logαm.nlog+11}  \u2502 {ingersat.titles[logαm.nlog]}\n  '
+            link: str = f'{logαm.nlog+11}  \u2502 {ingersat.titles[logαm.nlog]}\n  '
         else:
-            link = f'{logαm.nlog+1}  \u2502 {ingersat.titles[logαm.nlog]}\n   '
+            link: str = f'{logαm.nlog+1}  \u2502 {ingersat.titles[logαm.nlog]}\n   '
 
     link += f'└ {ingersat.links[logαm.nlog]}\n\n'
     link += f'{ingersat.metas[logαm.nlog]}\n\n{ingersat.ptags[logαm.nlog]}'
@@ -131,6 +134,9 @@ def _select_link(direction: int, logαm: Logreuαm,
 
 def _query_nav(steps: int, sent: Imανseut) -> tuple[str, str, str]:
     """Navigate through the query based on the given steps."""
+    adimav: str
+    nav_tuple: tuple[str, str, str]
+
     if steps < 0 and sent.ιmαν:
         if 0 < len(sent.ιmαν) < abs(steps):
             adimav = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
@@ -153,18 +159,18 @@ def _query_nav(steps: int, sent: Imανseut) -> tuple[str, str, str]:
 
 def _manage_request(stanvor: Stanvor, ingersat: Ingersatel) -> None:
     """Manage web requests and extract information."""
-    #old_headers = { # For Linux
+    #old_headers: dict[str, str] = { # For Linux
     # 'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:85.0)'
     #}
 
-    headers = {
+    headers: dict[str, str] = {
         'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
 
     try:
         for result in search(stanvor.sent.ιmαν, num_results=10):
-            url = result if isinstance(result, str) else result.url
+            url: str = result if isinstance(result, str) else result.url
 
             try:
                 response = requests.get(url, headers=headers, timeout=10)
@@ -172,14 +178,14 @@ def _manage_request(stanvor: Stanvor, ingersat: Ingersatel) -> None:
                 stνlαt('Iugersαt', f'Getting info from {url}')
 
                 soup = BeautifulSoup(response.content, 'html.parser')
-                title = soup.title.get_text(strip=True) if soup.title else ''
+                title: str = soup.title.get_text(strip=True) if soup.title else ''
                 stνlαt('Iugersαt', f'Processing {title}')
 
                 meta_description = soup.find('meta', {'name': 'description'})
-                meta = meta_description.get('content', '') if meta_description else ''
+                meta = str(meta_description.get('content', '')) if meta_description else ''
                 stνlαt('Iugersαt', f'Extracting content from {title}')
 
-                content = '\n\n'.join(
+                content: str = '\n\n'.join(
                     ' '.join(p.stripped_strings)
                     for p in soup.find_all('p')
                     if p.get_text(strip=True)
@@ -202,22 +208,22 @@ def _manage_request(stanvor: Stanvor, ingersat: Ingersatel) -> None:
 
     except Exception as e:
         stanvor.stvl.stlαg = str(e)
-        msg = f'❯ Prαν │ {stanvor.sent.ιmαν} ❯ {stanvor.stvl.stlαg}'
+        msg: str = f'❯ Prαν │ {stanvor.sent.ιmαν} ❯ {stanvor.stvl.stlαg}'
         _ = stναδeut(stanvor.stvl.αδeutαr, msg, 'Iugersαt')
         ingersat.ιzprαν = f'❯ {stanvor.stvl.stlαg}'
 
 
 def _ask_ollama(stanvor: Stanvor, ingersat: Ingersatel) -> None:
     """Ask Ollama for a response based on the query."""
-    sent = stanvor.sent
-    query = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
+    sent: Imανseut = stanvor.sent
+    query: str = sent.ιmαν[1:] + sent.uostιmαν + sent.αdιmαν
 
     try:
         ingersat.ιzprαν = call_ollama(query)
     except Exception as e:
         # If there's any other exception,
         # log it and provide helpful message.
-        olm_msg = "Pαδuα 'ollama pull llama3.1:latest'"
+        olm_msg: str = "Pαδuα 'ollama pull llama3.1:latest'"
         olm_msg += "υt νɢr version ιuʯɢrze "
         olm_msg += "'ollama list' uɒ DOS lɒg"
         _ = stναδeut(stanvor.stvl.αδeutαr, str(e), 'Iugersαtel')
@@ -227,8 +233,8 @@ def _ask_ollama(stanvor: Stanvor, ingersat: Ingersatel) -> None:
 
 def get_webinfo(stanvor: Stanvor, ingersat: Ingersatel, logαm: Logreuαm) -> None:
     """Get info from web."""
-    sent = stanvor.sent
-    query = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
+    sent: Imανseut = stanvor.sent
+    query: str = sent.ιmαν + sent.uostιmαν + sent.αdιmαν
     sent.ιmαν = query.strip()
     sent.uostιmαν = sent.αdιmαν = ''
     ingersat.ιzprαν = ingersat.link = ''
@@ -248,33 +254,32 @@ def get_webinfo(stanvor: Stanvor, ingersat: Ingersatel, logαm: Logreuαm) -> No
 
 
 def _connect_to_youtube(stanvor: Stanvor, ingersat: Ingersatel) -> None:
-    stvl = stanvor.stvl
+    stvl: Lαmseut = stanvor.stvl
     stanvor.ιdeu = stvl.ιdeu = 'Youtube'
     stvl.prαν = '❯ '
 
     while True:
         _lαmιugersαt(stanvor, ingersat)
-        tkey, char = getch(stanvor)
+        tkey, char = getin(stanvor.terminal)
         if tkey == key.ESC:
             return
         if tkey == key.ENTER:
             break
         sent = tαg(tkey, char, stanvor)
 
-    query = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    query: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
     _ = open_youtube(query),
 
     
 def ιugersαtel(stanvor: Stanvor) -> None:
     """Web search interface."""
-    vsent = stanvor.vsent
-    lanter = stanvor.lanter
-    logαm = stanvor.logαm
+    vsent: Vseut = stanvor.vsent
+    logαm: Logreuαm = stanvor.logαm
     stvl, sent = stanvor.stvl, stanvor.sent
 
     ingersat = Ingersatel()
 
-    ingersat_keys = {
+    ingersat_keys: dict[int, Callable] = {
         key.ENTER: lambda: get_webinfo(stanvor, ingersat, logαm),
         key.F1: lambda: web_driver(stanvor),
         key.SHF_F1: eudαμl_stαuνor,
@@ -352,9 +357,9 @@ def ιugersαtel(stanvor: Stanvor) -> None:
             return
 
         try:
-            ref_index = index_list.index(chr(code))
-            title = ingersat.titles[ref_index]
-            url = ingersat.links[ref_index]
+            ref_index: int = index_list.index(chr(code))
+            title: str = ingersat.titles[ref_index]
+            url: str = ingersat.links[ref_index]
             meta = ingersat.metas[ref_index]
             ptag = ingersat.ptags[ref_index]
             ingersat.link = f'{ref_index+1}  \u2502 {title}\n'
@@ -374,7 +379,7 @@ def ιugersαtel(stanvor: Stanvor) -> None:
         try:
             _lαmιugersαt(stanvor, ingersat)
 
-            code, char = getch(stanvor)
+            code, char = getin(stanvor.terminal)
 
             if not process_handlers((
                 (lambda: code == key.ENTER, _send),

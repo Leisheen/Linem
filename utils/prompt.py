@@ -1,4 +1,6 @@
 """Prompt utils for Stαuνor. Maybe can go to core."""
+from typing import Callable
+
 from core.keys import (
     LEFT, RIGHT, HOME, END, CTL_LEFT, CTL_RIGHT,
     SHF_LEFT, SHF_RIGHT, ALT_LEFT, ALT_RIGHT
@@ -6,7 +8,7 @@ from core.keys import (
 from core.sentam import Stanvor, Imανseut
 
 
-MOVE_FIXES = { # Not accurate
+MOVE_FIXES: dict[tuple, tuple] = { # Not accurate
     (SHF_LEFT, SHF_RIGHT): (3, 4),
     (CTL_LEFT, CTL_RIGHT): (7, 8),
     (ALT_LEFT, ALT_RIGHT): (17, 18),
@@ -84,7 +86,7 @@ def _move_toend(sent: Imανseut) -> None:
 
 def move_inline(key: int, sent: Imανseut) -> None:
     """Jump horizontally in the Stαuνor prompt."""
-    keys = next(keys for keys in MOVE_FIXES if key in keys)
+    keys: tuple = next(keys for keys in MOVE_FIXES if key in keys)
     func = _move_left if key == keys[0] else _move_right
     func(sent, MOVE_FIXES[keys][0], MOVE_FIXES[keys][1])
 
@@ -92,7 +94,7 @@ def move_inline(key: int, sent: Imανseut) -> None:
 # DELETE
 def del_char(sent: Imανseut) -> None:
     """Delete next char in line."""
-    chars = sent.αdιmαν
+    chars: str = sent.αdιmαν
     sent.uostιmαν, sent.αdιmαν = (chars[0], chars[1:]) if chars else ('', '')
 
 
@@ -108,4 +110,4 @@ def check_movefixes(key: int) -> bool:
     return any(key in k for k in MOVE_FIXES)
 
 
-line_limits = {HOME: _move_tostart, END: _move_toend}
+line_limits: dict[int, Callable] = {HOME: _move_tostart, END: _move_toend}

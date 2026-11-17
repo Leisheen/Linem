@@ -4,7 +4,7 @@ with suppress(ImportError):
     os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = 'hide'
 import pygame
 
-from core.keys import PLAY, STOP, BACKWARDS, FORWARDS, QUESTION
+from core.keys import PLAY, STOP, BACKWARDS, FORWARDS, SHF_PLAY
 from core.sentam import STANVOR, Stanvor, Audio, Lαmseut
 from core.stvlog import stνlαt
 
@@ -19,11 +19,11 @@ AUDIO_ACTIONS = {
     FORWARDS: 'forward',
 }
 STV_AUDIO_ACTIONS = { # Just for STANVOR so far
-    STOP:  'stop',
-    PLAY:     'pause',
-    BACKWARDS:   'rewind',
-    FORWARDS:   'forward',
-    QUESTION: 'audio_mode',
+    STOP:      'stop',
+    PLAY:      'pause',
+    BACKWARDS: 'rewind',
+    FORWARDS:  'forward',
+    SHF_PLAY:  'audio_mode',
 }
 
 
@@ -34,8 +34,8 @@ def set_audio(audio: Audio):
 
     audio.pos = music.get_pos() / 1000
 
-    prmthead = f'{audio.name} ❯  {str(int(audio.pos))}'
-    audio_mins = f'{int(audio.length)//60}:{int(audio.length)%60}'
+    prmthead: str = f'{audio.name} ❯  {str(int(audio.pos))}'
+    audio_mins: str = f'{int(audio.length)//60}:{int(audio.length)%60}'
     audio.prompt = f'{prmthead} : {audio.length}s ({audio_mins})'
 
     if audio.pos == -0.001:
@@ -57,7 +57,7 @@ def _play(audio: Audio) -> str:
 def _stop(audio: Audio, stvl: Lαmseut) -> str:
     music.stop()
     stvl.υprαν = ''
-    file = audio.name
+    file: str = audio.name
     audio.clear()
     return f'{file} stopped'
 
@@ -79,16 +79,41 @@ def _switch_mode(audio: Audio, stvl: Lαmseut) -> None:
 
 
 def _move(direction: str, audio: Audio) -> None:
-    current_pos = music.get_pos() / 1000
-    directions = {
-        'forward': lambda: min(current_pos + 50, float(audio.length)),
-        'rewind':  lambda: max(0, current_pos - 50),
-    }
-    audio.pos = directions.get(direction, lambda: current_pos)()
-    music.set_pos(audio.pos)
+    try:
+        # get_pos() returns milliseconds and can report -1 before playback is
+        # initialised.  In that case, use the position tracked by the UI.
+        current_pos: float = music.get_pos() / 1000
+        if current_pos < 0:
+            current_pos = float(getattr(audio, 'pos', 0) or 0)
+
+        length = float(audio.length or 0)
+
+        if direction == 'forward':
+            target_pos: float = min(current_pos + 50, length or current_pos + 50)
+        elif direction == 'rewind':
+            target_pos: float = max(0, current_pos - 50)
+        else:
+            target_pos: float = current_pos
+
+        if target_pos == current_pos:
+            return
+
+        try:
+            music.set_pos(target_pos)
+        except pygame.error:
+            # Not every decoder/backend implements set_pos().  Restarting the
+            # already-loaded track at the requested offset is the portable
+            # fallback supported by pygame.mixer.music.
+            music.play(start=target_pos)
+            if getattr(audio, 'paused', False):
+                music.pause()
+
+        audio.pos = target_pos
+    except (pygame.error, TypeError, ValueError):
+        return
 
 
-audio_actions = {
+audio_operations = {
     'play':       lambda audio, _: _play(audio),
     'pause':      lambda audio, _: _pause(audio),
     'stop':       lambda audio, stvl: _stop(audio, stvl),
@@ -100,15 +125,20 @@ audio_actions = {
 
 def drive_audio(function: str, stanvor: Stanvor, *args) -> None:
     """Module to play an audio file."""
-    audio, stvl = stanvor.audio, stanvor.stvl
-    sent = stanvor.sent
+    audio, stvl, sent = stanvor.audio, stanvor.stvl, stanvor.sent
+    prompt: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+
+    if prompt and os.path.exists(prompt):
+        audio.file = prompt
+
     if not audio.file:
-        audio.file = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-    filename = stanvor.audio.file.split('\\')[-1]
+        return
+    
+    filename: str = stanvor.audio.file.split('\\')[-1]
     audio.name = args[0] if args else filename
 
     master.init()
-    stat = audio_actions.get(function, lambda: None)(audio, stvl)
+    stat: str | None = audio_operations.get(function, lambda: None)(audio, stvl)
 
     if stat:
         stνlαt('Ouιter', f' {audio.name} {stat}', STANVOR)

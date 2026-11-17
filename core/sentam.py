@@ -2,47 +2,59 @@
 import ctypes
 import os
 import sys
+from typing import Any
 
+from pathlib import Path
 from core import posix
 from core import win
 from dataclasses import dataclass, field, fields
 
 
-STANVOR = 'Stαuνor'
+STANVOR: str = 'Stαuνor'
 
 
 class ScreenBuffer:
     """A 2D memory-grid manager with dirty-cell features to avoid flicker."""
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.pointer: list = [0, 0]
-        self.buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
-        self.old_buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
+    def __init__(self, width: int, height: int):
+        self.width: int = width
+        self.height: int = height
+        self.pointer: list[int] = [0, 0]
+        self.buffer: list[list[tuple]] = [
+            [(" ", None, None) for _ in range(width)] for _ in range(height)
+            ]
+        self.old_buffer: list[list[tuple]] = [
+            [(" ", None, None) for _ in range(width)] for _ in range(height)
+            ]
 
     def clear(self):
-        self.buffer = [[(" ", None, None) for _ in range(self.width)] for _ in range(self.height)]
-        self.pointer = [0, 0]
+        self.buffer: list[list[tuple]] = [
+            [(" ", None, None) for _ in range(self.width)]
+            for _ in range(self.height)
+            ]
+        self.pointer: list[int] = [0, 0]
 
     def reset(self):
-        self.old_buffer = [[(" ", None, None) for _ in range(self.width)] for _ in range(self.height)]
-        self.pointer = [0, 0]
+        self.old_buffer = [
+            [(None, None, None) for _ in range(self.width)]
+            for _ in range(self.height)
+            ]
+        self.pointer: list[int] = [0, 0]
 
-    def move(self, x, y):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.pointer = [x, y]
+    def move(self, xpos: int, ypos: int):
+        if 0 <= xpos < self.width and 0 <= ypos < self.height:
+            self.pointer: list[int] = [xpos, ypos]
 
     def insert(self, *args, **kwargs):
         """Write text at the cursor, or at an explicit (x, y) position."""
         fg, bg = None, None
 
-        def set_linebreak(x: int, y: int) -> tuple[int, int]:
+        def set_linebreak(xpos: int, ypos: int) -> tuple[int, int]:
             """Add a line break and move the cursor to the next line."""
-            x = 0
-            y += 1
-            if y >= self.height:
-                y = self.height - 1
-            return x, y
+            xpos = 0
+            ypos += 1
+            if ypos >= self.height:
+                ypos = self.height - 1
+            return xpos, ypos
 
         if kwargs:
             if 'fg' in kwargs:
@@ -52,17 +64,17 @@ class ScreenBuffer:
 
         if isinstance(args[0], int):
             if len(args) == 3:
-                x, y, val = args
+                xpos, ypos, val = args
             elif len(args) == 5:
-                x, y, val, fg, bg = args
+                xpos, ypos, val, fg, bg = args
 
-            if not (0 <= x < self.width and 0 <= y < self.height):
+            if not (0 <= xpos < self.width and 0 <= ypos < self.height):
                 return
 
-            prompt = val if isinstance(val, str) else chr(val)
-            self.pointer = [x, y]
+            prompt: str = val if isinstance(val, str) else chr(val)
+            self.pointer = [xpos, ypos]
         else:
-            prompt = args[0]
+            prompt: str = args[0]
             if prompt is None:
                 return
 
@@ -72,29 +84,36 @@ class ScreenBuffer:
         if not prompt:
             return
 
-        x, y = self.pointer
+        xpos, ypos = self.pointer
 
         for char in prompt:
             if char == '\n':
-                x, y = set_linebreak(x, y)
+                xpos, ypos = set_linebreak(xpos, ypos)
                 continue
+            if char == '\t':
+                tab_width: int = 4
+                tab_space: int = tab_width - (xpos % tab_width)
 
-            if 0 <= x < self.width and 0 <= y < self.height:
-                self.buffer[y][x] = (char, fg, bg)
-                x += 1
+                for _ in range(tab_space):
+                    xpos += 1
+                    self.buffer[ypos][xpos] = (' ', fg, bg)
 
-                if x >= self.width:
-                    x = 0
-                    y += 1
+            if 0 <= xpos < self.width and 0 <= ypos < self.height:
+                self.buffer[ypos][xpos] = (char, fg, bg)
+                xpos += 1
 
-            if y >= self.height:
-                y = self.height - 1
-                x = 0
+                if xpos >= self.width:
+                    xpos = 0
+                    ypos += 1
 
-        self.pointer = [x, y]
+            if ypos >= self.height:
+                ypos = self.height - 1
+                xpos = 0
+
+        self.pointer = [xpos, ypos]
 
     def render(self):
-        output = []
+        output: list = []
         # Sentinel values force an explicit foreground/background reset on the
         # first changed cell, so terminal state left by a previous render can
         # never turn a foreground-only character into a colored square.
@@ -122,22 +141,22 @@ class ScreenBuffer:
             return bg
 
 
-        for y in range(self.height):
-            for x in range(self.width):
-                new_cell = self.buffer[y][x]
+        for ypos in range(self.height):
+            for xpos in range(self.width):
+                new_cell: tuple[str, int, int] = self.buffer[ypos][xpos]
 
                 # Only write cells that changed since the last frame
-                if new_cell != self.old_buffer[y][x]:
+                if new_cell != self.old_buffer[ypos][xpos]:
                     char, fg, bg = new_cell
 
                     # 1. Move cursor to position
-                    output.append(f"\x1b[{y+1};{x+1}H")
+                    output.append(f"\x1b[{ypos + 1};{xpos + 1}H")
 
                     # 2. Update Foreground color if it changed
-                    current_fg = update_foreground(fg)
+                    current_fg: object = update_foreground(fg)
 
                     # 3. Update Background color if it changed
-                    current_bg = update_background(bg)
+                    current_bg: object = update_background(bg)
 
                     # 4. Append the actual character
                     output.append(char)
@@ -158,42 +177,47 @@ class ScreenBuffer:
 
 class VirtualCanvas:
     """A virtual canvas (pad) of arbitrary dimensions that can be larger than the screen."""
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int):
         self.width: int = width
         self.height: int = height
         self.xpos: int = 0
         self.ypos: int = 0
         # Internal 2D grid holding (char, fg, bg) tuples
-        self.buffer = [[(" ", None, None) for _ in range(width)] for _ in range(height)]
+        self.buffer: list[list[tuple]] = [
+            [(" ", None, None) for _ in range(width)] for _ in range(height)
+            ]
 
     def clear(self, fg=None, bg=None):
-        self.buffer = [[(" ", fg, bg) for _ in range(self.width)] for _ in range(self.height)]
-        self.xpos = 0
-        self.ypos = 0
+        self.buffer: list[list[tuple]] = [
+            [(" ", fg, bg) for _ in range(self.width)] for _ in range(self.height)
+            ]
+        self.xpos: int = 0
+        self.ypos: int = 0
     
     def getpos(self) -> tuple[int ,int]:
         return self.xpos, self.ypos
 
-    def set_cell(self, x, y, char, fg=None, bg=None):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.buffer[y][x] = (char, fg, bg)
-            self.xpos = x
-            self.ypos = y
+    def set_cell(self, xpos: int, ypos: int, char: str, fg=None, bg=None):
+        if 0 <= xpos < self.width and 0 <= ypos < self.height:
+            self.buffer[ypos][xpos] = (char, fg, bg)
+            self.xpos = xpos
+            self.ypos = ypos
 
-    def insert(self, start_x, start_y, text, fg=None, bg=None):
+    def insert(self, start_x: int, start_y: int, text: str, fg=None, bg=None):
         """Supports multi-line text and newlines directly on the virtual canvas."""
-        x, y = start_x, start_y
+        xpos, ypos = start_x, start_y
         for char in text:
             if char == '\n':
-                y += 1
-                x = start_x
+                ypos += 1
+                xpos = start_x
             else:
-                self.set_cell(x, y, char, fg, bg)
-                x += 1
-        self.xpos = x
-        self.ypos = y
+                self.set_cell(xpos, ypos, char, fg, bg)
+                xpos += 1
+        self.xpos = xpos
+        self.ypos = ypos
 
-    def refresh(self, screen_buffer, dest_x, dest_y, src_x, src_y, view_width, view_height):
+    def refresh(self, screen_buffer: ScreenBuffer, dest_x: int, dest_y: int,
+                src_x: int, src_y: int, view_width: int, view_height: int):
         """
         Copies a rectangular viewport from the virtual canvas onto the main screen buffer.
         Blit only the visible portion of the pad into the main screen buffer
@@ -233,7 +257,7 @@ class Terminal:
 
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self):
         """Restore cursor (\x1b[?25h), reset colors (\x1b[0m), and move home (\x1b[H)"""
         sys.stdout.write("\x1b[?25h\x1b[0m\x1b[H")
         sys.stdout.flush()
@@ -245,7 +269,7 @@ class Terminal:
         else:
             posix.restore_terminal(self)
 
-    def getch(self, timeout=0.05) -> int | dict | None:
+    def getch(self, timeout=0.05) -> dict[str, Any]:
         """Non-blocking key reader."""
         tmout = timeout
         return win.getkey(self) if win.IS_WINDOWS else posix.getkey(tmout)
@@ -348,6 +372,7 @@ class Audio:
 @dataclass
 class Logreuαm:
     """File system variables."""
+    root: Path = field(default_factory=Path)
     stat: bool = False
     loglist: list = field(default_factory=list)
     ιlog: list = field(default_factory=list)

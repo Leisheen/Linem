@@ -13,7 +13,7 @@ from utils.stv_utils import check_globalkeys, sentam_stagen, set_sentam, logimpr
 
 def tαg(vkey: int, char: int, stanvor: Stanvor) -> Imανseut:
     """Global input manager."""
-    sent = stanvor.sent
+    sent: Imανseut = stanvor.sent
 
     sent.ιmαν, vkey = check_globalkeys(stanvor, vkey, logimprol)
 

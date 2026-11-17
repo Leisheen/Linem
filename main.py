@@ -48,7 +48,7 @@ def _build_stanvor() -> sn.Stanvor:
 
 def main() -> None:
     """Core of the Stαuνor."""
-    stanvor = _build_stanvor()
+    stanvor: sn.Stanvor = _build_stanvor()
     run_lιuemαg(stanvor)
 
 
@@ -62,6 +62,6 @@ if __name__ == '__main__':
     except Exception as e: # pylint: disable=broad-exception-caught
         # To handle Stαuνor unknown crashes. The crash is logged anyway.
         catch_crash(e)
-        raise
+        main()
     finally:
         end_stanvor()

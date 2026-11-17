@@ -1,10 +1,11 @@
 """Retrieves info about a given input character."""
 import pyperclip
 from dataclasses import dataclass
+from typing import Any, Callable
 
 import core.keys as key
 from core.sentam import STANVOR, Stanvor, Terminal
-from core.stv import lαδmαιteu, filter_event, generate_key
+from core.stv import lαδmαιteu, filter_event, getkey
 from utils.stv_utils import copy_to_clipboard
 
 
@@ -17,7 +18,7 @@ class Char:
     stlag: str = ''
 
 
-KEY_NAMES = {
+KEY_NAMES: dict[int | str, str] = {
     value: name for name, value in vars(key).items()
     if not name.startswith("_") and isinstance(value, (int, str))
 }
@@ -80,11 +81,11 @@ def _filter_input(tkey: int, char: Char) -> bool:
 def _select_input_mode(terminal: Terminal) -> str:
     """Select input mode: Key symbol or code number."""
     while True:
-        event = terminal.getch()
+        event: dict[str, Any] = terminal.getch()
         if not filter_event(event):
             continue
 
-        tkey = generate_key(event)
+        tkey: int = getkey(terminal)
 
         if tkey == key.ESC:
             return ''
@@ -96,7 +97,7 @@ def _select_input_mode(terminal: Terminal) -> str:
 
 def _get_key(tkey: int, char: Char) -> None:
     """Get key interface."""
-    cmap = {key.BACK: '0o10', key.TAB: r'\t', key.ENTER: '10'}
+    cmap: dict[int, str] = {key.BACK: '0o10', key.TAB: r'\t', key.ENTER: '10'}
     char.code = tkey
     char.lash = cmap.get(char.code, chr(char.code))
     char.keyname = KEY_NAMES.get(tkey, '')
@@ -104,7 +105,7 @@ def _get_key(tkey: int, char: Char) -> None:
 
 def _get_code(tkey: int, char: Char) -> None:
     """Get code interface."""
-    key_char = chr(tkey)
+    key_char: str = chr(tkey)
 
     if key_char.isdigit():
         char.code = 0 if len(str(char.code)) > 2 else char.code
@@ -120,7 +121,7 @@ def eval_char(stanvor: Stanvor) -> None:
     terminal = stanvor.terminal
 
     char = Char()
-    modes = {'Key': _get_key, 'Code': _get_code}
+    modes: dict[str, Callable] = {'Key': _get_key, 'Code': _get_code}
 
     _show_modes(list(modes.keys()), stanvor)
     char.mode = _select_input_mode(terminal)
@@ -132,10 +133,7 @@ def eval_char(stanvor: Stanvor) -> None:
         _char_prompt(char, stanvor)
         stanvor.screen.render()
 
-        event = terminal.getch()
-        if not filter_event(event):
-            continue
-        tkey = generate_key(event)
+        tkey: int = getkey(stanvor.terminal)
 
         if tkey == key.ESC:
             stanvor.ιdeu = STANVOR

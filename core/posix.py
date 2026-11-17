@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 try:
     import select
@@ -30,23 +31,23 @@ def restore_terminal(self):
         termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)
 
 
-def getkey(timeout):
+def getkey(timeout) -> dict[str, Any]:
     # POSIX non-blocking read using select
     # Must be converted to int
     if select is None or not hasattr(sys.stdin, "read"):
-        return None
+        return {'': ''}
 
     dr, _, _ = select.select([sys.stdin], [], [], timeout)
     if dr:
-        ch = sys.stdin.read(1)
+        ch = str(sys.stdin.read(1))
         # Handle ANSI escape sequences for arrows (e.g., \x1b[A)
         if ch == '\x1b':
             dr2, _, _ = select.select([sys.stdin], [], [], 0.01)
             if dr2:
                 seq = sys.stdin.read(2)
-                if seq == '[A': return 'UP'
-                if seq == '[B': return 'DOWN'
-                if seq == '[C': return 'RIGHT'
-                if seq == '[D': return 'LEFT'
-        return ch
-    return None
+                if seq == '[A': return {'UP': 0}
+                if seq == '[B': return {'DOWN': 0}
+                if seq == '[C': return {'RIGHT': 0}
+                if seq == '[D': return {'LEFT': 0}
+        return {ch: 0}
+    return {'': ''}

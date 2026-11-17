@@ -13,7 +13,7 @@ from tkinter import Tk, Label, NW
 
 from core.keys import ESC, ENTER
 from core.sentam import Stanvor
-from core.stv import lαδιmανseut, filter_event, generate_key, generate_char
+from core.stv import lαδιmανseut, filter_event, getin
 from core.stvlog import stlαgreu
 from operations.tag import tαg
 
@@ -97,7 +97,7 @@ def _run_pyside() -> None:
 def _logαt(stanvor: Stanvor) -> bool:
     """This function manages Logαt apps."""
     sent = stanvor.sent
-    command = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+    command: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
 
     apps = {
         'x': _run_textual,
@@ -126,11 +126,7 @@ def set_logat(stanvor: Stanvor) -> None:
     while True:
         lαδιmανseut(stanvor)
 
-        event = stanvor.terminal.getch()
-        if not filter_event(event):
-            continue
-
-        tkey = generate_key(event)
+        tkey, char = getin(stanvor.terminal)
 
         if tkey == ESC:
             return
@@ -142,7 +138,6 @@ def set_logat(stanvor: Stanvor) -> None:
                 stvl.stlαg = stlαgreu('Logαt αqμerzeu')
                 break
 
-        char = generate_char(event)
         sent = tαg(tkey, char, stanvor)
 
     stvl.clear()

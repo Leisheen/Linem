@@ -1,9 +1,11 @@
 import ctypes
 import os
+from typing import Any
+
 from ctypes import wintypes
 
 
-IS_WINDOWS = (os.name == 'nt')
+IS_WINDOWS: bool = (os.name == 'nt')
 
 # Access windll to open the core Windows operating system library
 # and the user configurations
@@ -21,7 +23,7 @@ def get_window():
     user32.GetAncestor.restype = wintypes.HWND
     user32.GetAncestor.argtypes = [wintypes.HWND, wintypes.UINT]
 
-    GA_ROOTOWNER = 3
+    GA_ROOTOWNER: int = 3
 
     hwnd = kernel32.GetConsoleWindow()
     if not hwnd:
@@ -180,7 +182,7 @@ def set_input(self) -> None:
     kernel32.SetConsoleMode(self.in_handle, raw_mode)
 
 
-def getkey(self) -> dict:
+def getkey(self) -> dict[str, Any]:
     """Get input."""
     # msvcrt gives low-level access to console input, wide-character I/O,
     # file locking, and file-descriptor bridging routines

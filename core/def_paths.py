@@ -3,59 +3,59 @@ import os
 from dotenv import load_dotenv
 
 
-DEFAULT = ''
+DEFAULT: str = ''
 
 # OS
-DEFROOT       = os.getenv('STVPATH', r'C:\\' if os.name == 'nt' else '/')
-DESKTOP       = os.getenv('DESKTOP', DEFAULT)
+DEFROOT: str       = os.getenv('STVPATH', r'C:\\' if os.name == 'nt' else '/')
+DESKTOP: str       = os.getenv('DESKTOP', DEFAULT)
 
 load_dotenv()
 # STANVOR
-STVPATH       = os.getenv('STVPATH', DEFROOT)
-INVASH        = os.getenv('INVASH', DEFROOT)
-INVROOT       = os.getenv('INVROOT', DEFROOT)
-LOG_FILE      = os.getenv('LOG_FILE', 'log.txt')
-OLDLOG_FILE   = os.getenv('OLDLOG_FILE', 'oldlog.txt')
-LINEMAG       = os.getenv('LINEMAG', DEFROOT)
-MANSLAG       = os.getenv('MANSLAG', DEFROOT)
+STVPATH: str       = os.getenv('STVPATH', DEFROOT)
+INVASH: str        = os.getenv('INVASH', DEFROOT)
+INVROOT: str       = os.getenv('INVROOT', DEFROOT)
+LOG_FILE: str      = os.getenv('LOG_FILE', 'log.txt')
+OLDLOG_FILE: str   = os.getenv('OLDLOG_FILE', 'oldlog.txt')
+LINEMAG: str       = os.getenv('LINEMAG', DEFROOT)
+MANSLAG: str       = os.getenv('MANSLAG', DEFROOT)
 
 # PROGRAMS (EXE)
-CPROG         = os.getenv('CPROG', DEFAULT)
-MNCOMMANDER   = os.getenv('MNCOMMANDER', DEFAULT)
-SAGET         = os.getenv('SAGET', DEFAULT)
-VSCODE        = os.getenv('VSCODE', DEFAULT)
-CITIES        = os.getenv('CITIES', DEFAULT)
+CPROG: str         = os.getenv('CPROG', DEFAULT)
+MNCOMMANDER: str   = os.getenv('MNCOMMANDER', DEFAULT)
+SAGET: str         = os.getenv('SAGET', DEFAULT)
+VSCODE: str        = os.getenv('VSCODE', DEFAULT)
+CITIES: str        = os.getenv('CITIES', DEFAULT)
 
 # MUSSELAITH
-MUSDEV        = os.getenv('MUSDEV', DEFAULT)
-VERKLAIT      = os.getenv('VERKLAIT', DEFAULT)
+MUSDEV: str        = os.getenv('MUSDEV', DEFAULT)
+VERKLAIT: str      = os.getenv('VERKLAIT', DEFAULT)
 
 # MEDIA
-PIANO         = os.getenv('PIANO', DEFAULT)
-ABLETON       = os.getenv('ABLETON', DEFAULT)
-FINALE        = os.getenv('FINALE', DEFAULT)
-DAVINCI       = os.getenv('DAVINCI', DEFAULT)
-MPX           = os.getenv('MPX', DEFAULT)
+PIANO: str         = os.getenv('PIANO', DEFAULT)
+ABLETON: str       = os.getenv('ABLETON', DEFAULT)
+FINALE: str        = os.getenv('FINALE', DEFAULT)
+DAVINCI: str       = os.getenv('DAVINCI', DEFAULT)
+MPX: str           = os.getenv('MPX', DEFAULT)
 
 # DATA
-TANDERA       = os.getenv('TANDERA', DEFAULT)
-PROSERV       = os.getenv('PROSERV', DEFAULT)
-DATASET       = os.getenv('DATA', DEFAULT)
+TANDERA: str       = os.getenv('TANDERA', DEFAULT)
+PROSERV: str       = os.getenv('PROSERV', DEFAULT)
+DATASET: str       = os.getenv('DATA', DEFAULT)
 
 # BROWSER
-NOTION        = os.getenv('NOTION', DEFAULT)
+NOTION: str        = os.getenv('NOTION', DEFAULT)
 
 # GOOGLE
-GDRIVE        = 'https://drive.google.com/drive'
-GCAL          = 'https://calendar.google.com/calendar'
-GMAPS         = 'https://www.google.com/maps'
+GDRIVE: str        = 'https://drive.google.com/drive'
+GCAL: str          = 'https://calendar.google.com/calendar'
+GMAPS: str         = 'https://www.google.com/maps'
 
 # OTHERS
-YOGA          = os.getenv('YOGA', DEFAULT)
-AI            = os.getenv('AI', DEFAULT)
+YOGA: str          = os.getenv('YOGA', DEFAULT)
+AI: str            = os.getenv('AI', DEFAULT)
 
 
-EXCLUDED = ('desktop.ini')
+EXCLUDED: tuple[str]      = ('desktop.ini',)
 
 # EXTENSIONS
 IMG_EXT  = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.tiff')
