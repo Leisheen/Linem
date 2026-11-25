@@ -354,7 +354,7 @@ class Audio:
     file: str = ''
     name: str = ''
     prompt: str = ''
-    length: str = ''
+    length: int = 0
     on: bool = False
     paused: bool = False
     pos: float = 0

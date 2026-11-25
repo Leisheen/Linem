@@ -32,6 +32,7 @@ from core.def_paths import INVASH, LOG_FILE
 from core.sentam import (
     STANVOR, Audio, ScreenBuffer, Battery, Lαmseut, Stanvor, Vseut, Terminal, File
 )
+from core.stvlog import stlαgreu
 
 
 def set_invash(stvl: Lαmseut) -> Path:
@@ -183,7 +184,7 @@ def stop_stanvor(stanvor: Stanvor) -> None:
 
 def force_stlαg(stanvor: Stanvor, prompt: Any) -> None:
     """Return the current input manager."""
-    stanvor.stvl.stlαg = str(prompt)
+    stanvor.stvl.stlαg = stlαgreu(prompt)
 
 
 # -- CONFIG --

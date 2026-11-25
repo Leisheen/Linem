@@ -8,7 +8,7 @@ import sounddevice as sd
 import webbrowser # for manage_command
 
 from operator import itemgetter
-from typing import Dict, Callable, Any # askaq, manage_command
+from typing import Any, Callable, Dict # askaq, manage_command
 
 from core.audio import AUDIO_ACTIONS, STV_AUDIO_ACTIONS, set_audio, drive_audio
 import core.keys as key
@@ -35,17 +35,24 @@ improl_dicts: tuple = (logimprol, key.MUSSELAITH) #, PAD)
 sentam_stagen: dict[int, dict[str, Callable]] = {
     key.ALT_BACK: {'ιmαν': lambda *_: ''},
     key.BACK: {'ιmαν': lambda sent, _: sent.ιmαν[:-1]},
-    key.CTL_NUM1: {'νerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_NUM2: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_NUM4: {'υνerseut': lambda sent, _: sent.ιmαν},
-    key.CTL_NUM6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
-    key.CTL_NUM7: {'νerseut': lambda *_: ''},
-    key.CTL_NUM8: {'υνerseut': lambda *_: ''},
-    #key.PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + '.'},
-    key.ALT_NUM1: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
-    key.ALT_NUM2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
-    key.ALT_NUM3: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
-    #key.ALT_PADSTOP: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
+
+    # Verseut
+    key.ALT_NUM1: {'νerseut': lambda sent, _: sent.ιmαν},
+    key.ALT_NUM2: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.νerseut},
+    key.ALT_NUM3: {'νerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+
+    # Uversent
+    key.ALT_NUM4: {'υνerseut': lambda sent, _: sent.ιmαν},
+    key.ALT_NUM5: {'ιmαν': lambda sent, vsent: sent.ιmαν + vsent.υνerseut},
+    key.ALT_NUM6: {'υνerseut': lambda sent, _: sent.uostιmαν + sent.αdιmαν},
+
+    # All verseut
+    key.ALT_NUM7: {'ιmαν': lambda sent, vs: sent.ιmαν + vs.νerseut + vs.υνerseut},
+
+    # Clear versent
+    key.ALT_NUM0: {'νerseut': lambda *_: ''},
+    key.SHF_NUM0: {'υνerseut': lambda *_: ''}, # CTL_NUM0 doesn't work
+
     key.CTL_P: {'ιmαν': lambda sent, _: sent.ιmαν + pyperclip.paste()},
     key.ALT_F5: {'stlαg': lambda *_: lαuterbright(-10)},
     key.ALT_F6: {'stlαg': lambda *_: lαuterbright(10)},
@@ -147,7 +154,7 @@ def check_globalkeys(stanvor: Stanvor, code: int,
 
 
 # Filter command
-def manage_command(command: str, operations: Dict[str, Callable],
+def manage_command(command: str, operations: dict[tuple, Callable],
                    stanvor: Stanvor) -> str:
     """
     Filter command and execute corresponding action.
@@ -208,7 +215,7 @@ def play_alarm(alarm: Alarm) -> str:
 
 def manage_drivers(stanvor: Stanvor) -> None:
     """Manage audio and alarm drivers."""
-    set_audio(stanvor.audio)
+    set_audio(stanvor)
     alarm_stat: str = play_alarm(stanvor.alarm)
     if alarm_stat:
         stanvor.stvl.stlαg = alarm_stat

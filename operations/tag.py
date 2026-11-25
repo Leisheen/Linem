@@ -1,3 +1,4 @@
+from typing import Any
 import webbrowser
 
 from core.keys import TAB, DEL, ALT_DEL, XAXIS, CTL_ENTER
@@ -11,7 +12,7 @@ from utils.prompt import (
 from utils.stv_utils import check_globalkeys, sentam_stagen, set_sentam, logimprol
 
 
-def tαg(vkey: int, char: int, stanvor: Stanvor) -> Imανseut:
+def tαg(vkey: int, char: int, stanvor: Stanvor, **kwargs: Any) -> Imανseut:
     """Global input manager."""
     sent: Imανseut = stanvor.sent
 
@@ -31,5 +32,9 @@ def tαg(vkey: int, char: int, stanvor: Stanvor) -> Imανseut:
         (lambda: vkey == CTL_ENTER,       lambda: webbrowser.open(sent.ιmαν)),
         (lambda: chr(char).isprintable(), lambda: addchar(char, sent))
     ))
+    
+    if kwargs:
+        if 'upper' in kwargs:
+            sent.ιmαν = sent.ιmαν.upper()
 
     return sent

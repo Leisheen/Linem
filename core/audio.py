@@ -27,16 +27,23 @@ STV_AUDIO_ACTIONS = { # Just for STANVOR so far
 }
 
 
-def set_audio(audio: Audio):
+def set_audio(stanvor: Stanvor):
     """Set audio variables for Stαuνor and play audio file."""
+    audio = stanvor.audio
+
     if not audio.on:
         return
 
     audio.pos = music.get_pos() / 1000
 
     prmthead: str = f'{audio.name} ❯  {str(int(audio.pos))}'
-    audio_mins: str = f'{int(audio.length)//60}:{int(audio.length)%60}'
+    audio_mins: str = f'{audio.length // 60}:{audio.length % 60}'
     audio.prompt = f'{prmthead} : {audio.length}s ({audio_mins})'
+
+    if audio.pos > audio.length:
+        music.stop()
+        audio.clear()
+        return
 
     if audio.pos == -0.001:
         music.play()
@@ -44,12 +51,16 @@ def set_audio(audio: Audio):
 
 
 def _play(audio: Audio) -> str:
-    music.load(audio.file)
+    try:
+        music.load(audio.file)
+    except Exception as e:
+        return str(e)
+
     music.play()
 
     audio.start()
     audio.file = os.path.abspath(audio.name)
-    audio.length = str(int(master.Sound(audio.file).get_length()))
+    audio.length = int(master.Sound(audio.file).get_length())
 
     return ''
 

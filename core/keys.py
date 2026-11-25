@@ -121,7 +121,7 @@ CEDILLA: int    = 191       # ord('ç')
 
 # SPECIAL CHARACTERS
 QUESTION: int   = 219       # ?/'
-ORD: int        = 220       # º/ª   # Virtual key
+ORD: int        = 220       # º
 ADMIRE: int     = 221       # ¡/¿
 ACCENT: int     = 222       # ´
 LESS: int       = 226       # </>
@@ -139,6 +139,17 @@ SHF_UP: int     = 288
 SHF_RIGHT: int  = 289
 SHF_DOWN: int   = 290
 
+SHF_NUM0: int   = 298
+SHF_NUM1: int   = 299
+SHF_NUM2: int   = 300
+SHF_NUM3: int   = 301
+SHF_NUM4: int   = 302
+SHF_NUM5: int   = 303
+SHF_NUM6: int   = 304
+SHF_NUM7: int   = 305
+SHF_NUM8: int   = 306
+SHF_NUM9: int   = 307
+
 SHF_PADPLUS: int  = 357
 SHF_PADMINUS: int = 359
 
@@ -154,6 +165,7 @@ SHF_PLAY: int     = 429
 
 SHF_PLUS: int   = 437
 
+SHF_ORD: int    = 470       # ª
 GREATER: int    = 476       # </>
 
 # CTRL: int     (+500)
@@ -171,6 +183,7 @@ CTL_RIGHT: int  = 539
 CTL_DOWN: int   = 540
 CTL_DEL: int    = 546
 
+GR_NUM0: int    = 548
 CTL_NUM0: int   = 548
 CTL_NUM1: int   = 549
 CTL_NUM2: int   = 550
@@ -184,6 +197,10 @@ CTL_NUM9: int   = 557
 
 CTL_C: int      = 567
 CTL_P: int      = 580
+
+CTL_QUOTE: int  = 719
+CTL_ADMIRE: int = 721
+
 
 # ALT: int      (+750)
 ALT_BACK: int   = 758
@@ -280,6 +297,12 @@ ARROWS: tuple             = (*YAXIS, *XAXIS)
 CONCLUDE: tuple[int, int] = (ENTER, ESC)
 ESCAPE: tuple[int, int]   = (ESC, PADMINUS)
 COMPARE: tuple[int, int]  = (LESS, GREATER)
+
+CTLNUM_KEYS: tuple = (
+    GR_NUM0, CTL_NUM1, CTL_NUM2, CTL_NUM3, CTL_NUM4,
+    CTL_NUM5, CTL_NUM6, CTL_NUM7, CTL_NUM8, CTL_NUM9,
+)
+
 
 MSLTH_ORDS: list = [
     ALT_C, ALT_A, ALT_Q, ALT_E, ALT_W, ALT_I, ALT_O,

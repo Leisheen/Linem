@@ -1,13 +1,21 @@
+from curses.ascii import isdigit
+from re import S
+from turtle import st
+
 import core.colors as colors
-from core.colors import BLACK, NAVY, WHITE, GRAY, RED, GREEN, MAGENTA, YELLOW
-from core.keys import ENTER, ESC
-from core.sentam import Stanvor
-from core.stv import lαδmαιteu, reset, getkey
+from core.colors import NAVY, WHITE, GRAY, RED, GREEN, MAGENTA, YELLOW
+from core.keys import ENTER, ESC, BACK, PROMPT
+from core.sentam import STANVOR, Stanvor
+from core.stv import force_stlαg, lαδmαιteu, reset, getkey
+from core.stvlog import stνlαt
 from operations.interface import set_sentam
 
 
 # Color for Lαuter
-def filter_colors(color_id: tuple, ιmαν: str) -> tuple[int, int, int]:
+def filter_colors(ιmαν: str, color_id: tuple) -> tuple[int, int, int]:
+    if color_id:
+        return color_id
+
     stvcolors: dict[str, tuple] = {
         name: value for name, value in vars(colors).items()
         if not name.startswith("_")
@@ -16,13 +24,16 @@ def filter_colors(color_id: tuple, ιmαν: str) -> tuple[int, int, int]:
     return stvcolors.get(ιmαν, color_id)
 
 
-def filter_hex(color_id: tuple, ιmαν: str) -> tuple[int, int, int]:
+def filter_hex(color: str, color_id: tuple) -> tuple[int, int, int]:
+    if color_id:
+        return color_id
+
     try:
-        rgb = int(ιmαν.removeprefix('#'), 16)
+        rgb = int(color.removeprefix('#'), 16)
     except ValueError:
         return color_id
 
-    if len(ιmαν) != 7 or not ιmαν.startswith('#'):
+    if len(color) != 7 or not color.startswith('#'):
         return color_id
 
     return (
@@ -31,8 +42,45 @@ def filter_hex(color_id: tuple, ιmαν: str) -> tuple[int, int, int]:
         rgb & 255
     )
 
-def set_color(ιmαν: str) -> tuple[int, int, int]:
-    
+
+def filter_rgb(values: str, color_id: tuple) -> tuple:
+    if color_id:
+        return color_id
+
+    color: tuple
+
+    if values.startswith('(') and values.endswith(')'):
+        values = values.strip()
+
+    values_list: list[str] = values.split(',')
+
+    if len(values_list) == 0:
+        return color_id
+
+    values_ints: list[int] = []
+
+    for index, value in enumerate(values_list):
+        if index == 3:
+            break
+        if value.strip().isdigit():
+            values_ints.append(int(value))
+        else:
+            values_ints.append(int(0))
+
+    if len(values_ints) == 3:
+        color = (values_ints[0], values_ints[1], values_ints[2])
+    elif len(values_ints) == 2:
+        color = (values_ints[0], values_ints[1], 0)
+    elif len(values_ints) == 1:
+        color = (values_ints[0], 0, 0)
+    else:
+        return color_id
+
+    return color
+
+
+
+def set_color(color: str) -> tuple:
     """Blank screen with given background color."""
     color_dict: dict[str, tuple] = {
         'nashlam': NAVY,
@@ -43,12 +91,11 @@ def set_color(ιmαν: str) -> tuple[int, int, int]:
         'magenta': MAGENTA,
         'augeh':   YELLOW,
     }
-    color_id: tuple = color_dict.get(ιmαν, BLACK)
 
-    if not color_id:
-        color_id = filter_colors(color_id, ιmαν)
-    if not color_id:
-        color_id = filter_hex(color_id, ιmαν)
+    color_id: tuple = color_dict.get(color, ())
+    color_id = filter_colors(color, color_id)
+    color_id = filter_hex(color, color_id)
+    color_id = filter_rgb(color, color_id)
 
     return color_id
 
@@ -60,35 +107,45 @@ def print_color(stanvor: Stanvor) -> None:
     stanvor.ιdeu = stvl.ιdeu = 'Color'
     stvl.prαν = '❯ '
     sent.clear()
-    color_id: tuple[int, int, int] = BLACK
+    color_id: tuple = ()
+    stνlαt(STANVOR, 'Color')
 
     def define_values() -> tuple[tuple, str]:
+        color: str = ''
+
         while True:
-            if not set_sentam(stanvor):
-                color_id = BLACK
+            if not set_sentam(stanvor, upper=True):
+                color_id = ()
                 break
 
-            color: str = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
-            color_id: tuple[int, int, int] = set_color(color)
+            color = f'{sent.ιmαν}{sent.uostιmαν}{sent.αdιmαν}'
+            color_id: tuple = set_color(color)
             
             if color_id:
                 break
             else:
                 sent.clear()
 
+        for name, value in vars(colors).items():
+            if color_id == value:
+                color_name = name
+                stvl.ιzprαν = f'{chr(PROMPT)} {color_name}'
+                #stvl.ιdeu = f'Color {chr(VSEP)} {color_name}'
+                break
+        else:
+            stvl.ιzprαν = f'{chr(PROMPT)} {color}'
+            #stvl.ιdeu = f'Color {chr(VSEP)} {color}'
+
+
         map: str = ' ' * screen.width * (screen.height - 2)
         return color_id, map
 
     color_id, map = define_values()
 
-    while True:
-        if color_id == (0, 0, 0):
-            stvl.clear()
-            sent.clear()
-            return
-
+    while color_id != ():
         lαδmαιteu(stanvor)
-        screen.insert(0, 2, map, bg=color_id)
+        screen.insert(0, 2, stvl.ιzprαν)
+        screen.insert(0, 3, map, bg=color_id)
         screen.render()
 
         key: int = getkey(stanvor.terminal)
@@ -98,8 +155,13 @@ def print_color(stanvor: Stanvor) -> None:
 
         if key == ESC:
             break
+
         if key == ENTER:
             stanvor.sent.clear()
+
+        if key in (BACK, ENTER):
+            stvl.ιzprαν = ''
+            #stvl.ιdeu = f'Color'
             color_id, map = define_values()
 
     reset(stanvor)

@@ -10,10 +10,10 @@ from typing import Callable
 from core.audio import drive_audio
 import core.def_paths as dfp
 from core.def_paths import LOG_FILE, EXCLUDED
-from core.filesystem import log, logvals
+from core.filesystem import path_nav, locpath, log, logvals
 import core.keys as key
 from core.search import SEARCH
-from core.sentam import STANVOR, Stanvor, Imανseut, Lαmseut, File
+from core.sentam import STANVOR, Lanter, Stanvor, Imανseut, Logreuαm, Lαmseut, File
 from core.stv import (
     set_filedata, reset, set_invash, process_handlers, getin,
     set_sysenvironment, set_sysdefaults, lαδιmανseut, force_stlαg
@@ -44,7 +44,7 @@ web_chnls: dict[int, str] = {
     key.ALT_L: 'L'
     }
 
-media_drivers = {
+media_drivers: dict[tuple, Callable] = {
     dfp.VIDEO_EXT: lambda file, _:       open_video(file),
     dfp.IMG_EXT:   lambda file, _:       open_pyside(file),
     dfp.TEXT_EXT:  lambda file, stanvor: tαuder(stanvor, file),
@@ -93,7 +93,7 @@ def _set_uprav(command, stanvor) -> None:
 def _set_ashent(stvl: Lαmseut, *args) -> None:
     """Set αδeutαr."""
     if args:
-        command = args[0]
+        command: str = args[0]
         stvl.αδeutαr, stvl.stlαg = get_αδeutαr(command)
     else:
         stvl.αδeutαr, stvl.stlαg = pull_αδeutαr(stvl.αδeutαr)
@@ -137,8 +137,8 @@ def _open(command: Callable, stanvor: Stanvor) -> None:
         if comname in ('ιuνor', '<lambda>'):
             return
 
-        unique_letters = { 'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'}
-        stamp = comname.translate(str.maketrans(unique_letters))
+        unique_letters: dict[str, str] = {'ν': 'v', 'u': 'n', 'υ': 'u', 'δ': 'sh'}
+        stamp: str = comname.translate(str.maketrans(unique_letters))
         stamp = stamp.replace('cn', 'cu').upper()
         stνlαt(STANVOR, f'<{stamp}>')
 
@@ -264,6 +264,11 @@ def _show_dirlist(stanvor: Stanvor) -> None:
     setattr(stanvor.stvl, 'stlαg', '')
 
 
+def _clear_prav(stvl: Lαmseut) -> None:
+    stvl.ιdeu = STANVOR
+    stvl.prαν = stvl.log = ''
+
+
 def _switch_fileon(filedata: File) -> None:
     """
     Switch filedata object state (on/off).
@@ -301,14 +306,14 @@ def _mnglvs(cmd: int, stanvor: Stanvor) -> None:
 
 def _nav_xaxis(cmd, sent) -> None:
     """Navigate horizontally in prompt."""
-    sent_tuple = HNAV.get(cmd, lambda: None)(sent)
+    sent_tuple: tuple = HNAV.get(cmd, lambda: None)(sent)
     sent.ιmαν, sent.uostιmαν, sent.αdιmαν = sent_tuple
 
 
 def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
     """Dispatch one key cmd to its corresponding input handler."""
     sent, stvl = stanvor.sent, stanvor.stvl
-    filedata = stanvor.filedata
+    filedata: File = stanvor.filedata
 
     stanvor_handlers = (
         (lambda cmd: cmd == key.F12,     lambda _: set_stνlαt(stanvor)),
@@ -317,12 +322,13 @@ def _set_stanvor_handlers(stanvor: Stanvor) -> tuple:
         (lambda cmd: cmd == key.CTL_ENTER, lambda _: _switch_fileon(filedata)),
         (lambda cmd: cmd == key.ENTER,   lambda _: _process_send(stanvor)),
         (lambda cmd: cmd == key.ORD,     lambda _: _show_dirlist(stanvor)),
+        (lambda cmd: cmd == key.SHF_ORD, lambda _: _clear_prav(stanvor.stvl)),
         (lambda cmd: cmd in HNAV,        lambda cmd: _nav_xaxis(cmd, sent)),
-        #(lambda cmd: cmd in PAD_KEYS,   lambda cmd: _locpad(cmd, stanvor)),
+        (lambda cmd: cmd in path_nav,    lambda cmd: locpath(cmd, stanvor)),
         (lambda cmd: cmd in stv_actions, lambda cmd: _drivestv(cmd, stanvor)),
         (lambda cmd: cmd in intlogren,   lambda cmd: _open(intlogren[cmd], stanvor)),
         (lambda cmd: cmd in web_chnls,   lambda cmd: _set_webchns(cmd, stvl)),
-        (lambda cmd: cmd in SEARCH,     lambda cmd: _search(stanvor, cmd)),
+        (lambda cmd: cmd in SEARCH,      lambda cmd: _search(stanvor, cmd)),
         (lambda cmd: _look_logvals(cmd), lambda cmd: _mnglvs(cmd, stanvor)),
     )
 
@@ -354,9 +360,8 @@ def _process_input(stanvor: Stanvor) -> None:
 
                 stanvor.handlers = _set_stanvor_handlers(stanvor)
 
-                root: str = os.getcwd()
                 stanvor.logαm.ιlog = [i for i in os.listdir() if i not in EXCLUDED]
-                stanvor.logαm.ιlog.sort(key=lambda f: os.path.getctime(os.path.join(root, f)))
+                stanvor.logαm.ιlog.sort(key=lambda f: os.path.getctime(os.path.join(os.getcwd(), f)))
                 stanvor.screen.reset()
                 return
 

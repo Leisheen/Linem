@@ -12,6 +12,8 @@ SLATE: Color            = (112, 128, 144)
 # Reds & Pinks
 RED: Color              = (255, 0, 0)
 DARK_RED: Color         = (139, 0, 0)
+MAROON: Color           = (155, 0, 0)       #9b0000
+BURGUNDY: Color         = (128, 0, 32)      #800020
 LIGHT_RED: Color        = (255, 102, 102)
 CRIMSON: Color          = (220, 20, 60)
 PINK: Color             = (255, 192, 203)
@@ -45,6 +47,7 @@ NAVY: Color             = (0, 0, 128)
 SKY_BLUE: Color         = (135, 206, 235)
 DODGER_BLUE: Color      = (30, 144, 255)
 ROYAL_BLUE: Color       = (65, 105, 225)
+DARK_CYAN: Color        = (3, 123, 91)        #037b5b (lime_green/emerald_green)
 CYAN: Color             = (0, 255, 255)
 TEAL: Color             = (0, 128, 128)
 TURQUOISE: Color        = (64, 224, 208)
@@ -59,6 +62,11 @@ MAGENTA: Color          = (255, 0, 255)
 ORCHID: Color           = (218, 112, 214)
 PLUM: Color             = (221, 160, 221)
 LAVENDER: Color         = (230, 230, 250)
+WINE: Color             = (114, 47, 55)         #722F37
+RED_WINE: Color         = (114, 47, 55)         #722F37
+DARK_PINK: Color        = (128, 0, 50)          #800032
+WINE_RED: Color         = (123, 3, 35)          #7b0323
+CLARET: Color           = (123, 3, 35)          #7F1734
 
 # Earth Tones & Browns
 BROWN: Color            = (139, 69, 19)
